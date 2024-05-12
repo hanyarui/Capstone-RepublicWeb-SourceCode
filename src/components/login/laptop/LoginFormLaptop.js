@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { RiLockFill } from "react-icons/ri";
 
 const LoginFormLaptop = () => {
   const [username, setUsername] = useState("");
@@ -39,9 +40,12 @@ const LoginFormLaptop = () => {
       }}
     >
       <form
-        className="form flex flex-col w-full p-20 mt-60 shadow"
+        className="form flex flex-col w-full p-20 mt-40 shadow"
         onSubmit={handleSubmit}
       >
+        <div className="mx-auto mb-2">
+          <RiLockFill />
+        </div>
         <h1 className="text-2xl font-bold text-center mb-10">Login</h1>
         <label className="block mb-2" htmlFor="username">
           Username/Email
@@ -93,11 +97,11 @@ const LoginFormLaptop = () => {
         >
           Login
         </button>
-        <div className="text-center p-8">
+        {/* <div className="text-center p-8">
           <Link to="/Register" className="text-right">
             Belum Punya Akun?
           </Link>
-        </div>
+        </div> */}
       </form>
     </div>
   );
