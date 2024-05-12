@@ -32,18 +32,17 @@ const LoginFormHp = () => {
 
   return (
     <div
-      className="flex-initial w-full h-3/4"
+      className="flex-initial w-full h-1/2"
       style={{
         backgroundColor: "#ffffff",
         color: "white",
-        borderRadius: "20px 20px 0 0",
       }}
     >
       <form
-        className="form flex flex-col w-full p-10 mt-60 shadow"
+        className="form flex flex-col w-full p-10 mt-60"
         onSubmit={handleSubmit}
       >
-        <div className="mx-auto mb-5 text-black">
+        <div className="mx-auto mb-2 text-black">
           <RiLockFill />
         </div>
         <h1 className="text-2xl font-bold text-center text-black mb-10">
@@ -99,7 +98,7 @@ const LoginFormHp = () => {
             fontWeight: "700",
             backgroundColor: "#040F4D",
           }}
-          className="button p-4 w-1/2 mx-auto text-black rounded-3 cursor-pointer"
+          className="button p-4 w-1/2 mx-auto text-white rounded-3 cursor-pointer"
         >
           Login
         </button>
