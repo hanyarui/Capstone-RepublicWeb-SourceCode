@@ -2,9 +2,18 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+
+// Authentication
 import Login from "./pages/LoginPage";
-import Forgot from "./pages/forgotPassword/ForgotPasswordPage";
+
+// Password
+import ForgotPassword from "./pages/forgotPassword/ForgotPassword";
+import OTP from "./pages/forgotPassword/OTP";
+import ChangePassword from "./pages/forgotPassword/ChangePassword";
+
+// User Pages
 import Homepage from "./pages/Homepage";
+
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -12,7 +21,11 @@ root.render(
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<Login />} />
-      <Route path="/ForgotPassword" element={<Forgot />} />
+
+      <Route path="/ForgotPassword" element={<ForgotPassword />} />
+      <Route path="/OTP" element={<OTP />} />
+      <Route path="/ChangePassword" element={<ChangePassword />} />
+
       <Route path="/Homepage" element={<Homepage />} />
     </Routes>
   </BrowserRouter>
