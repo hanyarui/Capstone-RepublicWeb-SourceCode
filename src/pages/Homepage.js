@@ -33,7 +33,7 @@ const Homepage = () => {
           borderRadius: "0 0 40px 0",
         }}
       >
-        <div className="grid w-full gap-4">
+        <div className="grid w-full gap-16">
           <div className="grid grid-cols-2">
             <div className="text-left flex items-center">
               <FaRegCalendarAlt className="w-7 h-7" />
@@ -61,21 +61,21 @@ const Homepage = () => {
       <div className="w-full px-16 py-8">
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center my-auto">
-            <h2 className="text-xl font-semibold mb-4">Shift Middle</h2>
+            <h2 className="text-3xl font-bold mb-4">Shift Middle</h2>
             <button
-              className="p-3 text-white w-full mb-4"
+              className="p-3 text-white w-3/5 mb-4"
               style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
             >
               Masuk
             </button>
             <button
-              className="p-3 text-white w-full mb-4"
+              className="p-3 text-white w-3/5 mb-4"
               style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
             >
               Log Activity
             </button>
             <button
-              className="p-3 text-white w-full"
+              className="p-3 text-white w-3/5"
               style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
             >
               Histori Log Activity
@@ -87,58 +87,64 @@ const Homepage = () => {
             </div>
             <div className="grid grid-cols-4 gap-4 mb-4">
               <div
-                className="text-left py-5 pl-8 font-extrabold bg-gray-200 flex items-center"
+                className="text-left py-5 px-8 font-extrabold bg-gray-200 flex items-center justify-start w-full"
                 style={{ borderRadius: "10px" }}
               >
                 <GoDotFill className="mr-2" />
                 <div>
-                  <p>Masuk</p>
+                  <p className="font-bold">Masuk</p>
                   <p>---</p>
                 </div>
               </div>
               <div
-                className="text-left py-5 pl-8 font-extrabold bg-gray-200 flex items-center"
+                className="text-left py-5 px-8 font-extrabold bg-gray-200 flex items-center justify-start w-full"
                 style={{ borderRadius: "10px" }}
               >
                 <GoDotFill className="mr-2" />
                 <div>
-                  <p>Istirahat</p>
+                  <p className="font-bold">Istirahat</p>
                   <p>---</p>
                 </div>
               </div>
               <div
-                className="text-left py-5 pl-8 font-extrabold bg-gray-200 flex items-center"
+                className="text-left py-5 px-8 font-extrabold bg-gray-200 flex items-center justify-start w-full"
                 style={{ borderRadius: "10px" }}
               >
                 <GoDotFill className="mr-2" />
                 <div>
-                  <p>Kembali</p>
+                  <p className="font-bold">Kembali</p>
                   <p>---</p>
                 </div>
               </div>
               <div
-                className="text-left py-5 pl-8 font-extrabold bg-gray-200 flex items-center"
+                className="text-left py-5 px-8 font-extrabold bg-gray-200 flex items-center justify-start w-full"
                 style={{ borderRadius: "10px" }}
               >
                 <GoDotFill className="mr-2" />
                 <div>
-                  <p>Pulang</p>
+                  <p className="font-bold">Pulang</p>
                   <p>---</p>
                 </div>
               </div>
             </div>
-            <div className="bg-red-100 border border-red-500 p-4 rounded-lg">
-              <div className="text-red-700 font-semibold mb-2">Attention!</div>
-              <div className="mb-2">
-                • Kemarin anda absen pulang di kost jangan diulang!
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="bg-white border border-red-500 p-4 rounded-lg">
+                <div className="text-red-700 text-center">
+                  <strong>Attention!</strong>
+                  <p>• Kemarin anda absen pulang di kost jangan diulang!</p>
+                </div>
               </div>
-              <div className="text-red-700 font-semibold">
-                Anda memiliki kekurangan jam kerja
+              <div className="bg-white border border-red-500 p-4 rounded-lg">
+                <div className="text-red-700 font-semibold text-center mb-2">
+                  Anda memiliki kekurangan jam kerja
+                </div>
+                <div className="text-red-700 text-2xl text-center mt-2">
+                  -14:01:53
+                </div>
+                <div className="text-center">
+                  <button className="text-blue-600 mt-2">Lihat Detail</button>
+                </div>
               </div>
-              <div className="text-red-700 text-2xl mt-2">-14:01:53</div>
-              <button className="bg-red-500 text-white px-4 py-2 rounded-lg mt-2">
-                Lihat Detail
-              </button>
             </div>
           </div>
         </div>
