@@ -26,7 +26,7 @@ const LoginFormLaptop = () => {
       // Ganti push dengan navigasi sesuai dengan kebutuhan aplikasi Anda
       window.location.href = "/Homepage";
     } else {
-      alert("Username atau password salah");
+      alert("Email atau password salah");
     }
   };
 
@@ -49,13 +49,13 @@ const LoginFormLaptop = () => {
           </div>
           <h1 className="text-2xl font-bold text-center mb-10">Login</h1>
           <label className="block mb-2" htmlFor="username">
-            Username/Email
+            Email
           </label>
           <input
             type="text"
             id="username"
             style={{ borderRadius: "5px", backgroundColor: "#040F4D" }}
-            placeholder="Masukkan Username / Email"
+            placeholder="Masukkan Email"
             className="input p-2 h-12 border border-gray-300 mb-5 w-full"
             value={username}
             onChange={(event) => setUsername(event.target.value)}
