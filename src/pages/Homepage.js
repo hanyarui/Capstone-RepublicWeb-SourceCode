@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from "react";
 import { IoPersonSharp } from "react-icons/io5";
 import { FaRegCalendarAlt } from "react-icons/fa";
+import { GoDotFill } from "react-icons/go";
 import TodayDate from "./home/TodayDate";
 
 const getCurrentTime = () => {
@@ -32,7 +33,7 @@ const Homepage = () => {
           borderRadius: "0 0 40px 0",
         }}
       >
-        <div className="grid w-full gap-4">
+        <div className="grid w-full gap-16">
           <div className="grid grid-cols-2">
             <div className="text-left flex items-center">
               <FaRegCalendarAlt className="w-7 h-7" />
@@ -59,7 +60,7 @@ const Homepage = () => {
 
       <div className="w-full px-16 py-8">
         <div className="grid grid-cols-3 gap-4">
-          <div className="text-center">
+          <div className="text-center my-auto">
             <h2 className="text-xl font-semibold mb-4">Shift Middle</h2>
             <button
               className="p-3 text-white w-full mb-4"
@@ -85,21 +86,45 @@ const Homepage = () => {
               <button className="text-red-600">Lihat Barcode Saya</button>
             </div>
             <div className="grid grid-cols-4 gap-4 mb-4">
-              <div className="text-center">
-                <div>Masuk</div>
-                <div>---</div>
+              <div
+                className="text-left py-5 pl-8 font-extrabold bg-gray-200 flex items-center"
+                style={{ borderRadius: "10px" }}
+              >
+                <GoDotFill className="mr-2" />
+                <div>
+                  <p>Masuk</p>
+                  <p>---</p>
+                </div>
               </div>
-              <div className="text-center">
-                <div>Istirahat</div>
-                <div>---</div>
+              <div
+                className="text-left py-5 pl-8 font-extrabold bg-gray-200 flex"
+                style={{ borderRadius: "10px" }}
+              >
+                <GoDotFill />
+                <div>
+                  <p>Istirahat</p>
+                  <p>---</p>
+                </div>
               </div>
-              <div className="text-center">
-                <div>Kembali</div>
-                <div>---</div>
+              <div
+                className="text-left py-5 pl-8 font-extrabold bg-gray-200 flex"
+                style={{ borderRadius: "10px" }}
+              >
+                <GoDotFill />
+                <div>
+                  <p>Kembali</p>
+                  <p>---</p>
+                </div>
               </div>
-              <div className="text-center">
-                <div>Pulang</div>
-                <div>---</div>
+              <div
+                className="text-left py-5 pl-8 font-extrabold bg-gray-200 flex"
+                style={{ borderRadius: "10px" }}
+              >
+                <GoDotFill />
+                <div>
+                  <p>Pulang</p>
+                  <p>---</p>
+                </div>
               </div>
             </div>
             <div className="bg-red-100 border border-red-500 p-4 rounded-lg">
