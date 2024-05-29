@@ -1,6 +1,6 @@
 import { React, useState, useEffect } from "react";
 import TodayDate from "./../../pages/home/TodayDate";
-import { IoPersonSharp } from "react-icons/io5";
+import { IoPersonSharp, IoLogOutOutline } from "react-icons/io5";
 import { FaRegCalendarAlt } from "react-icons/fa";
 
 const getCurrentTime = () => {
@@ -41,16 +41,23 @@ const Header = () => {
           </div>
           <div className="text-2xl font-semibold text-right">{time}</div>
         </div>
-        <div className="text-center text-2xl font-bold">
+
+        <div className="text-center text-3xl font-semibold italic">
           "Change your life now for better future"
         </div>
-        <div className="flex items-center">
-          <div className="bg-red-700 w-12 h-12 rounded-full flex justify-center items-center">
-            <IoPersonSharp className="w-9 h-9" />
+
+        <div className="grid grid-cols-2">
+          <div className="flex items-center">
+            <div className="bg-red-700 w-12 h-12 rounded-full flex justify-center items-center">
+              <IoPersonSharp className="w-9 h-9" />
+            </div>
+            <div className="ml-3">
+              <p className="text-xl font-semibold">Syalita Widyandini</p>
+              <p>19850910 202112 1 001</p>
+            </div>
           </div>
-          <div className="ml-3">
-            <p className="text-xl font-semibold">Syalita Widyandini</p>
-            <p>19850910 202112 1 001</p>
+          <div className="flex items-center justify-end">
+            <IoLogOutOutline className="w-9 h-9" />
           </div>
         </div>
       </div>
