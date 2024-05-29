@@ -1,8 +1,7 @@
 import { React, useState, useEffect } from "react";
-import { IoPersonSharp } from "react-icons/io5";
-import { FaRegCalendarAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { GoDotFill } from "react-icons/go";
-import TodayDate from "./home/TodayDate";
+import Header from "../components/homepage/Header";
 
 const getCurrentTime = () => {
   const now = new Date();
@@ -24,50 +23,55 @@ const Homepage = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+  // Pop Up
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [currentTime, setCurrentTime] = useState("---");
+
+  const handleMasukClick = () => {
+    setIsPopupVisible(true);
+  };
+
+  const handleConfirm = () => {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString();
+    setCurrentTime(timeString);
+    setIsPopupVisible(false);
+  };
+
+  // Move to History Log Activity
+  let navigate = useNavigate();
+  const moveToHistoryLogActivity = () => {
+    navigate("/HistoryLogActivity");
+  };
+
   return (
     <div className="min-h-screen bg-white flex flex-col items-center p-0">
-      <div
-        className="text-white w-full flex justify-between items-center py-5 px-16"
-        style={{
-          backgroundImage: "url(/assets/background.svg)",
-          borderRadius: "0 0 40px 0",
-        }}
-      >
-        <div className="grid w-full gap-4">
-          <div className="grid grid-cols-2">
-            <div className="text-left flex items-center">
-              <FaRegCalendarAlt className="w-7 h-7" />
-              <div className="text-xl font-thin ml-3">
-                <TodayDate />
-              </div>
-            </div>
-            <div className="text-2xl font-semibold text-right">{time}</div>
-          </div>
-          <div className="text-center text-2xl font-bold">
-            "Change your life now for better future"
-          </div>
-          <div className="flex items-center">
-            <div className="bg-red-700 w-12 h-12 rounded-full flex justify-center items-center">
-              <IoPersonSharp className="w-9 h-9" />
-            </div>
-            <div className="ml-3">
-              <p className="text-xl font-semibold">Syalita Widyandini</p>
-              <p>19850910 202112 1 001</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <Header />
       <div className="w-full px-16 py-8">
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center my-auto">
             <h2 className="text-xl font-semibold mb-4">Shift Middle</h2>
             <button
+              onClick={handleMasukClick}
               className="p-3 text-white w-full mb-4"
               style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
             >
               Masuk
             </button>
+            {isPopupVisible && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white p-5 rounded-lg">
+                  <p>Anda telah masuk</p>
+                  <button
+                    onClick={handleConfirm}
+                    className="mt-3 p-2 bg-blue-500 text-white rounded"
+                  >
+                    Konfirmasi
+                  </button>
+                </div>
+              </div>
+            )}
+
             <button
               className="p-3 text-white w-full mb-4"
               style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
@@ -75,6 +79,7 @@ const Homepage = () => {
               Log Activity
             </button>
             <button
+              onClick={moveToHistoryLogActivity}
               className="p-3 text-white w-full"
               style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
             >
@@ -93,7 +98,7 @@ const Homepage = () => {
                 <GoDotFill className="mr-2" />
                 <div>
                   <p>Masuk</p>
-                  <p>---</p>
+                  <p>{currentTime}</p>
                 </div>
               </div>
               <div

@@ -13,6 +13,7 @@ import ChangePassword from "./pages/password/ChangePassword";
 
 // User Pages
 import Homepage from "./pages/Homepage";
+import HistoryLogActivity from "./pages/HistoryLogActivity";
 
 import reportWebVitals from "./reportWebVitals";
 
@@ -27,6 +28,7 @@ root.render(
       <Route path="/ChangePassword" element={<ChangePassword />} />
 
       <Route path="/Homepage" element={<Homepage />} />
+      <Route path="/HistoryLogActivity" element={<HistoryLogActivity />} />
     </Routes>
   </BrowserRouter>
 );
