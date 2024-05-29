@@ -33,7 +33,7 @@ const Homepage = () => {
           borderRadius: "0 0 40px 0",
         }}
       >
-        <div className="grid w-full gap-16">
+        <div className="grid w-full gap-4">
           <div className="grid grid-cols-2">
             <div className="text-left flex items-center">
               <FaRegCalendarAlt className="w-7 h-7" />
@@ -97,30 +97,30 @@ const Homepage = () => {
                 </div>
               </div>
               <div
-                className="text-left py-5 pl-8 font-extrabold bg-gray-200 flex"
+                className="text-left py-5 pl-8 font-extrabold bg-gray-200 flex items-center"
                 style={{ borderRadius: "10px" }}
               >
-                <GoDotFill />
+                <GoDotFill className="mr-2" />
                 <div>
                   <p>Istirahat</p>
                   <p>---</p>
                 </div>
               </div>
               <div
-                className="text-left py-5 pl-8 font-extrabold bg-gray-200 flex"
+                className="text-left py-5 pl-8 font-extrabold bg-gray-200 flex items-center"
                 style={{ borderRadius: "10px" }}
               >
-                <GoDotFill />
+                <GoDotFill className="mr-2" />
                 <div>
                   <p>Kembali</p>
                   <p>---</p>
                 </div>
               </div>
               <div
-                className="text-left py-5 pl-8 font-extrabold bg-gray-200 flex"
+                className="text-left py-5 pl-8 font-extrabold bg-gray-200 flex items-center"
                 style={{ borderRadius: "10px" }}
               >
-                <GoDotFill />
+                <GoDotFill className="mr-2" />
                 <div>
                   <p>Pulang</p>
                   <p>---</p>
