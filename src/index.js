@@ -7,9 +7,9 @@ import "./index.css";
 import Login from "./pages/LoginPage";
 
 // Password
-import ForgotPassword from "./pages/forgotPassword/ForgotPassword";
-import OTP from "./pages/forgotPassword/OTP";
-import ChangePassword from "./pages/forgotPassword/ChangePassword";
+import ForgotPassword from "./pages/password/ForgotPassword";
+import OTP from "./pages/password/OTP";
+import ChangePassword from "./pages/password/ChangePassword";
 
 // User Pages
 import Homepage from "./pages/Homepage";

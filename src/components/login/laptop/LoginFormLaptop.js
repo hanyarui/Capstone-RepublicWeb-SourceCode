@@ -41,7 +41,7 @@ const LoginFormLaptop = () => {
     >
       <div className="w-full">
         <form
-          className="form flex flex-col w-full h-full  px-20"
+          className="form flex flex-col w-full h-full px-20"
           onSubmit={handleSubmit}
         >
           <div className="mx-auto mb-2">
