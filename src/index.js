@@ -15,6 +15,9 @@ import ChangePassword from "./pages/auth/password/ChangePassword";
 import Homepage from "./pages/user/Homepage";
 import HistoryLogActivity from "./pages/user/HistoryLogActivity";
 
+// Admin Pages
+import Dashboard from "./pages/admin/Dashboard";
+
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -29,6 +32,8 @@ root.render(
 
       <Route path="/Homepage" element={<Homepage />} />
       <Route path="/HistoryLogActivity" element={<HistoryLogActivity />} />
+
+      <Route path="/Dashboard" element={<Dashboard />} />
     </Routes>
   </BrowserRouter>
 );
