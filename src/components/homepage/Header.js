@@ -25,7 +25,7 @@ const Header = () => {
 
   return (
     <div
-      className="text-white w-full flex justify-between items-center py-5 px-16"
+      className="text-white w-full flex justify-between items-center py-20 px-16"
       style={{
         backgroundImage: "url(/assets/background.svg)",
         borderRadius: "0 0 40px 0",
@@ -46,7 +46,7 @@ const Header = () => {
           "Change your life now for better future"
         </div>
 
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-2 place-items-centerer">
           <div className="flex items-center">
             <div className="bg-red-700 w-12 h-12 rounded-full flex justify-center items-center">
               <IoPersonSharp className="w-9 h-9" />

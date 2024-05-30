@@ -56,15 +56,14 @@ const Homepage = () => {
     <div className="min-h-screen bg-white flex flex-col items-center p-0">
       {/* Header */}
       <Header />
-
-      <div className="w-full px-16 py-8">
-        <div className="grid grid-cols-3 gap-4">
+      <div className="w-full px-16 py-12">
+        <div className="grid grid-cols-3 gap-6">
           {/* Shift Middle */}
           <div className="text-center my-auto">
             <h2 className="text-3xl font-bold mb-4">Shift Middle</h2>
             <button
               onClick={handleMasukClick}
-              className="p-3 text-white w-full mb-4"
+              className="p-4 text-white w-8/12 mb-4"
               style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
             >
               Masuk
@@ -84,14 +83,14 @@ const Homepage = () => {
             )}
 
             <button
-              className="p-3 text-white w-full mb-4"
+              className="p-4 text-white w-8/12 mb-4"
               style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
             >
               Log Activity
             </button>
             <button
               onClick={moveToHistoryLogActivity}
-              className="p-3 text-white w-full"
+              className="p-4 text-white w-8/12"
               style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
             >
               Histori Log Activity
@@ -106,15 +105,13 @@ const Homepage = () => {
             <div className="grid grid-cols-4 gap-4 mb-4">
               {/* Masuk Kerja Indicator */}
               <div
-                className="text-left py-5 px-7 font-extrabold bg-gray-200 flex items-center justify-start w-full"
+                className="text-left py-5 px-7 font-extrabold bg-gray-200 flex items-center justify-start w-full w-72 h-32"
                 style={{ borderRadius: "10px" }}
               >
                 <div className="grid">
                   <div className="grid grid-cols-3 items-center">
                     <GoDotFill
-                      className={` ${
-                        isIconRed ? "text-red-600" : "text-black"
-                      }`}
+                      className={`${isIconRed ? "text-red-600" : "text-black"}`}
                     />
                     <p className="font-bold col-span-2">Masuk</p>
                   </div>
@@ -127,7 +124,7 @@ const Homepage = () => {
 
               {/* Istirahat Kerja Indicator */}
               <div
-                className="text-left py-5 px-7 font-extrabold bg-gray-200 flex items-center justify-start w-full"
+                className="text-left py-5 px-7 font-extrabold bg-gray-200 flex items-center justify-start w-full w-72 h-32"
                 style={{ borderRadius: "10px" }}
               >
                 <div className="grid">
@@ -148,7 +145,7 @@ const Homepage = () => {
 
               {/* Kembali Kerja Indicator */}
               <div
-                className="text-left py-5 px-7 font-extrabold bg-gray-200 flex items-center justify-start w-full"
+                className="text-left py-5 px-7 font-extrabold bg-gray-200 flex items-center justify-start w-full w-72 h-32"
                 style={{ borderRadius: "10px" }}
               >
                 <div className="grid">
@@ -169,7 +166,7 @@ const Homepage = () => {
 
               {/* Pulang Kerja Indicator */}
               <div
-                className="text-left py-5 px-7 font-extrabold bg-gray-200 flex items-center justify-start w-full"
+                className="text-left py-5 px-7 font-extrabold bg-gray-200 flex items-center justify-start w-full w-72 h-32"
                 style={{ borderRadius: "10px" }}
               >
                 <div className="grid">
@@ -190,11 +187,17 @@ const Homepage = () => {
             </div>
 
             {/* Bottom Components */}
+            {/* Attention */}
+            <div className="grid grid-cols-1 gap-4 mb-4">
+              <div className="text-red-700 text-center">
+                <strong>Attention!</strong>
+              </div>
+            </div>
+
             <div className="grid grid-cols-2 gap-4 mb-4">
-              {/* Attention */}
-              <div className="bg-white border border-red-500 p-4 rounded-lg">
+              {/* Pesan Atenttion */}
+              <div className="bg-white border border-red-500 p-16 rounded-md">
                 <div className="text-red-700 text-center">
-                  <strong>Attention!</strong>
                   <p>• Kemarin anda absen pulang di kost jangan diulang!</p>
                 </div>
               </div>
