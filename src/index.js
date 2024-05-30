@@ -4,16 +4,16 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 
 // Authentication
-import Login from "./pages/LoginPage";
+import Login from "./pages/auth/LoginPage";
 
 // Password
-import ForgotPassword from "./pages/password/ForgotPassword";
-import OTP from "./pages/password/OTP";
-import ChangePassword from "./pages/password/ChangePassword";
+import ForgotPassword from "./pages/auth/password/ForgotPassword";
+import OTP from "./pages/auth/password/OTP";
+import ChangePassword from "./pages/auth/password/ChangePassword";
 
 // User Pages
-import Homepage from "./pages/Homepage";
-import HistoryLogActivity from "./pages/HistoryLogActivity";
+import Homepage from "./pages/user/Homepage";
+import HistoryLogActivity from "./pages/user/HistoryLogActivity";
 
 import reportWebVitals from "./reportWebVitals";
 
