@@ -44,8 +44,14 @@ const Dashboard = ({ activities }) => {
             <a
               href="#"
               className="block px-4 py-2 text-gray-800 font-bold hover:bg-gray-200 rounded"
-            >
+              >
               Divisi
+            </a>
+            <a
+              href="#"
+              className="block px-4 py-2 text-gray-800 font-bold hover:bg-gray-200 rounded"
+            >
+              Shift
             </a>
             <a
               href="#"
