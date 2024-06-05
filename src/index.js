@@ -17,6 +17,7 @@ import HistoryLogActivity from "./pages/user/HistoryLogActivity";
 
 // Admin Pages
 import Dashboard from "./pages/admin/Dashboard";
+import Divisi from "./pages/admin/Divisi";
 
 import reportWebVitals from "./reportWebVitals";
 
@@ -34,6 +35,7 @@ root.render(
       <Route path="/HistoryLogActivity" element={<HistoryLogActivity />} />
 
       <Route path="/Dashboard" element={<Dashboard />} />
+      <Route path="/Divisi" element={<Divisi />} />
     </Routes>
   </BrowserRouter>
 );
