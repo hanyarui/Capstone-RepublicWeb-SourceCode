@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoDotFill } from "react-icons/go";
+import { RiStickyNoteAddFill } from "react-icons/ri";
+import { LuFileClock } from "react-icons/lu";
 import Header from "./HeaderHp";
 
 // Function Get Current Time
@@ -12,37 +14,29 @@ const getCurrentTime = () => {
   return `${hours}:${minutes}:${seconds}`;
 };
 
+// Function to Get Current Date
 const getCurrentDate = () => {
   const now = new Date();
-  const options = {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  };
-  return now.toLocaleDateString("id-ID", options);
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 };
 
-const calculateTimeDifference = (startTime, endTime) => {
-  const [startHours, startMinutes, startSeconds] = startTime
-    .split(":")
-    .map(Number);
-  const [endHours, endMinutes, endSeconds] = endTime.split(":").map(Number);
-
-  const startDate = new Date(0, 0, 0, startHours, startMinutes, startSeconds);
-  const endDate = new Date(0, 0, 0, endHours, endMinutes, endSeconds);
-  let diff = endDate - startDate;
-
-  const hours = Math.floor(diff / 1000 / 60 / 60);
-  diff -= hours * 1000 * 60 * 60;
-  const minutes = Math.floor(diff / 1000 / 60);
-  diff -= minutes * 1000 * 60;
-  const seconds = Math.floor(diff / 1000);
-
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
-    2,
-    "0"
-  )}:${String(seconds).padStart(2, "0")}`;
+// Mock API Call to Save Data
+const saveAttendanceData = async (data) => {
+  try {
+    // Mock API call to save data
+    await fetch("/api/saveAttendance", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+  } catch (error) {
+    console.error("Error saving attendance data:", error);
+  }
 };
 
 const Homepage = () => {
@@ -54,85 +48,82 @@ const Homepage = () => {
   const [currentPulangTime, setCurrentPulangTime] = useState("---");
   const [currentStep, setCurrentStep] = useState(0);
   const [isIconRed, setIsIconRed] = useState(false);
-  const [shortageTime, setShortageTime] = useState("---");
+  const [storedDate, setStoredDate] = useState(getCurrentDate());
 
-  const standardWorkingHours = "08:00:00"; // 8 hours
-
+  // Time Interval
   useEffect(() => {
     const intervalId = setInterval(() => {
       setTime(getCurrentTime());
+      checkAndResetProgress();
     }, 1000);
 
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleMasukClick = () => {
+  // Check and Reset Progress
+  const checkAndResetProgress = async () => {
+    const currentDate = getCurrentDate();
+    if (currentDate !== storedDate) {
+      const attendanceData = {
+        date: storedDate,
+        masuk: currentMasukTime,
+        istirahat: currentIstirahatTime,
+        kembali: currentKembaliTime,
+        pulang: currentPulangTime,
+      };
+      await saveAttendanceData(attendanceData);
+      resetProgress();
+      setStoredDate(currentDate);
+    }
+  };
+
+  // Reset Progress
+  const resetProgress = () => {
+    setCurrentMasukTime("---");
+    setCurrentIstirahatTime("---");
+    setCurrentKembaliTime("---");
+    setCurrentPulangTime("---");
+    setCurrentStep(0);
+    setIsIconRed(false);
+  };
+
+  // Button Click Handlers
+  const handleButtonClick = () => {
     setIsPopupVisible(true);
   };
 
+  // Pop Up Konfirmasi
   const handleConfirm = () => {
     const timeString = getCurrentTime();
     setIsPopupVisible(false);
     setIsIconRed(true);
-    switch (currentStep) {
-      case 0:
-        setCurrentMasukTime(timeString);
-        setCurrentStep(1);
-        break;
-      case 1:
-        setCurrentIstirahatTime(timeString);
-        setCurrentStep(2);
-        break;
-      case 2:
-        setCurrentKembaliTime(timeString);
-        setCurrentStep(3);
-        break;
-      case 3:
-        setCurrentPulangTime(timeString);
-        calculateShortageTime(timeString);
-        setCurrentStep(0);
-        break;
-      default:
-        break;
+
+    if (currentStep === 0) {
+      setCurrentMasukTime(timeString);
+    } else if (currentStep === 1) {
+      setCurrentIstirahatTime(timeString);
+    } else if (currentStep === 2) {
+      setCurrentKembaliTime(timeString);
+    } else if (currentStep === 3) {
+      setCurrentPulangTime(timeString);
     }
+
+    setCurrentStep(currentStep + 1);
   };
 
-  const calculateShortageTime = (currentPulangTime) => {
-    if (currentMasukTime !== "---" && currentPulangTime !== "---") {
-      const totalWorkingTime = calculateTimeDifference(
-        currentMasukTime,
-        currentPulangTime
-      );
-      const [totalHours, totalMinutes, totalSeconds] = totalWorkingTime
-        .split(":")
-        .map(Number);
-      const [standardHours, standardMinutes, standardSeconds] =
-        standardWorkingHours.split(":").map(Number);
-
-      const totalInSeconds =
-        totalHours * 3600 + totalMinutes * 60 + totalSeconds;
-      const standardInSeconds =
-        standardHours * 3600 + standardMinutes * 60 + standardSeconds;
-
-      let shortageInSeconds = standardInSeconds - totalInSeconds;
-      if (shortageInSeconds < 0) shortageInSeconds = 0;
-
-      const shortageHours = Math.floor(shortageInSeconds / 3600);
-      shortageInSeconds -= shortageHours * 3600;
-      const shortageMinutes = Math.floor(shortageInSeconds / 60);
-      const shortageSeconds = shortageInSeconds % 60;
-
-      setShortageTime(
-        `${String(shortageHours).padStart(2, "0")}:${String(
-          shortageMinutes
-        ).padStart(2, "0")}:${String(shortageSeconds).padStart(2, "0")}`
-      );
-    }
-  };
-
+  // Pindah Halaman History Log Activity
   let navigate = useNavigate();
   const moveToHistoryLogActivity = () => {
     navigate("/HistoryLogActivity");
+  };
+
+  // Button Text based on current step
+  const getButtonText = () => {
+    if (currentStep === 0) return "Masuk";
+    if (currentStep === 1) return "Istirahat";
+    if (currentStep === 2) return "Kembali";
+    if (currentStep === 3) return "Pulang";
+    return "Selesai";
   };
 
   return (
@@ -157,7 +148,7 @@ const Homepage = () => {
               <p className="text-start font-medium text-base">
                 {currentMasukTime}
               </p>
-              <p className="text-start text-red-600 text-sm">- Telat Masuk</p>
+              <p className="text-start text-red-600 text-sm">-Telat Masuk</p>
             </div>
           </div>
           <div className="bg-gray-200 p-1 rounded-md">
@@ -200,23 +191,8 @@ const Homepage = () => {
             </div>
           </div>
         </div>
-        <div className="mt-4">
-          <p>Sudahkah Anda berbuat kebaikan hari ini?</p>
-          <textarea
-            className="w-full mt-2 p-2 border rounded-md"
-            placeholder="Tambahkan kebaikan apa hari ini yang telah anda lakukan"
-          ></textarea>
-          <div className="flex justify-between mt-2">
-            <button className="px-4 py-2 bg-gray-500 text-white rounded-md">
-              Batal
-            </button>
-            <button className="px-4 py-2 bg-blue-500 text-white rounded-md">
-              Tambahkan
-            </button>
-          </div>
-        </div>
       </div>
-      <div className="w-full px-4 py-6 text-center bg-white">
+      <div className="w-full px-4 pt-6 pb-20 text-center bg-white">
         <div className="text-red-700">
           <strong>Attention!</strong>
         </div>
@@ -226,14 +202,11 @@ const Homepage = () => {
               • Kemarin anda absen pulang di kost jangan diulang!
             </p>
           </div>
-
           <div className="bg-white border border-red-500 p-4 rounded-md">
             <div className="text-red-700 font-semibold">
               Anda memiliki kekurangan jam kerja
             </div>
-            {shortageTime !== "---" && (
-              <div className="text-red-700 text-2xl mt-2">-{shortageTime}</div>
-            )}
+            <div className="text-red-700 text-2xl mt-2">-</div>
             <div className="mt-2">
               <button className="text-blue-600">Lihat Detail</button>
             </div>
@@ -241,12 +214,6 @@ const Homepage = () => {
         </div>
       </div>
       <div className="w-full px-4 py-6 flex justify-between bg-white">
-        <button
-          onClick={handleMasukClick}
-          className="p-4 text-white bg-blue-900 rounded-md w-full"
-        >
-          Masuk
-        </button>
         {isPopupVisible && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-5 rounded-lg">
@@ -260,18 +227,43 @@ const Homepage = () => {
             </div>
           </div>
         )}
-        <button
-          className="p-4 text-white bg-blue-900 rounded-md mx-2"
-          onClick={moveToHistoryLogActivity}
-        >
-          Log Activity
-        </button>
-        <button
-          onClick={moveToHistoryLogActivity}
-          className="p-4 text-white bg-blue-900 rounded-md"
-        >
-          Histori Log Activity
-        </button>
+        <div className="fixed bottom-0 left-0 w-full flex justify-center p-2 bg-white border-t border-gray-300">
+          <button
+            onClick={handleButtonClick}
+            className="p-4 text-white text-xl font-semibold w-1/3"
+            style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
+            disabled={currentStep > 3}
+          >
+            {getButtonText()}
+          </button>
+          {isPopupVisible && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white p-5 rounded-lg">
+                <p>Anda telah {getButtonText().toLowerCase()}</p>
+                <button
+                  onClick={handleConfirm}
+                  className="mt-3 p-2 bg-blue-500 text-white rounded"
+                >
+                  Konfirmasi
+                </button>
+              </div>
+            </div>
+          )}
+          <button
+            className="p-2 text-white rounded-md mx-2"
+            style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
+            // onClick={moveToLogActivity}
+          >
+            <RiStickyNoteAddFill className="size-6 mx-8" />
+          </button>
+          <button
+            onClick={moveToHistoryLogActivity}
+            className="p-2 text-white rounded-md mx-2"
+            style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
+          >
+            <LuFileClock className="size-6 mx-8" />
+          </button>
+        </div>
       </div>
     </div>
   );

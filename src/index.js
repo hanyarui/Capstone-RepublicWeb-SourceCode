@@ -13,7 +13,6 @@ import ChangePassword from "./pages/auth/password/ChangePassword";
 
 // User Pages
 import Homepage from "./pages/user/Homepage";
-import HomepageHp from "./components/homepage/hp/HomepageHp";
 import HistoryLogActivity from "./pages/user/HistoryLogActivity";
 
 // Admin Pages
@@ -34,12 +33,16 @@ root.render(
       <Route path="/ChangePassword" element={<ChangePassword />} />
 
       <Route path="/Homepage" element={<Homepage />} />
-      <Route path="/HomepageHp" element={<HomepageHp />} />
       <Route path="/HistoryLogActivity" element={<HistoryLogActivity />} />
 
+<<<<<<< Updated upstream
       <Route path="/Dashboard" element={<Dashboard />} />
       <Route path="/Divisi" element={<Divisi />} />
       <Route path="/TambahAkun" element={<TambahAkun />} />
+=======
+      <Route path="/Admin/Dashboard" element={<Dashboard />} />
+      <Route path="/Admin/Divisi" element={<Divisi />} />
+>>>>>>> Stashed changes
     </Routes>
   </BrowserRouter>
 );
