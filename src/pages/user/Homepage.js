@@ -12,44 +12,116 @@ const getCurrentTime = () => {
   return `${hours}:${minutes}:${seconds}`;
 };
 
+// Function to Get Current Date
+const getCurrentDate = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+// Mock API Call to Save Data
+const saveAttendanceData = async (data) => {
+  try {
+    // Mock API call to save data
+    await fetch("/api/saveAttendance", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+  } catch (error) {
+    console.error("Error saving attendance data:", error);
+  }
+};
+
 const Homepage = () => {
   const [time, setTime] = useState(getCurrentTime());
   const [isPopupVisible, setIsPopupVisible] = useState(false);
-  const [currentTime, setCurrentTime] = useState("---");
+  const [currentMasukTime, setCurrentMasukTime] = useState("---");
+  const [currentIstirahatTime, setCurrentIstirahatTime] = useState("---");
+  const [currentKembaliTime, setCurrentKembaliTime] = useState("---");
+  const [currentPulangTime, setCurrentPulangTime] = useState("---");
+  const [currentStep, setCurrentStep] = useState(0);
   const [isIconRed, setIsIconRed] = useState(false);
+  const [storedDate, setStoredDate] = useState(getCurrentDate());
 
   // Time Interval
   useEffect(() => {
     const intervalId = setInterval(() => {
       setTime(getCurrentTime());
+      checkAndResetProgress();
     }, 1000);
 
     return () => clearInterval(intervalId);
   }, []);
 
-  // Masuk Kerja
-  const handleMasukClick = () => {
-    setIsPopupVisible(true);
+  // Check and Reset Progress
+  const checkAndResetProgress = async () => {
+    const currentDate = getCurrentDate();
+    if (currentDate !== storedDate) {
+      const attendanceData = {
+        date: storedDate,
+        masuk: currentMasukTime,
+        istirahat: currentIstirahatTime,
+        kembali: currentKembaliTime,
+        pulang: currentPulangTime,
+      };
+      await saveAttendanceData(attendanceData);
+      resetProgress();
+      setStoredDate(currentDate);
+    }
   };
 
-  // Istirahat Kerja
+  // Reset Progress
+  const resetProgress = () => {
+    setCurrentMasukTime("---");
+    setCurrentIstirahatTime("---");
+    setCurrentKembaliTime("---");
+    setCurrentPulangTime("---");
+    setCurrentStep(0);
+    setIsIconRed(false);
+  };
 
-  // Kembali Kerja
-
-  // Pulang Kerja
+  // Button Click Handlers
+  const handleButtonClick = () => {
+    setIsPopupVisible(true);
+  };
 
   // Pop Up Konfirmasi
   const handleConfirm = () => {
     const timeString = getCurrentTime();
-    setCurrentTime(timeString);
     setIsPopupVisible(false);
     setIsIconRed(true);
+
+    if (currentStep === 0) {
+      setCurrentMasukTime(timeString);
+    } else if (currentStep === 1) {
+      setCurrentIstirahatTime(timeString);
+    } else if (currentStep === 2) {
+      setCurrentKembaliTime(timeString);
+    } else if (currentStep === 3) {
+      setCurrentPulangTime(timeString);
+    }
+
+    setCurrentStep(currentStep + 1);
   };
 
   // Pindah Halaman History Log Activity
   let navigate = useNavigate();
   const moveToHistoryLogActivity = () => {
     navigate("/HistoryLogActivity");
+  };
+
+  // Button Text based on current step
+  const getButtonText = () => {
+    if (currentStep === 0) return "Masuk";
+    if (currentStep === 1) return "Istirahat";
+    if (currentStep === 2) return "Kembali";
+    if (currentStep === 3) return "Pulang";
+    return "Selesai";
   };
 
   return (
@@ -62,16 +134,17 @@ const Homepage = () => {
           <div className="text-center my-auto">
             <h2 className="text-3xl font-bold mb-4">Shift Middle</h2>
             <button
-              onClick={handleMasukClick}
+              onClick={handleButtonClick}
               className="p-4 text-white w-8/12 mb-4"
               style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
+              disabled={currentStep > 3}
             >
-              Masuk
+              {getButtonText()}
             </button>
             {isPopupVisible && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                 <div className="bg-white p-5 rounded-lg">
-                  <p>Anda telah masuk</p>
+                  <p>Anda telah {getButtonText().toLowerCase()}</p>
                   <button
                     onClick={handleConfirm}
                     className="mt-3 p-2 bg-blue-500 text-white rounded"
@@ -111,13 +184,17 @@ const Homepage = () => {
                 <div className="grid">
                   <div className="grid grid-cols-3 items-center">
                     <GoDotFill
-                      className={`${isIconRed ? "text-red-600" : "text-black"}`}
+                      className={`${
+                        isIconRed && currentStep > 0
+                          ? "text-red-600"
+                          : "text-black"
+                      }`}
                     />
                     <p className="font-bold col-span-2">Masuk</p>
                   </div>
                   <div className="grid grid-cols-3 items-center">
                     <div></div>
-                    <p className="col-span-2 font-medium">{currentTime}</p>
+                    <p className="col-span-2 font-medium">{currentMasukTime}</p>
                   </div>
                 </div>
               </div>
@@ -131,14 +208,18 @@ const Homepage = () => {
                   <div className="grid grid-cols-3 items-center">
                     <GoDotFill
                       className={` ${
-                        isIconRed ? "text-red-600" : "text-black"
+                        isIconRed && currentStep > 1
+                          ? "text-red-600"
+                          : "text-black"
                       }`}
                     />
                     <p className="font-bold col-span-2">Istirahat</p>
                   </div>
                   <div className="grid grid-cols-3 items-center">
                     <div></div>
-                    <p className="col-span-2 font-medium">{currentTime}</p>
+                    <p className="col-span-2 font-medium">
+                      {currentIstirahatTime}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -152,14 +233,18 @@ const Homepage = () => {
                   <div className="grid grid-cols-3 items-center">
                     <GoDotFill
                       className={` ${
-                        isIconRed ? "text-red-600" : "text-black"
+                        isIconRed && currentStep > 2
+                          ? "text-red-600"
+                          : "text-black"
                       }`}
                     />
                     <p className="font-bold col-span-2">Kembali</p>
                   </div>
                   <div className="grid grid-cols-3 items-center">
                     <div></div>
-                    <p className="col-span-2 font-medium">{currentTime}</p>
+                    <p className="col-span-2 font-medium">
+                      {currentKembaliTime}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -173,14 +258,18 @@ const Homepage = () => {
                   <div className="grid grid-cols-3 items-center">
                     <GoDotFill
                       className={` ${
-                        isIconRed ? "text-red-600" : "text-black"
+                        isIconRed && currentStep > 3
+                          ? "text-red-600"
+                          : "text-black"
                       }`}
                     />
                     <p className="font-bold col-span-2">Pulang</p>
                   </div>
                   <div className="grid grid-cols-3 items-center">
                     <div></div>
-                    <p className="col-span-2 font-medium">{currentTime}</p>
+                    <p className="col-span-2 font-medium">
+                      {currentPulangTime}
+                    </p>
                   </div>
                 </div>
               </div>
