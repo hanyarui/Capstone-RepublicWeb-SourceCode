@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaBell } from "react-icons/fa";
-import { BsPersonFill } from "react-icons/bs";
+import TambahAkun from "./TambahAkun"; // Import the modal component
 
 const Divisi = ({ activities }) => {
   const [visibleActivities, setVisibleActivities] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredDivisions, setFilteredDivisions] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
   const divisions = [
     { name: "UI/UX Designer", members: 20 },
@@ -104,7 +105,10 @@ const Divisi = ({ activities }) => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <button className="bg-blue-500 text-white px-4 py-2 rounded">
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+            onClick={() => setIsModalOpen(true)} // Open modal on button click
+          >
             Tambah Anggota
           </button>
         </div>
@@ -139,6 +143,8 @@ const Divisi = ({ activities }) => {
         <a href="#" className="block mt-4 text-blue-500 text-center">
           See all teams...
         </a>
+        {isModalOpen && <TambahAkun onClose={() => setIsModalOpen(false)} />}{" "}
+        {/* Render modal */}
       </main>
     </div>
   );

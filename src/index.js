@@ -19,6 +19,7 @@ import HistoryLogActivity from "./pages/user/HistoryLogActivity";
 // Admin Pages
 import Dashboard from "./pages/admin/Dashboard";
 import Divisi from "./pages/admin/Divisi";
+import TambahAkun from "./pages/admin/TambahAkun";
 
 import reportWebVitals from "./reportWebVitals";
 
@@ -38,6 +39,7 @@ root.render(
 
       <Route path="/Dashboard" element={<Dashboard />} />
       <Route path="/Divisi" element={<Divisi />} />
+      <Route path="/TambahAkun" element={<TambahAkun />} />
     </Routes>
   </BrowserRouter>
 );
