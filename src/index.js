@@ -35,14 +35,9 @@ root.render(
       <Route path="/Homepage" element={<Homepage />} />
       <Route path="/HistoryLogActivity" element={<HistoryLogActivity />} />
 
-<<<<<<< Updated upstream
       <Route path="/Dashboard" element={<Dashboard />} />
       <Route path="/Divisi" element={<Divisi />} />
       <Route path="/TambahAkun" element={<TambahAkun />} />
-=======
-      <Route path="/Admin/Dashboard" element={<Dashboard />} />
-      <Route path="/Admin/Divisi" element={<Divisi />} />
->>>>>>> Stashed changes
     </Routes>
   </BrowserRouter>
 );
