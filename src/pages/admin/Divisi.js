@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaBell } from "react-icons/fa";
-import TambahAkun from "./TambahAkun"; // Import the modal component
+import TambahAkun from "./divisi/TambahKaryawan"; // Import the modal component
 
 const Divisi = ({ activities }) => {
   const [visibleActivities, setVisibleActivities] = useState([]);

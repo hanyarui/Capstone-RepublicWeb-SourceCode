@@ -16,9 +16,13 @@ import Homepage from "./pages/user/Homepage";
 import HistoryLogActivity from "./pages/user/HistoryLogActivity";
 
 // Admin Pages
+// Dashboard
 import Dashboard from "./pages/admin/Dashboard";
+// Divisi
 import Divisi from "./pages/admin/Divisi";
-import TambahAkun from "./pages/admin/TambahAkun";
+import TambahKaryawan from "./pages/admin/divisi/TambahKaryawan";
+// Presensi
+import Presensi from "./pages/admin/Presensi";
 
 import reportWebVitals from "./reportWebVitals";
 
@@ -37,7 +41,8 @@ root.render(
 
       <Route path="/Dashboard" element={<Dashboard />} />
       <Route path="/Divisi" element={<Divisi />} />
-      <Route path="/TambahAkun" element={<TambahAkun />} />
+      <Route path="/TambahKaryawan" element={<TambahKaryawan />} />
+      <Route path="/Presensi" element={<Presensi />} />
     </Routes>
   </BrowserRouter>
 );
