@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { FaBell } from "react-icons/fa";
 import TambahAkun from "./divisi/TambahKaryawan"; // Import the modal component
+import Sidebar from "../../components/Sidebar";
+import Navbar from "../../components/Navbar";
 
 const Divisi = ({ activities }) => {
   const [visibleActivities, setVisibleActivities] = useState([]);
@@ -46,56 +47,10 @@ const Divisi = ({ activities }) => {
   }, [searchQuery]);
 
   return (
-    <div className="flex h-screen">
-      <aside className="w-64 bg-gray-100 flex flex-col justify-between p-4">
-        <div>
-          <div className="items-center pt-8 pb-16">
-            <img src="assets/logo.svg" className="mx-auto size-20" alt="Logo" />
-          </div>
-          <nav className="space-y-2">
-            <a
-              href="#"
-              className="block px-4 py-2 text-gray-800 font-bold hover:bg-gray-200 rounded"
-            >
-              Dashboard
-            </a>
-            <a
-              href="#"
-              className="block px-4 py-2 text-gray-800 font-bold hover:bg-gray-200 rounded"
-            >
-              Presensi
-            </a>
-            <a
-              href="#"
-              className="block px-4 py-2 text-gray-800 font-bold hover:bg-gray-200 rounded"
-            >
-              Divisi
-            </a>
-            <a
-              href="#"
-              className="block px-4 py-2 text-gray-800 font-bold hover:bg-gray-200 rounded"
-            >
-              Laporan
-            </a>
-          </nav>
-        </div>
-        <a href="#" className="block text-gray-800 font-bold">
-          Log out
-        </a>
-      </aside>
+    <div className="flex h-screen bg-slate-100">
+      <Sidebar />
       <main className="flex-1 w-full p-8">
-        <header className="flex justify-end items-center mb-8">
-          <FaBell className="text-xl mr-4" />
-          <div className="mr-4 text-right">
-            <p className="font-bold">Wahyudi Atkinson</p>
-            <p className="text-sm text-gray-600">Admin</p>
-          </div>
-          <img
-            className="w-10 h-10 rounded-full"
-            src="https://via.placeholder.com/40"
-            alt="User Avatar"
-          />
-        </header>
+        <Navbar />
         <div className="flex justify-between items-center mb-8">
           <input
             type="text"
