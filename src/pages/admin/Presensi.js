@@ -3,7 +3,7 @@ import axios from "axios";
 import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import { IoIosSearch } from "react-icons/io";
-import { RxCalendar } from "react-icons/rx";
+import { CiFilter } from "react-icons/ci";
 
 const Presensi = () => {
   const [data, setData] = useState([]);
@@ -90,6 +90,15 @@ const Presensi = () => {
                     />
                   </div>
                 </form>
+                <div>
+                  <button
+                    className="ml-3 items-center justify-center px-4 border border-black flex bg-white"
+                    style={{ height: "44px" }}
+                  >
+                    <CiFilter className="mr-3" />
+                    Filter
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -29,6 +29,10 @@ import Shift from "./pages/admin/Shift";
 
 // Presensi
 import Presensi from "./pages/admin/Presensi";
+
+// Laporan
+import Laporan from "./pages/admin/Laporan";
+
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -50,6 +54,7 @@ root.render(
       <Route path="/Project" element={<Project />} />
       <Route path="/TambahKaryawan" element={<TambahKaryawan />} />
       <Route path="/Presensi" element={<Presensi />} />
+      <Route path="/Laporan" element={<Laporan />} />
     </Routes>
   </BrowserRouter>
 );
