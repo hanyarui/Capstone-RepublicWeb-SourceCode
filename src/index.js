@@ -24,6 +24,9 @@ import Divisi from "./pages/admin/Divisi";
 import Project from "./pages/admin/Project";
 import TambahKaryawan from "./pages/admin/divisi/TambahKaryawan";
 
+// Shift
+import Shift from "./pages/admin/Shift";
+
 // Presensi
 import Presensi from "./pages/admin/Presensi";
 import reportWebVitals from "./reportWebVitals";
@@ -43,6 +46,7 @@ root.render(
 
       <Route path="/Dashboard" element={<Dashboard />} />
       <Route path="/Divisi" element={<Divisi />} />
+      <Route path="/Shift" element={<Shift />} />
       <Route path="/Project" element={<Project />} />
       <Route path="/TambahKaryawan" element={<TambahKaryawan />} />
       <Route path="/Presensi" element={<Presensi />} />
