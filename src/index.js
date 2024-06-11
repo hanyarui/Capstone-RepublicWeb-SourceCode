@@ -18,12 +18,14 @@ import HistoryLogActivity from "./pages/user/HistoryLogActivity";
 // Admin Pages
 // Dashboard
 import Dashboard from "./pages/admin/Dashboard";
-// Divisi
+
+// Divisi dan Project
 import Divisi from "./pages/admin/Divisi";
+import Project from "./pages/admin/Project";
 import TambahKaryawan from "./pages/admin/divisi/TambahKaryawan";
+
 // Presensi
 import Presensi from "./pages/admin/Presensi";
-
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -41,6 +43,7 @@ root.render(
 
       <Route path="/Dashboard" element={<Dashboard />} />
       <Route path="/Divisi" element={<Divisi />} />
+      <Route path="/Project" element={<Project />} />
       <Route path="/TambahKaryawan" element={<TambahKaryawan />} />
       <Route path="/Presensi" element={<Presensi />} />
     </Routes>
