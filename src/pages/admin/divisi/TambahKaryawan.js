@@ -4,7 +4,7 @@ import Navbar from "../../../components/Navbar";
 
 const TambahKaryawan = () => {
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-slate-100">
       <Sidebar />
       <main className="flex-1 w-full">
         <Navbar />
@@ -20,7 +20,7 @@ const TambahKaryawan = () => {
             </h2>
           </div>
           <form className="grid grid-cols-4 gap-5">
-            <div className="grid grid-rows-5 p-6 border rounded-lg bg-white">
+            <div className="grid grid-rows-5 p-4 border rounded-lg bg-white">
               <div className="flex flex-col">
                 <label className="font-bold mb-2">Nama</label>
                 <input
@@ -57,7 +57,7 @@ const TambahKaryawan = () => {
                 />
               </div>
             </div>
-            <div className="grid grid-rows-4 p-6 border rounded-lg bg-white">
+            <div className="grid grid-rows-4 p-4 border rounded-lg bg-white">
               <div className="flex flex-col">
                 <label className="font-bold mb-2">Username</label>
                 <input
@@ -87,7 +87,7 @@ const TambahKaryawan = () => {
                 />
               </div>
             </div>
-            <div className="grid grid-rows-4 p-6 border rounded-lg bg-white">
+            <div className="grid grid-rows-4 p-4 border rounded-lg bg-white">
               <div className="flex flex-col">
                 <label className="font-bold mb-2">Tanggal Masuk</label>
                 <input
@@ -126,7 +126,7 @@ const TambahKaryawan = () => {
                 </select>
               </div>
             </div>
-            <div className="grid grid-rows-4 p-6 border rounded-lg bg-white">
+            <div className="grid grid-rows-4 p-4 border rounded-lg bg-white">
               <div className="flex flex-col">
                 <label className="font-bold mb-2">OS</label>
                 <select className="border border-gray-300 rounded px-4 py-2">
@@ -142,13 +142,6 @@ const TambahKaryawan = () => {
                   <option>Firefox</option>
                   <option>Safari</option>
                 </select>
-              </div>
-              <div className="flex flex-col">
-                <label className="font-bold mb-2">Lokasi Kantor</label>
-                <input
-                  type="text"
-                  className="border border-gray-300 rounded px-4 py-2"
-                />
               </div>
               <div className="flex flex-col">
                 <label className="font-bold mb-2">Upload Barcode</label>

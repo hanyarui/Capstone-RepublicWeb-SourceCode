@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { FaBell } from "react-icons/fa";
 import { BsPersonFill } from "react-icons/bs";
+import Sidebar from "../../components/Sidebar";
+import Navbar from "../../components/Navbar";
+import { FiCheckCircle } from "react-icons/fi";
+import { BiLogIn, BiLogOut } from "react-icons/bi";
+import { MdOutlineDoNotDisturbOn } from "react-icons/md";
 
 const Dashboard = ({ activities }) => {
   const [visibleActivities, setVisibleActivities] = useState([]);
@@ -22,80 +26,40 @@ const Dashboard = ({ activities }) => {
   }, [activities]);
 
   return (
-    <div className="flex h-screen">
-      <aside className="w-64 bg-gray-100 flex flex-col justify-between p-4">
-        <div>
-          <div className="items-center pt-8 pb-16">
-            <img src="assets/logo.svg" className="mx-auto size-20" alt="Logo" />
-          </div>
-          <nav className="space-y-2">
-            <a
-              href="#"
-              className="block px-4 py-2 text-gray-800 font-bold hover:bg-gray-200 rounded"
-            >
-              Dashboard
-            </a>
-            <a
-              href="#"
-              className="block px-4 py-2 text-gray-800 font-bold hover:bg-gray-200 rounded"
-            >
-              Presensi
-            </a>
-            <a
-              href="#"
-              className="block px-4 py-2 text-gray-800 font-bold hover:bg-gray-200 rounded"
-            >
-              Divisi
-            </a>
-            <a
-              href="#"
-              className="block px-4 py-2 text-gray-800 font-bold hover:bg-gray-200 rounded"
-            >
-              Shift
-            </a>
-            <a
-              href="#"
-              className="block px-4 py-2 text-gray-800 font-bold hover:bg-gray-200 rounded"
-            >
-              Laporan
-            </a>
-          </nav>
-        </div>
-        <a href="#" className="block text-gray-800 font-bold">
-          Log out
-        </a>
-      </aside>
+    <div className="flex h-screen bg-slate-100">
+      <Sidebar />
       <main className="flex-1 w-full">
-        <header className="flex justify-end items-center p-4">
-          <FaBell className="text-xl mr-4" />
-          <div className="mr-4 text-right">
-            <p className="font-bold">Wahyudi Atkinson</p>
-            <p className="text-sm text-gray-600">Admin</p>
-          </div>
-          <img
-            className="w-10 h-10 rounded-full"
-            src="https://via.placeholder.com/40"
-            alt="User Avatar"
-          />
-        </header>
+        <Navbar />
         <div className="grid grid-cols-2">
           <div className="grid grid-cols-1">
             <section className="grid grid-cols-2 auto-cols-min size-4/5 gap-6 p-6">
-              <div className="bg-blue-500 text-white p-4 rounded">
-                <h3 className="text-lg">Jumlah Karyawan</h3>
-                <p className="text-2xl">325</p>
+              <div className="relative bg-blue-600 h-60 text-white p-4 rounded-xl">
+                <h3 className="text-xl font-semibold">Jumlah Karyawan</h3>
+                <p className="text-4xl mt-5 font-bold">%%</p>
+                <div className="absolute bottom-2 right-2">
+                  <FiCheckCircle size={110} />
+                </div>
               </div>
-              <div className="bg-green-500 text-white p-4 rounded">
-                <h3 className="text-lg">Masuk</h3>
-                <p className="text-2xl">200</p>
+              <div className="relative bg-green-600 h-60 text-white p-4 rounded-xl">
+                <h3 className="text-xl font-semibold">Masuk</h3>
+                <p className="text-4xl mt-5 font-bold">%%</p>
+                <div className="absolute bottom-2 right-2">
+                  <BiLogIn size={110} />
+                </div>
               </div>
-              <div className="bg-red-500 text-white p-4 rounded">
-                <h3 className="text-lg">Tidak Masuk</h3>
-                <p className="text-2xl">100</p>
+              <div className="relative bg-red-600 h-60 text-white p-4 rounded-xl">
+                <h3 className="text-xl font-semibold">Tidak Masuk</h3>
+                <p className="text-4xl mt-5 font-bold">%%</p>
+                <div className="absolute bottom-2 right-2">
+                  <BiLogOut size={110} />
+                </div>
               </div>
-              <div className="bg-orange-500 text-white p-4 rounded">
-                <h3 className="text-lg">Izin</h3>
-                <p className="text-2xl">25</p>
+              <div className="relative bg-orange-600 h-60 text-white p-4 rounded-xl">
+                <h3 className="text-xl font-semibold">Izin</h3>
+                <p className="text-4xl mt-5 font-bold">%%</p>
+                <div className="absolute bottom-2 right-2">
+                  <MdOutlineDoNotDisturbOn size={110} />
+                </div>
               </div>
             </section>
             <div></div>
