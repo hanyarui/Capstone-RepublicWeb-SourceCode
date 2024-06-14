@@ -5,28 +5,41 @@ import { RiLockFill } from "react-icons/ri";
 const LoginFormLaptop = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const response = await fetch("/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        password,
-      }),
-    });
+    const response = await fetch(
+      "https://republikweb-cp-backend.vercel.app/v1/karyawan/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      }
+    );
 
     const data = await response.json();
 
-    if (data.success) {
-      // Ganti push dengan navigasi sesuai dengan kebutuhan aplikasi Anda
-      window.location.href = "/Homepage";
+    if (data.token) {
+      const decodedToken = jwtDecode(data.token);
+
+      if (decodedToken.isAdmin) {
+        document.cookie = `token=${data.token}; max-age=3600; path=/`;
+
+        window.location.href = "/Dashboard";
+      } else {
+        document.cookie = `token=${data.token}; max-age=3600; path=/`;
+
+        window.location.href = "/Homepage";
+      }
     } else {
-      alert("Email atau password salah");
+      setMessage("Email atau password salah");
     }
   };
 
@@ -49,16 +62,17 @@ const LoginFormLaptop = () => {
           </div>
           <h1 className="text-2xl font-bold text-center mb-10">Login</h1>
           <label className="block mb-2" htmlFor="username">
-            Email
+            Username
           </label>
           <input
             type="text"
             id="username"
             style={{ borderRadius: "5px", backgroundColor: "#040F4D" }}
-            placeholder="Masukkan Email"
+            placeholder="Masukkan Username"
             className="input p-2 h-12 border border-gray-300 mb-5 w-full"
             value={username}
             onChange={(event) => setUsername(event.target.value)}
+            required
           />
           <label className="block mb-2" htmlFor="password">
             Password
@@ -71,6 +85,7 @@ const LoginFormLaptop = () => {
             className="input p-2 h-12 border border-gray-300 mb-8 w-full"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
+            required
           />
           <div className="w-full flex flex-row-reverse justify-between">
             <div className="text-right">
@@ -91,18 +106,13 @@ const LoginFormLaptop = () => {
             </div>
           </div>
           <button
-            onClick={handleSubmit}
             type="submit"
             style={{ borderRadius: "5px", fontWeight: "700" }}
             className="button p-4 w-1/2 mx-auto bg-white text-black rounded-3 cursor-pointer"
           >
             Login
           </button>
-          {/* <div className="text-center p-8">
-          <Link to="/Register" className="text-right">
-            Belum Punya Akun?
-          </Link>
-        </div> */}
+          {message && <p className="text-center mt-5">{message}</p>}
         </form>
       </div>
     </div>

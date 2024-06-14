@@ -9,21 +9,24 @@ const LoginFormHp = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const response = await fetch("/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        password,
-      }),
-    });
+    const response = await fetch(
+      "https://republikweb-cp-backend.vercel.app/v1/karyawan/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      }
+    );
 
     const data = await response.json();
 
-    if (data.success) {
-      // Ganti push dengan navigasi sesuai dengan kebutuhan aplikasi Anda
+    if (data.token) {
+      document.cookie = `token=${data.token}; max-age=3600; path=/`;
       window.location.href = "/Homepage";
     } else {
       alert("Email atau password salah");
