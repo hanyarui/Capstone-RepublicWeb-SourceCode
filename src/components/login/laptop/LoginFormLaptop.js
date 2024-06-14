@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { RiLockFill } from "react-icons/ri";
+import { jwtDecode } from "jwt-decode";
 
 const LoginFormLaptop = () => {
   const [username, setUsername] = useState("");
