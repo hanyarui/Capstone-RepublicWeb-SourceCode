@@ -11,10 +11,11 @@ const PreForgot = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "https://republikweb-cp-backend.vercel.app/v1/karyawan/request-reset-password",
+        "https://republikweb-cp-backend.vercel.app/v1/karyawan/request-password-reset",
         { email }
       );
       setMessage("OTP has been sent to your email.");
+      window.location.href = "/OTP";
     } catch (error) {
       setMessage("Failed to send OTP. Please try again.");
     }

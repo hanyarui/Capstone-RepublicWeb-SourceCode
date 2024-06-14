@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { React, useState, useEffect } from "react";
 import TodayDate from "../../../pages/user/home/TodayDate";
 import Logout from "../../../pages/auth/Logout";
 import { IoPersonSharp } from "react-icons/io5";
 import { FaRegCalendarAlt } from "react-icons/fa";
-import jwtDecode from "jwt-decode";
 
 const getCurrentTime = () => {
   const now = new Date();
@@ -15,8 +14,6 @@ const getCurrentTime = () => {
 
 const Header = () => {
   const [time, setTime] = useState(getCurrentTime());
-  const [nama, setNama] = useState("");
-  const [nip, setNIP] = useState("");
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -26,57 +23,6 @@ const Header = () => {
     // Cleanup interval on component unmount
     return () => clearInterval(intervalId);
   }, []);
-
-  useEffect(() => {
-    // Function to fetch Nama and NIP from API
-    const fetchUserData = async () => {
-      // Get token from cookies
-      const token = getCookie("token");
-
-      if (token) {
-        try {
-          // Decode token to get user information
-          const decodedToken = jwtDecode(token);
-          const userId = decodedToken.karyawanId;
-
-          // Fetch user data from API
-          const response = await fetch(
-            `https://republikweb-cp-backend.vercel.app/v1/karyawan/${userId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          if (response.ok) {
-            const userData = await response.json();
-            setNama(userData.fullname);
-            setNIP(userData.NIP);
-          } else {
-            console.error("Failed to fetch user data");
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
-  // Function to get cookie value by name
-  const getCookie = (name) => {
-    const cookieString = document.cookie;
-    const cookies = cookieString.split("; ");
-    for (let cookie of cookies) {
-      const [cookieName, cookieValue] = cookie.split("=");
-      if (cookieName === name) {
-        return cookieValue;
-      }
-    }
-    return null;
-  };
 
   return (
     <div
@@ -107,8 +53,8 @@ const Header = () => {
               <IoPersonSharp className="w-9 h-9" />
             </div>
             <div className="ml-3">
-              <p className="text-xl font-semibold">{nama}</p>
-              <p>{nip}</p>
+              <p className="text-xl font-semibold">Syalita Widyandini</p>
+              <p>19850910 202112 1 001</p>
             </div>
           </div>
           <div className="flex items-center justify-end">
