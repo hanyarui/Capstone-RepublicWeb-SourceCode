@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Logout from "../pages/auth/Logout";
 
 const Sidebar = () => {
   return (
@@ -41,9 +42,9 @@ const Sidebar = () => {
           </Link>
         </nav>
       </div>
-      <a href="#" className="block text-gray-800 font-bold">
-        Log out
-      </a>
+      <div className="justify-center items-center">
+        <Logout />
+      </div>
     </aside>
   );
 };

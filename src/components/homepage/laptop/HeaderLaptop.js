@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from "react";
 import TodayDate from "../../../pages/user/home/TodayDate";
-import { IoPersonSharp, IoLogOutOutline } from "react-icons/io5";
+import Logout from "../../../pages/auth/Logout";
+import { IoPersonSharp } from "react-icons/io5";
 import { FaRegCalendarAlt } from "react-icons/fa";
 
 const getCurrentTime = () => {
@@ -25,13 +26,13 @@ const Header = () => {
 
   return (
     <div
-      className="text-white w-full flex justify-between items-center py-20 px-16"
+      className="text-white w-full flex justify-between items-center pt-12 pb-8 px-16"
       style={{
         backgroundImage: "url(/assets/background.svg)",
         borderRadius: "0 0 40px 0",
       }}
     >
-      <div className="grid w-full gap-16">
+      <div className="grid w-full gap-12">
         <div className="grid grid-cols-2">
           <div className="text-left flex items-center">
             <FaRegCalendarAlt className="w-7 h-7" />
@@ -57,7 +58,7 @@ const Header = () => {
             </div>
           </div>
           <div className="flex items-center justify-end">
-            <IoLogOutOutline className="w-9 h-9" />
+            <Logout />
           </div>
         </div>
       </div>
