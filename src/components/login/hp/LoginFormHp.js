@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { RiLockFill } from "react-icons/ri";
+import { jwtDecode } from "jwt-decode";
 
 const LoginFormHp = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -26,10 +28,19 @@ const LoginFormHp = () => {
     const data = await response.json();
 
     if (data.token) {
-      document.cookie = `token=${data.token}; max-age=3600; path=/`;
-      window.location.href = "/Homepage";
+      const decodedToken = jwtDecode(data.token);
+
+      if (decodedToken.isAdmin) {
+        document.cookie = `token=${data.token}; max-age=3600; path=/`;
+
+        window.location.href = "/Dashboard";
+      } else {
+        document.cookie = `token=${data.token}; max-age=3600; path=/`;
+
+        window.location.href = "/Homepage";
+      }
     } else {
-      alert("Email atau password salah");
+      setMessage("Email atau password salah");
     }
   };
 

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import HomepageHp from "../../components/homepage/hp/HomepageHp";
 import HomepageLaptop from "../../components/homepage/laptop/HomepageLaptop";
 
-const LoginPage = () => {
+const Homepage = () => {
   const [screenWidth, setScreenWidth] = useState();
 
   useEffect(() => {
@@ -34,4 +34,4 @@ const LoginPage = () => {
   return <div>{renderLoginForm()}</div>;
 };
 
-export default LoginPage;
+export default Homepage;

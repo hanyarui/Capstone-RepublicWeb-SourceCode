@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import { PiCodeSimpleLight } from "react-icons/pi";
@@ -136,9 +137,11 @@ const Divisi = ({ activities }) => {
             </div>
           </div>
           <div>
-            <button className="bg-blue-900 text-white px-8 py-2 rounded-2xl mb-8">
-              Tambah Anggota
-            </button>
+            <Link to={"/TambahKaryawan"}>
+              <button className="bg-blue-900 text-white px-8 py-2 rounded-2xl mb-8">
+                Tambah Anggota
+              </button>
+            </Link>
           </div>
           <div className="grid grid-cols-3 gap-6">
             {filteredDivisions.map((division, index) => (
