@@ -11,15 +11,15 @@ const TambahKaryawan = () => {
     tanggal_lahir: "",
     phoneNumber: "",
     username: "",
-    email: "",
-    password: "",
-    ulangiPassword: "",
+    email: null,
+    password: null,
+    ulangiPassword: null,
     tanggal_masuk: "",
     tanggal_keluar: "",
-    NIP: "",
+    NIP: null,
     division: "",
+    lokasi_kantor: "",
     OS: "",
-    lokasi_kantor: null,
     Browser: "",
     barcode: null,
   });
@@ -79,7 +79,7 @@ const TambahKaryawan = () => {
   };
 
   return (
-    <div className="flex h-full bg-slate-100">
+    <div className="flex h-screen bg-slate-100">
       <Sidebar />
       <main className="flex-1 w-full">
         <Navbar />
@@ -100,7 +100,7 @@ const TambahKaryawan = () => {
                 <label className="font-bold mb-2">Nama</label>
                 <input
                   type="text"
-                  name="nama"
+                  name="fullname"
                   className="border border-gray-300 rounded px-4 py-2"
                   value={formData.fullname}
                   onChange={handleChange}
@@ -110,7 +110,7 @@ const TambahKaryawan = () => {
                 <label className="font-bold mb-2">Pendidikan Terakhir</label>
                 <input
                   type="text"
-                  name="pendidikanTerakhir"
+                  name="pendidikan_terakhir"
                   className="border border-gray-300 rounded px-4 py-2"
                   value={formData.pendidikan_terakhir}
                   onChange={handleChange}
@@ -120,7 +120,7 @@ const TambahKaryawan = () => {
                 <label className="font-bold mb-2">Tempat Lahir</label>
                 <input
                   type="text"
-                  name="tempatLahir"
+                  name="tempat_lahir"
                   className="border border-gray-300 rounded px-4 py-2"
                   value={formData.tempat_lahir}
                   onChange={handleChange}
@@ -130,7 +130,7 @@ const TambahKaryawan = () => {
                 <label className="font-bold mb-2">Tanggal Lahir</label>
                 <input
                   type="date"
-                  name="tanggalLahir"
+                  name="tanggal_lahir"
                   className="border border-gray-300 rounded px-4 py-2"
                   value={formData.tanggal_lahir}
                   onChange={handleChange}
@@ -140,7 +140,7 @@ const TambahKaryawan = () => {
                 <label className="font-bold mb-2">Nomor HP</label>
                 <input
                   type="text"
-                  name="nomorHP"
+                  name="phoneNumber"
                   className="border border-gray-300 rounded px-4 py-2"
                   value={formData.phoneNumber}
                   onChange={handleChange}
@@ -194,7 +194,7 @@ const TambahKaryawan = () => {
                 <label className="font-bold mb-2">Tanggal Masuk</label>
                 <input
                   type="date"
-                  name="tanggalMasuk"
+                  name="tanggal_masuk"
                   className="border border-gray-300 rounded px-4 py-2"
                   value={formData.tanggal_masuk}
                   onChange={handleChange}
@@ -204,7 +204,7 @@ const TambahKaryawan = () => {
                 <label className="font-bold mb-2">Tanggal Keluar</label>
                 <input
                   type="date"
-                  name="tanggalKeluar"
+                  name="tanggal_keluar"
                   className="border border-gray-300 rounded px-4 py-2"
                   value={formData.tanggal_keluar}
                   onChange={handleChange}
@@ -221,9 +221,19 @@ const TambahKaryawan = () => {
                 />
               </div>
               <div className="flex flex-col">
+                <label className="font-bold mb-2">Lokasi Kantor</label>
+                <input
+                  type="text"
+                  name="lokasi_kantor"
+                  className="border border-gray-300 rounded px-4 py-2"
+                  value={formData.lokasi_kantor}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="flex flex-col">
                 <label className="font-bold mb-2">Divisi</label>
                 <select
-                  name="divisi"
+                  name="division"
                   className="border border-gray-300 rounded px-4 py-2"
                   value={formData.division}
                   onChange={handleChange}
@@ -246,7 +256,7 @@ const TambahKaryawan = () => {
               <div className="flex flex-col">
                 <label className="font-bold mb-2">OS</label>
                 <select
-                  name="os"
+                  name="OS"
                   className="border border-gray-300 rounded px-4 py-2"
                   value={formData.OS}
                   onChange={handleChange}
@@ -259,7 +269,7 @@ const TambahKaryawan = () => {
               <div className="flex flex-col">
                 <label className="font-bold mb-2">Browser</label>
                 <select
-                  name="browser"
+                  name="Browser"
                   className="border border-gray-300 rounded px-4 py-2"
                   value={formData.Browser}
                   onChange={handleChange}
