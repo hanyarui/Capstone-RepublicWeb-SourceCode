@@ -23,6 +23,7 @@ import Dashboard from "./pages/admin/Dashboard";
 import Divisi from "./pages/admin/Divisi";
 import Project from "./pages/admin/Project";
 import TambahKaryawan from "./pages/admin/divisi/TambahKaryawan";
+import DetailedView from "./pages/admin/DetailedView";
 
 // Shift
 import Shift from "./pages/admin/Shift";
@@ -40,26 +41,23 @@ root.render(
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<Login />} />
-
       <Route path="/ForgotPassword" element={<ForgotPassword />} />
       <Route path="/OTP" element={<OTP />} />
       <Route path="/ChangePassword" element={<ChangePassword />} />
-
       <Route path="/Homepage" element={<Homepage />} />
       <Route path="/HistoryLogActivity" element={<HistoryLogActivity />} />
-
       <Route path="/Dashboard" element={<Dashboard />} />
       <Route path="/Divisi" element={<Divisi />} />
+      <Route path="/DetailedView" element={<DetailedView />} />
       <Route path="/Shift" element={<Shift />} />
       <Route path="/Project" element={<Project />} />
       <Route path="/TambahKaryawan" element={<TambahKaryawan />} />
       <Route path="/Presensi" element={<Presensi />} />
       <Route path="/Laporan" element={<Laporan />} />
+      <Route path="/division/:divisionName" element={<DetailedView />} />{" "}
+      {/* Add this route */}
     </Routes>
   </BrowserRouter>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

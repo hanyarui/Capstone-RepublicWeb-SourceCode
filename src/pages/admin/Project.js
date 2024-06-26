@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import { IoIosSearch } from "react-icons/io";
@@ -90,7 +91,9 @@ const Project = ({ activities }) => {
         <div className="px-10 pt-5">
           <div className="flex justify-between items-center mb-8">
             <div className="flex space-x-10">
-              <h2 className="text-2xl font-bold">Divisi</h2>
+              <Link to="/Divisi">
+                <h2 className="text-2xl font-bold cursor-pointer">Divisi</h2>
+              </Link>
               <h2 className="text-2xl font-bold border-b-2 border-black">
                 Project
               </h2>

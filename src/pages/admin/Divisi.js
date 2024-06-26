@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
-import { PiCodeSimpleLight } from "react-icons/pi";
+import { IoMdCode } from "react-icons/io";
 import { CiPen } from "react-icons/ci";
-import { CiCamera } from "react-icons/ci";
+import { IoCameraOutline } from "react-icons/io5";
 import { BsCameraVideo } from "react-icons/bs";
-import { FaPalette } from "react-icons/fa6";
+import { PiPalette } from "react-icons/pi";
 import { HiOutlineSpeakerphone } from "react-icons/hi";
 import { PiNotePencil } from "react-icons/pi";
 import { LiaHandshake } from "react-icons/lia";
-import { HiMiniUserGroup } from "react-icons/hi2";
-import { FiThumbsUp } from "react-icons/fi";
-import { FaTiktok } from "react-icons/fa6";
-import { MdBusinessCenter } from "react-icons/md";
+import { HiOutlineUserGroup } from "react-icons/hi2";
+import { PiThumbsUp } from "react-icons/pi";
+import { PiTiktokLogo } from "react-icons/pi";
+import { BsFolder2 } from "react-icons/bs";
 import { GoFileDirectory } from "react-icons/go";
 import { IoIosSearch } from "react-icons/io"; // Import the search icon
 
@@ -22,9 +22,11 @@ const Divisi = ({ activities }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredDivisions, setFilteredDivisions] = useState([]);
 
+  const navigate = useNavigate();
+
   const divisions = [
     {
-      name: "UI/UX Designer",
+      name: "UI & U0X Designer",
       members: 20,
       icon: <CiPen className="text-white w-8 h-8" />,
     },
@@ -36,12 +38,12 @@ const Divisi = ({ activities }) => {
     {
       name: "Social Media Specialist",
       members: 20,
-      icon: <FiThumbsUp className="text-white w-8 h-8" />,
+      icon: <PiThumbsUp className="text-white w-8 h-8" />,
     },
     {
       name: "Programmer",
       members: 20,
-      icon: <PiCodeSimpleLight className="text-white w-8 h-8" />,
+      icon: <IoMdCode className="text-white w-8 h-8" />,
     },
     {
       name: "Marketing Communication",
@@ -51,12 +53,12 @@ const Divisi = ({ activities }) => {
     {
       name: "Tiktok Creator",
       members: 20,
-      icon: <FaTiktok className="text-white w-8 h-8" />,
+      icon: <PiTiktokLogo className="text-white w-8 h-8" />,
     },
     {
       name: "Desain Grafis",
       members: 20,
-      icon: <FaPalette className="text-white w-8 h-8" />,
+      icon: <PiPalette className="text-white w-8 h-8" />,
     },
     {
       name: "Content Writer",
@@ -66,17 +68,17 @@ const Divisi = ({ activities }) => {
     {
       name: "Administrasi",
       members: 20,
-      icon: <MdBusinessCenter className="text-white w-8 h-8" />,
+      icon: <BsFolder2 className="text-white w-8 h-8" />,
     },
     {
       name: "Fotografer",
       members: 20,
-      icon: <CiCamera className="text-white w-8 h-8" />,
+      icon: <IoCameraOutline className="text-white w-8 h-8" />,
     },
     {
       name: "Human Resource",
       members: 20,
-      icon: <HiMiniUserGroup className="text-white w-8 h-8" />,
+      icon: <HiOutlineUserGroup className="text-white w-8 h-8" />,
     },
     {
       name: "Project Manager",
@@ -122,8 +124,12 @@ const Divisi = ({ activities }) => {
         <div className="px-10 pt-5">
           <div className="flex justify-between items-center mb-8">
             <div className="flex space-x-10">
-              <h2 className="text-2xl font-bold">Divisi</h2>
-              <h2 className="text-2xl font-bold">Project</h2>
+              <h2 className="text-2xl font-bold border-b-2 border-black">
+                Divisi
+              </h2>
+              <Link to="/Project">
+                <h2 className="text-2xl font-bold cursor-pointer">Project</h2>
+              </Link>
             </div>
             <div className="relative">
               <input
@@ -138,7 +144,7 @@ const Divisi = ({ activities }) => {
           </div>
           <div>
             <Link to={"/TambahKaryawan"}>
-              <button className="bg-blue-900 text-white px-8 py-2 rounded-2xl mb-8">
+              <button className="bg-blue-950 text-white px-8 py-2 rounded-2xl mb-8">
                 Tambah Anggota
               </button>
             </Link>
@@ -147,10 +153,11 @@ const Divisi = ({ activities }) => {
             {filteredDivisions.map((division, index) => (
               <div
                 key={index}
-                className="bg-white shadow rounded p-4 flex items-center"
+                className="bg-white shadow rounded p-4 flex items-center cursor-pointer"
+                onClick={() => navigate(`/division/${division.name}`)}
               >
                 <div className="flex items-center space-x-4">
-                  <div className="bg-blue-900 rounded-full p-2">
+                  <div className="bg-blue-950 rounded-full p-2">
                     {typeof division.icon === "string" ? (
                       <img
                         src={`/assets/icons/${division.icon}.svg`} // Adjust the path according to your assets
