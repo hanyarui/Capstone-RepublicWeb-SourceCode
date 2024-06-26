@@ -84,7 +84,7 @@ const Project = ({ activities }) => {
   }, [searchQuery]);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-full">
       <Sidebar />
       <main className="flex-1 w-full">
         <Navbar />

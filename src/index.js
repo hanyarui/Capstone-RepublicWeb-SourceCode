@@ -35,6 +35,7 @@ import Presensi from "./pages/admin/Presensi";
 import Laporan from "./pages/admin/Laporan";
 
 import reportWebVitals from "./reportWebVitals";
+import Profile from "./pages/admin/Profile";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -47,6 +48,7 @@ root.render(
       <Route path="/Homepage" element={<Homepage />} />
       <Route path="/HistoryLogActivity" element={<HistoryLogActivity />} />
       <Route path="/Dashboard" element={<Dashboard />} />
+      <Route path="/Profile" element={<Profile />} />
       <Route path="/Divisi" element={<Divisi />} />
       <Route path="/DetailedView" element={<DetailedView />} />
       <Route path="/Shift" element={<Shift />} />

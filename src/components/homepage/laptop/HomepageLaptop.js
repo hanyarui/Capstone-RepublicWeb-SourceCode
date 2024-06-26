@@ -4,6 +4,7 @@ import { GoDotFill } from "react-icons/go";
 import { RiStickyNoteAddFill } from "react-icons/ri";
 import { LuFileClock } from "react-icons/lu";
 import Header from "./HeaderLaptop";
+import Cookies from "js-cookie";
 
 // Function Get Current Time
 const getCurrentTime = () => {
@@ -26,14 +27,25 @@ const getCurrentDate = () => {
 // Mock API Call to Save Data
 const saveAttendanceData = async (data) => {
   try {
+    const token = Cookies.get("token"); // Get token from cookies
+
+    if (!token) {
+      console.error("No token found in cookies");
+      return;
+    }
+
     // Mock API call to save data
-    await fetch("/api/saveAttendance", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+    await fetch(
+      "https://republikweb-cp-backend.vercel.app/attendance/checkin",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Add token to headers
+        },
+        body: JSON.stringify(data),
+      }
+    );
   } catch (error) {
     console.error("Error saving attendance data:", error);
   }
@@ -66,10 +78,10 @@ const HomepageLaptop = () => {
     if (currentDate !== storedDate) {
       const attendanceData = {
         date: storedDate,
-        masuk: currentMasukTime,
-        istirahat: currentIstirahatTime,
-        kembali: currentKembaliTime,
-        pulang: currentPulangTime,
+        start: currentMasukTime,
+        break: currentIstirahatTime,
+        resume: currentKembaliTime,
+        end: currentPulangTime,
       };
       await saveAttendanceData(attendanceData);
       resetProgress();
@@ -93,20 +105,33 @@ const HomepageLaptop = () => {
   };
 
   // Pop Up Konfirmasi
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const timeString = getCurrentTime();
     setIsPopupVisible(false);
     setIsIconRed(true);
 
+    let type = "";
+
     if (currentStep === 0) {
       setCurrentMasukTime(timeString);
+      type = "start";
     } else if (currentStep === 1) {
       setCurrentIstirahatTime(timeString);
+      type = "break";
     } else if (currentStep === 2) {
       setCurrentKembaliTime(timeString);
+      type = "resume";
     } else if (currentStep === 3) {
       setCurrentPulangTime(timeString);
+      type = "end";
     }
+
+    const attendanceData = {
+      step: getButtonText().toLowerCase(),
+      time: timeString,
+      type,
+    };
+    await saveAttendanceData(attendanceData);
 
     setCurrentStep(currentStep + 1);
   };
@@ -215,7 +240,7 @@ const HomepageLaptop = () => {
                 <div className="grid">
                   <div className="grid grid-cols-3 items-center">
                     <GoDotFill
-                      className={` ${
+                      className={`${
                         isIconRed && currentStep > 1
                           ? "text-red-600"
                           : "text-black"
@@ -240,7 +265,7 @@ const HomepageLaptop = () => {
                 <div className="grid">
                   <div className="grid grid-cols-3 items-center">
                     <GoDotFill
-                      className={` ${
+                      className={`${
                         isIconRed && currentStep > 2
                           ? "text-red-600"
                           : "text-black"
@@ -265,7 +290,7 @@ const HomepageLaptop = () => {
                 <div className="grid">
                   <div className="grid grid-cols-3 items-center">
                     <GoDotFill
-                      className={` ${
+                      className={`${
                         isIconRed && currentStep > 3
                           ? "text-red-600"
                           : "text-black"

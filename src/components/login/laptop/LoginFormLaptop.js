@@ -12,7 +12,7 @@ const LoginFormLaptop = () => {
     event.preventDefault();
 
     const response = await fetch(
-      "https://republikweb-cp-backend.vercel.app/v1/karyawan/login",
+      "https://republikweb-cp-backend.vercel.app/karyawan/login",
       {
         method: "POST",
         headers: {

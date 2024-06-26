@@ -13,7 +13,7 @@ const Shift = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-slate-100">
+    <div className="flex h-full bg-slate-100">
       <Sidebar />
       <main className="flex-1 w-full">
         <Navbar />
