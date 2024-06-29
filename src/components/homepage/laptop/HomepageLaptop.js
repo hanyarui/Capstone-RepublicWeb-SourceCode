@@ -54,6 +54,8 @@ const saveAttendanceData = async (data) => {
 const HomepageLaptop = () => {
   const [time, setTime] = useState(getCurrentTime());
   const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [isLogPopupVisible, setIsLogPopupVisible] = useState(false);
+  const [logActivityText, setLogActivityText] = useState("");
   const [currentMasukTime, setCurrentMasukTime] = useState("---");
   const [currentIstirahatTime, setCurrentIstirahatTime] = useState("---");
   const [currentKembaliTime, setCurrentKembaliTime] = useState("---");
@@ -138,6 +140,18 @@ const HomepageLaptop = () => {
 
   // Pindah Halaman History Log Activity
   let navigate = useNavigate();
+
+  // Handle Log Activity Pop-up
+  const popupLogActivity = () => {
+    setIsLogPopupVisible(true);
+  };
+
+  const handleLogConfirm = () => {
+    console.log("Log Activity:", logActivityText);
+    setIsLogPopupVisible(false);
+    setLogActivityText(""); // Reset text field after confirmation
+  };
+
   const moveToHistoryLogActivity = () => {
     navigate("/HistoryLogActivity");
   };
@@ -183,14 +197,33 @@ const HomepageLaptop = () => {
             )}
 
             <button
+              onClick={popupLogActivity}
               className="p-4 text-white w-8/12 mb-4"
               style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
             >
               <div className="flex items-center justify-center">
                 <RiStickyNoteAddFill className="size-8 mr-3" />
-                Log Activity Log Activity
+                Log Activity
               </div>
             </button>
+            {isLogPopupVisible && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white p-2 rounded-lg">
+                  <textarea
+                    value={logActivityText}
+                    onChange={(e) => setLogActivityText(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded mb-3"
+                    placeholder="Masukkan aktivitas log anda..."
+                  />
+                  <button
+                    onClick={handleLogConfirm}
+                    className="p-2 bg-blue-500 text-white rounded"
+                  >
+                    Konfirmasi
+                  </button>
+                </div>
+              </div>
+            )}
             <button
               onClick={moveToHistoryLogActivity}
               className="p-4 text-white w-8/12"
