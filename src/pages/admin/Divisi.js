@@ -26,7 +26,7 @@ const Divisi = ({ activities }) => {
 
   const divisions = [
     {
-      name: "UI & U0X Designer",
+      name: "UI & UX Designer",
       members: 20,
       icon: <CiPen className="text-white w-8 h-8" />,
     },
@@ -117,7 +117,7 @@ const Divisi = ({ activities }) => {
   }, [searchQuery]);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-gray-100">
       <Sidebar />
       <main className="flex-1 w-full">
         <Navbar />
@@ -153,7 +153,7 @@ const Divisi = ({ activities }) => {
             {filteredDivisions.map((division, index) => (
               <div
                 key={index}
-                className="bg-white shadow rounded p-4 flex items-center cursor-pointer"
+                className="p-4 flex items-center cursor-pointer"
                 onClick={() => navigate(`/division/${division.name}`)}
               >
                 <div className="flex items-center space-x-4">

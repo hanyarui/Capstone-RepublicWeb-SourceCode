@@ -4,6 +4,7 @@ import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import { IoIosSearch } from "react-icons/io";
 import { MdGroups2 } from "react-icons/md";
+import { FaArrowCircleRight } from "react-icons/fa";
 
 const Project = ({ activities }) => {
   const [visibleActivities, setVisibleActivities] = useState([]);
@@ -56,6 +57,41 @@ const Project = ({ activities }) => {
       members: 20,
       icon: <MdGroups2 className="text-white w-8 h-8" />,
     },
+    {
+      name: "E Learning",
+      members: 20,
+      icon: <MdGroups2 className="text-white w-8 h-8" />,
+    },
+    {
+      name: "Web Presensi",
+      members: 20,
+      icon: <MdGroups2 className="text-white w-8 h-8" />,
+    },
+    {
+      name: "Web Presensi",
+      members: 20,
+      icon: <MdGroups2 className="text-white w-8 h-8" />,
+    },
+    {
+      name: "Web Presensi",
+      members: 20,
+      icon: <MdGroups2 className="text-white w-8 h-8" />,
+    },
+    {
+      name: "Toko",
+      members: 20,
+      icon: <MdGroups2 className="text-white w-8 h-8" />,
+    },
+    {
+      name: "Web Presensi",
+      members: 20,
+      icon: <MdGroups2 className="text-white w-8 h-8" />,
+    },
+    {
+      name: "Web Presensi",
+      members: 20,
+      icon: <MdGroups2 className="text-white w-8 h-8" />,
+    },
     // Add more projects as needed
   ];
 
@@ -84,11 +120,11 @@ const Project = ({ activities }) => {
   }, [searchQuery]);
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-screen bg-gray-100">
       <Sidebar />
-      <main className="flex-1 w-full">
+      <main className="flex-1 w-full overflow-hidden">
         <Navbar />
-        <div className="px-10 pt-5">
+        <div className="px-10 pt-5 h-full flex flex-col">
           <div className="flex justify-between items-center mb-8">
             <div className="flex space-x-10">
               <Link to="/Divisi">
@@ -109,25 +145,28 @@ const Project = ({ activities }) => {
               <IoIosSearch className="absolute left-2 top-2 text-gray-400 w-6 h-6" />
             </div>
           </div>
-          <div className="grid grid-cols-4 gap-10">
-            {filteredProjects.map((project, index) => (
-              <div
-                key={index}
-                className="relative bg-blue-950 text-white shadow-lg rounded-lg flex flex-col justify-between"
-                style={{ height: "200px", width: "380px" }}
-              >
-                <div className="p-5 flex justify-center items-center">
-                  <p className="font-bold text-lg">{project.name}</p>
+          <div className="flex-grow overflow-y-auto">
+            <div className="grid grid-cols-4 gap-10">
+              {filteredProjects.map((project, index) => (
+                <div
+                  key={index}
+                  className="relative bg-blue-950 text-white shadow-lg rounded-t-lg flex flex-col justify-between"
+                  style={{ height: "150px", width: "280px" }}
+                >
+                  <div className="p-5 flex justify-center items-center">
+                    <p className="font-bold text-lg">{project.name}</p>
+                  </div>
+                  <div className="flex justify-around items-center flex-grow">
+                    <MdGroups2 className="text-white size-20" />
+                    <p className="text-lg place">{project.members} Orang</p>
+                  </div>
+                  <div className="bg-white text-black text-left py-1 rounded-b-lg pl-4 pr-4 flex justify-between items-center">
+                    View Detail
+                    <FaArrowCircleRight />
+                  </div>
                 </div>
-                <div className="flex justify-around items-center flex-grow">
-                  <MdGroups2 className="text-white size-32" />
-                  <p className="text-lg place">{project.members} Orang</p>
-                </div>
-                <div className="bg-white text-black text-center py-2 rounded-b-lg">
-                  View Detail
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </main>

@@ -1,21 +1,21 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
-import { IoIosSearch } from "react-icons/io"; // Import the search icon
+import Sidebar from "../../components/Sidebar";
+import { IoIosSearch } from "react-icons/io";
 import { IoChevronBackOutline } from "react-icons/io5";
 
-const DetailedView = ({ members = [] }) => {
+const DetailedView = ({ karyawan = [] }) => {
   const { divisionName } = useParams();
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
-  const filteredMembers = members.filter((member) =>
-    member.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredKaryawan = karyawan.filter((employee) =>
+    employee.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-gray-100">
       <Sidebar />
       <main className="flex-1 w-full">
         <Navbar />
@@ -39,12 +39,12 @@ const DetailedView = ({ members = [] }) => {
             </div>
           </div>
           <div className="bg-blue-950 shadow rounded p-4 mb-0">
-            <h className="text-lg text-white font-medium mb-0">
-              Filter Data Anggota
-            </h>
+            <h1 className="text-lg text-white font-medium mb-0">
+              Filter Data Karyawan
+            </h1>
           </div>
           <div className="bg-white shadow rounded p-4 mb-4">
-            <div className="flex space-x-2">
+            <div className="flex space-x-2 items-center">
               <input type="checkbox" className="form-checkbox" />
               <select className="border border-gray-300 rounded px-2 py-1">
                 <option>Bulk Action</option>
@@ -54,7 +54,7 @@ const DetailedView = ({ members = [] }) => {
               <button className="bg-blue-900 text-white px-4 py-1 rounded">
                 Apply
               </button>
-              <span className="text-lg font-semibold">Project :</span>
+              <span className="text-lg font-semibold mr-2">Project :</span>
               <select className="border border-gray-300 rounded px-2 py-1">
                 <option>Pilih Project</option>
                 <option>Project 1</option>
@@ -63,13 +63,13 @@ const DetailedView = ({ members = [] }) => {
             </div>
           </div>
           <div className="bg-blue-950 p-4 rounded">
-            {filteredMembers.map((member, index) => (
+            {filteredKaryawan.map((employee, index) => (
               <div key={index} className="bg-white shadow rounded p-4 mb-4">
                 <div className="bg-blue-900 text-white p-4 rounded mb-2">
-                  <p className="font-mono">{member.id}</p>
+                  <p className="font-mono">{employee.id}</p>
                 </div>
                 <div className="bg-blue-900 text-white p-4 rounded">
-                  <p className="text-lg font-semibold">{member.name}</p>
+                  <p className="text-lg font-semibold">{employee.name}</p>
                 </div>
               </div>
             ))}
