@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "../../../components/Sidebar";
 import Navbar from "../../../components/Navbar";
-import Shift from "../Shift";
 
 const TambahKaryawan = () => {
   const [formData, setFormData] = useState({
@@ -81,7 +80,7 @@ const TambahKaryawan = () => {
   return (
     <div className="flex h-screen bg-slate-100">
       <Sidebar />
-      <main className="flex-1 w-full">
+      <main className="flex-1 w-screen">
         <Navbar />
         <div className="px-10 pt-5">
           <div
@@ -101,7 +100,7 @@ const TambahKaryawan = () => {
                 <input
                   type="text"
                   name="fullname"
-                  className="border border-gray-300 rounded px-4 py-2"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
                   value={formData.fullname}
                   onChange={handleChange}
                 />
@@ -111,7 +110,7 @@ const TambahKaryawan = () => {
                 <input
                   type="text"
                   name="pendidikan_terakhir"
-                  className="border border-gray-300 rounded px-4 py-2"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
                   value={formData.pendidikan_terakhir}
                   onChange={handleChange}
                 />
@@ -121,7 +120,7 @@ const TambahKaryawan = () => {
                 <input
                   type="text"
                   name="tempat_lahir"
-                  className="border border-gray-300 rounded px-4 py-2"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
                   value={formData.tempat_lahir}
                   onChange={handleChange}
                 />
@@ -131,7 +130,7 @@ const TambahKaryawan = () => {
                 <input
                   type="date"
                   name="tanggal_lahir"
-                  className="border border-gray-300 rounded px-4 py-2"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
                   value={formData.tanggal_lahir}
                   onChange={handleChange}
                 />
@@ -141,7 +140,7 @@ const TambahKaryawan = () => {
                 <input
                   type="text"
                   name="phoneNumber"
-                  className="border border-gray-300 rounded px-4 py-2"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
                   value={formData.phoneNumber}
                   onChange={handleChange}
                 />
@@ -153,7 +152,7 @@ const TambahKaryawan = () => {
                 <input
                   type="text"
                   name="username"
-                  className="border border-gray-300 rounded px-4 py-2"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
                   value={formData.username}
                   onChange={handleChange}
                 />
@@ -163,7 +162,7 @@ const TambahKaryawan = () => {
                 <input
                   type="email"
                   name="email"
-                  className="border border-gray-300 rounded px-4 py-2"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
                   value={formData.email}
                   onChange={handleChange}
                 />
@@ -173,7 +172,7 @@ const TambahKaryawan = () => {
                 <input
                   type="password"
                   name="password"
-                  className="border border-gray-300 rounded px-4 py-2"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
                   value={formData.password}
                   onChange={handleChange}
                 />
@@ -183,7 +182,7 @@ const TambahKaryawan = () => {
                 <input
                   type="password"
                   name="ulangiPassword"
-                  className="border border-gray-300 rounded px-4 py-2"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
                   value={formData.ulangiPassword}
                   onChange={handleChange}
                 />
@@ -195,7 +194,7 @@ const TambahKaryawan = () => {
                 <input
                   type="date"
                   name="tanggal_masuk"
-                  className="border border-gray-300 rounded px-4 py-2"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
                   value={formData.tanggal_masuk}
                   onChange={handleChange}
                 />
@@ -205,7 +204,7 @@ const TambahKaryawan = () => {
                 <input
                   type="date"
                   name="tanggal_keluar"
-                  className="border border-gray-300 rounded px-4 py-2"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
                   value={formData.tanggal_keluar}
                   onChange={handleChange}
                 />
@@ -215,7 +214,7 @@ const TambahKaryawan = () => {
                 <input
                   type="text"
                   name="NIP"
-                  className="border border-gray-300 rounded px-4 py-2"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
                   value={formData.NIP}
                   onChange={handleChange}
                 />
@@ -225,7 +224,7 @@ const TambahKaryawan = () => {
                 <input
                   type="text"
                   name="lokasi_kantor"
-                  className="border border-gray-300 rounded px-4 py-2"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
                   value={formData.lokasi_kantor}
                   onChange={handleChange}
                 />
@@ -234,7 +233,7 @@ const TambahKaryawan = () => {
                 <label className="font-bold mb-2">Divisi</label>
                 <select
                   name="division"
-                  className="border border-gray-300 rounded px-4 py-2"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
                   value={formData.division}
                   onChange={handleChange}
                 >
@@ -257,7 +256,7 @@ const TambahKaryawan = () => {
                 <label className="font-bold mb-2">OS</label>
                 <select
                   name="OS"
-                  className="border border-gray-300 rounded px-4 py-2"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
                   value={formData.OS}
                   onChange={handleChange}
                 >
@@ -270,7 +269,7 @@ const TambahKaryawan = () => {
                 <label className="font-bold mb-2">Browser</label>
                 <select
                   name="Browser"
-                  className="border border-gray-300 rounded px-4 py-2"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
                   value={formData.Browser}
                   onChange={handleChange}
                 >
@@ -284,20 +283,21 @@ const TambahKaryawan = () => {
                 <input
                   type="file"
                   name="barcode"
-                  className="border border-gray-300 rounded px-4 py-2"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
                   onChange={handleChange}
                 />
               </div>
             </div>
-            <div className="flex justify-center mt-8">
-              <button
-                type="submit"
-                className="bg-blue-500 w-2/5 text-white px-8 py-2 mb-8 rounded"
-              >
-                Simpan
-              </button>
-            </div>
           </form>
+          <div className="flex justify-center mt-5">
+            <button
+              type="submit"
+              className="bg-blue-500 w-2/5 text-white px-8 py-1 mb-8 rounded"
+              onClick={handleSubmit}
+            >
+              Simpan
+            </button>
+          </div>
         </div>
       </main>
     </div>
