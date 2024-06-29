@@ -5,15 +5,7 @@ import { RiStickyNoteAddFill } from "react-icons/ri";
 import { LuFileClock } from "react-icons/lu";
 import Header from "./HeaderLaptop";
 import Cookies from "js-cookie";
-
-// Function Get Current Time
-const getCurrentTime = () => {
-  const now = new Date();
-  const hours = String(now.getHours()).padStart(2, "0");
-  const minutes = String(now.getMinutes()).padStart(2, "0");
-  const seconds = String(now.getSeconds()).padStart(2, "0");
-  return `${hours}:${minutes}:${seconds}`;
-};
+import { jwtDecode } from "jwt-decode";
 
 // Function to Get Current Date
 const getCurrentDate = () => {
@@ -51,8 +43,32 @@ const saveAttendanceData = async (data) => {
   }
 };
 
+// Function to Get Attendance Data
+const getAttendanceData = async (karyawanId, date) => {
+  try {
+    const response = await fetch(
+      `https://republikweb-cp-backend.vercel.app/attendance/${karyawanId}/${date}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch attendance data");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching attendance data:", error);
+    return null;
+  }
+};
+
 const HomepageLaptop = () => {
-  const [time, setTime] = useState(getCurrentTime());
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [isLogPopupVisible, setIsLogPopupVisible] = useState(false);
   const [logActivityText, setLogActivityText] = useState("");
@@ -64,17 +80,35 @@ const HomepageLaptop = () => {
   const [isIconRed, setIsIconRed] = useState(false);
   const [storedDate, setStoredDate] = useState(getCurrentDate());
 
-  // Time Interval
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setTime(getCurrentTime());
-      checkAndResetProgress();
-    }, 1000);
+  // Get karyawanId from token
+  const token = Cookies.get("token");
+  let karyawanId = "";
+  if (token) {
+    const decodedToken = jwtDecode(token);
+    karyawanId = decodedToken.karyawanId;
+  }
 
-    return () => clearInterval(intervalId);
+  // UseEffect to Fetch Attendance Data
+  useEffect(() => {
+    (async () => {
+      const data = await getAttendanceData(karyawanId, getCurrentDate());
+      if (data) {
+        setCurrentMasukTime(data.start || "---");
+        setCurrentIstirahatTime(data.break || "---");
+        setCurrentKembaliTime(data.resume || "---");
+        setCurrentPulangTime(data.end || "---");
+        // Set currentStep based on available data
+        let step = 0;
+        if (data.start) step = 1;
+        if (data.break) step = 2;
+        if (data.resume) step = 3;
+        if (data.end) step = 4;
+        setCurrentStep(step);
+      }
+    })();
   }, []);
 
-  // Check and Reset Progress
+  // Reset Progress at the end of the day
   const checkAndResetProgress = async () => {
     const currentDate = getCurrentDate();
     if (currentDate !== storedDate) {
@@ -91,7 +125,6 @@ const HomepageLaptop = () => {
     }
   };
 
-  // Reset Progress
   const resetProgress = () => {
     setCurrentMasukTime("---");
     setCurrentIstirahatTime("---");
@@ -106,9 +139,11 @@ const HomepageLaptop = () => {
     setIsPopupVisible(true);
   };
 
-  // Pop Up Konfirmasi
   const handleConfirm = async () => {
-    const timeString = getCurrentTime();
+    const timeString = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
     setIsPopupVisible(false);
     setIsIconRed(true);
 
@@ -138,7 +173,7 @@ const HomepageLaptop = () => {
     setCurrentStep(currentStep + 1);
   };
 
-  // Pindah Halaman History Log Activity
+  // Navigate to History Log Activity Page
   let navigate = useNavigate();
 
   // Handle Log Activity Pop-up
