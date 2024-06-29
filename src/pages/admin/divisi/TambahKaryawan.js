@@ -82,9 +82,9 @@ const TambahKaryawan = () => {
       <Sidebar />
       <main className="flex-1 w-screen">
         <Navbar />
-        <div className="px-10 pt-5">
+        <div className="px-10 pt-3">
           <div
-            className="mb-4 pt-16 pb-20 pl-10 flex justify-between"
+            className="mb-4 pt-10 pb-20 pl-10 flex justify-between"
             style={{
               backgroundImage: "url(/assets/background_add.png)",
             }}
