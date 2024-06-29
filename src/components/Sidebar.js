@@ -7,7 +7,7 @@ const Sidebar = () => {
     <aside className="w-64 h-auto bg-gray-100 flex flex-col justify-between p-4 shadow-2xl">
       <div>
         <div className="items-center pt-8 pb-16">
-          <img src="assets/logo.svg" className="mx-auto size-20" alt="Logo" />
+          <img src="/assets/logo.svg" className="mx-auto size-20" alt="Logo" />
         </div>
         <nav className="space-y-2">
           <Link

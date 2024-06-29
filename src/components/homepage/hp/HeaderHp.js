@@ -2,6 +2,8 @@ import { React, useState, useEffect } from "react";
 import TodayDate from "../../../pages/user/home/TodayDate";
 import { IoPersonSharp, IoLogOutOutline } from "react-icons/io5";
 import { FaRegCalendarAlt } from "react-icons/fa";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 const getCurrentTime = () => {
   const now = new Date();
@@ -13,11 +15,28 @@ const getCurrentTime = () => {
 
 const Header = () => {
   const [time, setTime] = useState(getCurrentTime());
+  const [employeeName, setEmployeeName] = useState("");
+  const [employeeNIP, setEmployeeNIP] = useState("");
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       setTime(getCurrentTime());
     }, 1000);
+
+    // Ambil token dari cookies
+    const token = Cookies.get("token"); // Pastikan ini adalah nama yang Anda gunakan untuk menyimpan token di cookies
+    if (token) {
+      try {
+        // Dekode token
+        const decodedToken = jwtDecode(token);
+
+        // Set state untuk Nama dan NIP karyawan
+        setEmployeeName(decodedToken.fullname);
+        setEmployeeNIP(decodedToken.NIP);
+      } catch (error) {
+        console.error("Token tidak valid atau tidak bisa didekode:", error);
+      }
+    }
 
     // Cleanup interval on component unmount
     return () => clearInterval(intervalId);
@@ -51,8 +70,8 @@ const Header = () => {
               <IoPersonSharp className="size-7" />
             </div>
             <div className="ml-3">
-              <p className="text-xs font-semibold">Syalita Widyandini</p>
-              <p style={{ fontSize: "10px" }}>19850910 202112 1 001</p>
+              <p className="text-xs font-semibold">{employeeName}</p>
+              <p style={{ fontSize: "10px" }}>{employeeNIP}</p>
             </div>
           </div>
           <div className="flex items-center justify-end">

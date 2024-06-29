@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
+import { Link } from "react-router-dom";
+import Logout from "../auth/Logout";
 import { IoIosSearch } from "react-icons/io";
 import { IoChevronBackOutline } from "react-icons/io5";
+import Sidebar from "../../components/Sidebar";
 
 const DetailedView = ({ karyawan = [] }) => {
   const { divisionName } = useParams();
