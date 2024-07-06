@@ -20,9 +20,16 @@ const getCurrentDate = () => {
 const formatTime = (timeString) => {
   if (!timeString) return "---"; // Handle case where timeString is undefined or null
   const date = new Date(timeString);
-  const hours = String(date.getHours()).padStart(2, "0");
+  let hours = date.getHours();
   const minutes = String(date.getMinutes()).padStart(2, "0");
-  return `${hours}:${minutes}`;
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
+
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  const formattedHours = String(hours).padStart(2, "0");
+
+  return `${formattedHours}:${minutes}:${seconds} ${ampm}`;
 };
 
 // Mock API Call to Save Data
@@ -132,7 +139,7 @@ const HomepageLaptop = () => {
   // UseEffect to Fetch Attendance Data
   useEffect(() => {
     (async () => {
-      const data = await getAttendanceData(karyawanId, getCurrentDate());
+      const data = await getAttendanceData(karyawanId);
       if (data) {
         setCurrentMasukTime(formatTime(data.checkInTimes.start));
         setCurrentIstirahatTime(formatTime(data.checkInTimes.break));
@@ -148,7 +155,7 @@ const HomepageLaptop = () => {
         setCurrentStep(step);
       }
     })();
-  }, []);
+  }, [currentStep]); // add currentStep as dependency to fetch latest data
 
   // Button Click Handlers
   const handleButtonClick = () => {
@@ -156,32 +163,23 @@ const HomepageLaptop = () => {
   };
 
   const handleConfirm = async () => {
-    const timeString = new Date().toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
     setIsPopupVisible(false);
     setIsIconRed(true);
 
     let type = "";
 
     if (currentStep === 0) {
-      setCurrentMasukTime(timeString);
       type = "start";
     } else if (currentStep === 1) {
-      setCurrentIstirahatTime(timeString);
       type = "break";
     } else if (currentStep === 2) {
-      setCurrentKembaliTime(timeString);
       type = "resume";
     } else if (currentStep === 3) {
-      setCurrentPulangTime(timeString);
       type = "end";
     }
 
     const attendanceData = {
       step: getButtonText().toLowerCase(),
-      time: timeString,
       type,
     };
     await saveAttendanceData(attendanceData);
@@ -295,7 +293,7 @@ const HomepageLaptop = () => {
             <div className="grid grid-cols-4 gap-4 mb-4">
               {/* Masuk Kerja Indicator */}
               <div
-                className="text-left py-5 px-7 font-extrabold bg-gray-200 flex items-center justify-start w-full w-72 h-32"
+                className="text-left py-5 px-7 font-extrabold bg-gray-200 flex items-center justify-start w-full h-32"
                 style={{ borderRadius: "10px" }}
               >
                 <div className="grid">
