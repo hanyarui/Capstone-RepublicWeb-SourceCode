@@ -1,50 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { GiBackwardTime } from "react-icons/gi";
 import OtpInput from "react-otp-input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const OTP = () => {
+  const navigate = useNavigate();
+
   const [otp, setOtp] = useState("");
-  const [isResendEnabled, setIsResendEnabled] = useState(false);
-  const [countdown, setCountdown] = useState(60);
   const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    let timer;
-    if (isResendEnabled) {
-      timer = setTimeout(() => {
-        if (countdown > 0) {
-          setCountdown((prevCount) => prevCount - 1);
-        } else {
-          setIsResendEnabled(false);
-          setCountdown(60);
-        }
-      }, 1000);
-    }
-    return () => clearTimeout(timer);
-  }, [isResendEnabled, countdown]);
-
-  const handleResend = async () => {
-    alert("Mengirim ulang OTP...");
+  const handleVerifyOTP = async (event) => {
+    event.preventDefault();
     try {
       const response = await axios.post(
-        "https://republikweb-cp-backend.vercel.app/karyawan/request-password-reset"
+        "https://republikweb-cp-backend.vercel.app/karyawan/validasi-otp",
+        { otp }
       );
-      setMessage("OTP has been sent to your email.");
-      window.location.href = "/OTP";
+      if (response.data.message === "OTP is valid") {
+        const userId = response.data.userId;
+
+        alert("OTP is valid");
+        navigate("/ChangePassword", { state: { userId } });
+      } else {
+        setMessage(response.data.error || "Invalid OTP");
+      }
     } catch (error) {
-      setMessage("Failed to send OTP. Please try again.");
+      setMessage("Failed to verify OTP. Please try again.");
     }
-
-    // Disable the button for 60 seconds
-    setIsResendEnabled(false);
-    setCountdown(60); // Reset countdown
-  };
-
-  const handleVerifyOTP = (event) => {
-    event.preventDefault();
-    alert(`Memverifikasi OTP: ${otp}`);
   };
 
   return (
@@ -77,7 +60,6 @@ const OTP = () => {
         </div>
 
         <button
-          //   onClick={handleSubmit}
           type="submit"
           style={{
             borderRadius: "20px",
@@ -88,14 +70,7 @@ const OTP = () => {
         >
           Verify Now
         </button>
-        <div className="text-center">
-          <div className="flex-col">
-            <p className="mr-2">Belum menerima email?</p>
-            <Link onClick={handleResend} className="text-red-600">
-              Kirim ulang
-            </Link>
-          </div>
-        </div>
+        {message && <p className="text-center text-red-600">{message}</p>}
       </form>
     </div>
   );

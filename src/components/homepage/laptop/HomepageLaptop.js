@@ -16,6 +16,15 @@ const getCurrentDate = () => {
   return `${year}-${month}-${day}`;
 };
 
+// Function to Format Time (Hours and Minutes)
+const formatTime = (timeString) => {
+  if (!timeString) return "---"; // Handle case where timeString is undefined or null
+  const date = new Date(timeString);
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
+};
+
 // Mock API Call to Save Data
 const saveAttendanceData = async (data) => {
   try {
@@ -70,14 +79,21 @@ const saveActivityData = async (data) => {
 };
 
 // Function to Get Attendance Data
-const getAttendanceData = async (karyawanId, date) => {
+const getAttendanceData = async (karyawanId) => {
   try {
+    const token = Cookies.get("token");
+    if (!token) {
+      console.error("No token found in cookies");
+      return null;
+    }
+
     const response = await fetch(
-      `https://republikweb-cp-backend.vercel.app/attendance/${karyawanId}/${date}`,
+      `https://republikweb-cp-backend.vercel.app/attendance-today/${karyawanId}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Add token to headers
         },
       }
     );
@@ -118,16 +134,17 @@ const HomepageLaptop = () => {
     (async () => {
       const data = await getAttendanceData(karyawanId, getCurrentDate());
       if (data) {
-        setCurrentMasukTime(data.start || "---");
-        setCurrentIstirahatTime(data.break || "---");
-        setCurrentKembaliTime(data.resume || "---");
-        setCurrentPulangTime(data.end || "---");
+        setCurrentMasukTime(formatTime(data.checkInTimes.start));
+        setCurrentIstirahatTime(formatTime(data.checkInTimes.break));
+        setCurrentKembaliTime(formatTime(data.checkInTimes.resume));
+        setCurrentPulangTime(formatTime(data.checkInTimes.end));
+
         // Set currentStep based on available data
         let step = 0;
-        if (data.start) step = 1;
-        if (data.break) step = 2;
-        if (data.resume) step = 3;
-        if (data.end) step = 4;
+        if (data.checkInTimes.start) step = 1;
+        if (data.checkInTimes.break) step = 2;
+        if (data.checkInTimes.resume) step = 3;
+        if (data.checkInTimes.end) step = 4;
         setCurrentStep(step);
       }
     })();
