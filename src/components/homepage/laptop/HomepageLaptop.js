@@ -216,17 +216,18 @@ const HomepageLaptop = () => {
 
   return (
     <div className="min-h-screen w-screen bg-white flex flex-col items-center p-0">
-      {/* Header */}
       <Header />
-      <div className="w-full px-16 py-12">
-        <div className="grid grid-cols-3 gap-6">
-          {/* Shift Middle */}
-          <div className="text-center my-auto">
+      <div className="w-full px-4 md:px-16 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="text-center md:text-auto mt-16">
             <h2 className="text-3xl font-bold mb-4">Shift Middle</h2>
             <button
               onClick={handleButtonClick}
-              className="p-4 text-white text-xl w-8/12 mb-4"
-              style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
+              className={`p-4 text-white text-xl w-3/5 ${
+                currentStep > 3
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-950"
+              } rounded-xl`}
               disabled={currentStep > 3}
             >
               {getButtonText()}
@@ -244,20 +245,18 @@ const HomepageLaptop = () => {
                 </div>
               </div>
             )}
-
             <button
               onClick={popupLogActivity}
-              className="p-4 text-white w-8/12 mb-4"
-              style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
+              className="p-4 text-white w-3/5 mt-4 bg-blue-950 rounded-xl"
             >
               <div className="flex items-center justify-center">
-                <RiStickyNoteAddFill className="size-8 mr-3" />
+                <RiStickyNoteAddFill className="mr-3" />
                 Log Activity
               </div>
             </button>
             {isLogPopupVisible && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white p-2 rounded-lg">
+                <div className="bg-white p-5 rounded-lg">
                   <textarea
                     value={logActivityText}
                     onChange={(e) => setLogActivityText(e.target.value)}
@@ -265,8 +264,8 @@ const HomepageLaptop = () => {
                     placeholder="Masukkan aktivitas log anda..."
                   />
                   <button
-                    onClick={saveActivityData}
-                    className="p-2 bg-blue-500 text-white rounded"
+                    onClick={handleLogConfirm}
+                    className="mt-3 p-2 bg-blue-500 text-white rounded"
                   >
                     Konfirmasi
                   </button>
@@ -275,147 +274,97 @@ const HomepageLaptop = () => {
             )}
             <button
               onClick={moveToHistoryLogActivity}
-              className="p-4 text-white w-8/12"
-              style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
+              className="p-4 text-white w-3/5 mt-4 bg-blue-950 rounded-xl"
             >
               <div className="flex items-center justify-center">
-                <LuFileClock className="size-8 mr-3" />
+                <LuFileClock className="mr-3" />
                 Histori Log Activity
               </div>
             </button>
           </div>
 
-          {/* Right Components */}
           <div className="col-span-2">
-            <div className="flex justify-end mb-4">
-              <button className="text-red-600">Lihat Barcode Saya</button>
+            <div className="flex justify-end items-start h-10">
+              <button className="text-red-700">Lihat Barcode Saya</button>
             </div>
-            <div className="grid grid-cols-4 gap-4 mb-4">
-              {/* Masuk Kerja Indicator */}
-              <div
-                className="text-left py-5 px-7 font-extrabold bg-gray-200 flex items-center justify-start w-full h-32"
-                style={{ borderRadius: "10px" }}
-              >
-                <div className="grid">
-                  <div className="grid grid-cols-3 items-center">
-                    <GoDotFill
-                      className={`${
-                        isIconRed && currentStep > 0
-                          ? "text-red-600"
-                          : "text-black"
-                      }`}
-                    />
-                    <p className="font-bold col-span-2">Masuk</p>
-                  </div>
-                  <div className="grid grid-cols-3 items-center">
-                    <div></div>
-                    <p className="col-span-2 font-medium">{currentMasukTime}</p>
-                  </div>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
+              <div className="text-left py-5 px-7 font-extrabold bg-gray-200 flex flex-col justify-center h-28 rounded-lg">
+                <div className="grid grid-cols-3 items-center mb-2">
+                  <GoDotFill
+                    className={`${
+                      isIconRed && currentStep > 0
+                        ? "text-red-700"
+                        : "text-black"
+                    }`}
+                  />
+                  <p className="font-bold col-span-2">Masuk</p>
                 </div>
+                <p className="font-medium">{currentMasukTime}</p>
+              </div>
+              <div className="text-left py-5 px-7 font-extrabold bg-gray-200 flex flex-col justify-center h-28 rounded-lg">
+                <div className="grid grid-cols-3 items-center mb-2">
+                  <GoDotFill
+                    className={`${
+                      isIconRed && currentStep > 1
+                        ? "text-red-700"
+                        : "text-black"
+                    }`}
+                  />
+                  <p className="font-bold col-span-2">Istirahat</p>
+                </div>
+                <p className="font-medium">{currentIstirahatTime}</p>
+              </div>
+              <div className="text-left py-5 px-7 font-extrabold bg-gray-200 flex flex-col justify-center h-28 rounded-lg">
+                <div className="grid grid-cols-3 items-center mb-2">
+                  <GoDotFill
+                    className={`${
+                      isIconRed && currentStep > 2
+                        ? "text-red-700"
+                        : "text-black"
+                    }`}
+                  />
+                  <p className="font-bold col-span-2">Kembali</p>
+                </div>
+                <p className="font-medium">{currentKembaliTime}</p>
               </div>
 
-              {/* Istirahat Kerja Indicator */}
-              <div
-                className="text-left py-5 px-7 font-extrabold bg-gray-200 flex items-center justify-start w-full w-72 h-32"
-                style={{ borderRadius: "10px" }}
-              >
-                <div className="grid">
-                  <div className="grid grid-cols-3 items-center">
-                    <GoDotFill
-                      className={`${
-                        isIconRed && currentStep > 1
-                          ? "text-red-600"
-                          : "text-black"
-                      }`}
-                    />
-                    <p className="font-bold col-span-2">Istirahat</p>
-                  </div>
-                  <div className="grid grid-cols-3 items-center">
-                    <div></div>
-                    <p className="col-span-2 font-medium">
-                      {currentIstirahatTime}
-                    </p>
-                  </div>
+              <div className="text-left py-5 px-7 font-extrabold bg-gray-200 flex flex-col justify-center h-28 rounded-lg">
+                <div className="grid grid-cols-3 items-center mb-2">
+                  <GoDotFill
+                    className={`${
+                      isIconRed && currentStep > 3
+                        ? "text-red-600"
+                        : "text-black"
+                    }`}
+                  />
+                  <p className="font-bold col-span-2">Pulang</p>
                 </div>
-              </div>
-
-              {/* Kembali Kerja Indicator */}
-              <div
-                className="text-left py-5 px-7 font-extrabold bg-gray-200 flex items-center justify-start w-full w-72 h-32"
-                style={{ borderRadius: "10px" }}
-              >
-                <div className="grid">
-                  <div className="grid grid-cols-3 items-center">
-                    <GoDotFill
-                      className={`${
-                        isIconRed && currentStep > 2
-                          ? "text-red-600"
-                          : "text-black"
-                      }`}
-                    />
-                    <p className="font-bold col-span-2">Kembali</p>
-                  </div>
-                  <div className="grid grid-cols-3 items-center">
-                    <div></div>
-                    <p className="col-span-2 font-medium">
-                      {currentKembaliTime}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Pulang Kerja Indicator */}
-              <div
-                className="text-left py-5 px-7 font-extrabold bg-gray-200 flex items-center justify-start w-full w-72 h-32"
-                style={{ borderRadius: "10px" }}
-              >
-                <div className="grid">
-                  <div className="grid grid-cols-3 items-center">
-                    <GoDotFill
-                      className={`${
-                        isIconRed && currentStep > 3
-                          ? "text-red-600"
-                          : "text-black"
-                      }`}
-                    />
-                    <p className="font-bold col-span-2">Pulang</p>
-                  </div>
-                  <div className="grid grid-cols-3 items-center">
-                    <div></div>
-                    <p className="col-span-2 font-medium">
-                      {currentPulangTime}
-                    </p>
-                  </div>
-                </div>
+                <p className="font-medium">{currentPulangTime}</p>
               </div>
             </div>
 
-            {/* Bottom Components */}
-            {/* Attention */}
-            <div className="grid grid-cols-1 gap-4 mb-4">
-              <div className="text-red-700 text-center">
+            <div className="grid items-center gap-0 mt-6">
+              <div className="text-red-500 text-center">
                 <strong>Attention!</strong>
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              {/* Pesan Atenttion */}
-              <div className="bg-white border border-red-500 p-16 rounded-md">
-                <div className="text-red-700 text-center">
-                  <p>• Kemarin anda absen pulang di kost jangan diulang!</p>
+              <div className="grid grid-cols md:grid-cols-2 gap-6 mt-6">
+                <div className="bg-white border border-red-500 p-4 rounded-lg flex items-center justify-center h-40">
+                  <div className="text-red-500 text-center">
+                    Kemarin anda absen pulang di kost jangan diulang!
+                  </div>
                 </div>
-              </div>
 
-              {/* Kurang Jam Kerja */}
-              <div className="bg-white border border-red-500 p-4 rounded-lg">
-                <div className="text-red-700 font-semibold text-center mb-2">
-                  Anda memiliki kekurangan jam kerja
-                </div>
-                <div className="text-red-700 text-2xl text-center mt-2">
-                  -14:01:53
-                </div>
-                <div className="text-center">
-                  <button className="text-blue-600 mt-2">Lihat Detail</button>
+                <div className="bg-white border border-red-500 p-4 rounded-lg flex flex-col items-center">
+                  <div className="text-red-500 font-semibold text-center mb-5">
+                    Anda memiliki kekurangan jam kerja
+                  </div>
+                  <div className="text-red-500 text-2xl text-center mt-2">
+                    -14:01:53
+                  </div>
+                  <div className="text-center">
+                    <button className="text-blue-600 mt-2">Lihat Detail</button>
+                  </div>
                 </div>
               </div>
             </div>
