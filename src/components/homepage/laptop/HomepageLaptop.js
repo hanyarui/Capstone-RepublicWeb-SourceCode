@@ -43,6 +43,32 @@ const saveAttendanceData = async (data) => {
   }
 };
 
+const saveActivityData = async (data) => {
+  try {
+    const token = Cookies.get("token"); // Get token from cookies
+
+    if (!token) {
+      console.error("No token found in cookies");
+      return;
+    }
+
+    // Mock API call to save data
+    await fetch(
+      "https://republikweb-cp-backend.vercel.app/attendance/activitylog",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Add token to headers
+        },
+        body: JSON.stringify(data),
+      }
+    );
+  } catch (error) {
+    console.error("Error saving attendance data:", error);
+  }
+};
+
 // Function to Get Attendance Data
 const getAttendanceData = async (karyawanId, date) => {
   try {
@@ -78,7 +104,6 @@ const HomepageLaptop = () => {
   const [currentPulangTime, setCurrentPulangTime] = useState("---");
   const [currentStep, setCurrentStep] = useState(0);
   const [isIconRed, setIsIconRed] = useState(false);
-  const [storedDate, setStoredDate] = useState(getCurrentDate());
 
   // Get karyawanId from token
   const token = Cookies.get("token");
@@ -107,32 +132,6 @@ const HomepageLaptop = () => {
       }
     })();
   }, []);
-
-  // Reset Progress at the end of the day
-  const checkAndResetProgress = async () => {
-    const currentDate = getCurrentDate();
-    if (currentDate !== storedDate) {
-      const attendanceData = {
-        date: storedDate,
-        start: currentMasukTime,
-        break: currentIstirahatTime,
-        resume: currentKembaliTime,
-        end: currentPulangTime,
-      };
-      await saveAttendanceData(attendanceData);
-      resetProgress();
-      setStoredDate(currentDate);
-    }
-  };
-
-  const resetProgress = () => {
-    setCurrentMasukTime("---");
-    setCurrentIstirahatTime("---");
-    setCurrentKembaliTime("---");
-    setCurrentPulangTime("---");
-    setCurrentStep(0);
-    setIsIconRed(false);
-  };
 
   // Button Click Handlers
   const handleButtonClick = () => {
@@ -251,7 +250,7 @@ const HomepageLaptop = () => {
                     placeholder="Masukkan aktivitas log anda..."
                   />
                   <button
-                    onClick={handleLogConfirm}
+                    onClick={saveActivityData}
                     className="p-2 bg-blue-500 text-white rounded"
                   >
                     Konfirmasi

@@ -4,16 +4,44 @@ import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import { IoIosSearch } from "react-icons/io";
 import { CiFilter } from "react-icons/ci";
+import Cookies from "js-cookie";
+
+const formatTime = (datetime) => {
+  const date = new Date(datetime);
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+};
 
 const Presensi = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    // Ganti URL dengan endpoint API Anda
+    const token = Cookies.get("token");
+
+    if (!token) {
+      console.error("No token found!");
+      return;
+    }
+
+    const today = new Date().toISOString().split("T")[0];
+
     axios
-      .get("https://api.example.com/activity-logs")
+      .get(`https://republikweb-cp-backend.vercel.app/report/date/${today}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((response) => {
-        setData(response.data);
+        const mappedData = response.data.map((item) => ({
+          nama: item.karyawanId,
+          masuk: formatTime(item.checkInTimes.start),
+          pulang: formatTime(item.checkInTimes.end),
+          mulai: formatTime(item.checkInTimes.break),
+          selesai: formatTime(item.checkInTimes.resume),
+          // total: item.total,
+          // kurang: item.kurang,
+          // aktivitas: item.aktivitas,
+          // aksi: item.aksi,
+          // status: item.status,
+        }));
+        setData(mappedData);
       })
       .catch((error) => {
         console.error("There was an error fetching the data!", error);
@@ -23,19 +51,17 @@ const Presensi = () => {
   return (
     <div className="flex h-screen bg-slate-100">
       <Sidebar />
-      <main className="flex-1 w-full ">
+      <main className="flex-1 w-full">
         <Navbar />
         <div className="px-10 pt-5">
           <div
             className="mb-4 py-10 px-10"
-            style={{
-              backgroundColor: "#040F4D",
-            }}
+            style={{ backgroundColor: "#040F4D" }}
           >
             <div className="grid grid-cols-2">
               <div className="text-white">
-                <h2 className="text-3xl  font-bold">Data Presensi</h2>
-                <p className="">Data per tanggal</p>
+                <h2 className="text-3xl font-bold">Data Presensi</h2>
+                <p>Data per tanggal</p>
               </div>
 
               <div className="relative text-white">

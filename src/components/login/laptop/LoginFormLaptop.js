@@ -68,7 +68,11 @@ const LoginFormLaptop = () => {
           <input
             type="text"
             id="username"
-            style={{ borderRadius: "5px", backgroundColor: "#040F4D" }}
+            style={{
+              borderRadius: "5px",
+              backgroundColor: "#FFFFFF",
+              color: "#000000",
+            }}
             placeholder="Masukkan Username"
             className="input p-2 h-12 border border-gray-300 mb-5 w-full"
             value={username}
@@ -81,7 +85,11 @@ const LoginFormLaptop = () => {
           <input
             type="password"
             id="password"
-            style={{ borderRadius: "5px", backgroundColor: "#040F4D" }}
+            style={{
+              borderRadius: "5px",
+              backgroundColor: "#FFFFFF",
+              color: "#000000",
+            }}
             placeholder="Masukkan Password"
             className="input p-2 h-12 border border-gray-300 mb-8 w-full"
             value={password}

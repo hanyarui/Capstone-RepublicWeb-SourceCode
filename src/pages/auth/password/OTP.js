@@ -29,7 +29,7 @@ const OTP = () => {
     alert("Mengirim ulang OTP...");
     try {
       const response = await axios.post(
-        "https://republikweb-cp-backend.vercel.app/v1/karyawan/request-password-reset"
+        "https://republikweb-cp-backend.vercel.app/karyawan/request-password-reset"
       );
       setMessage("OTP has been sent to your email.");
       window.location.href = "/OTP";
