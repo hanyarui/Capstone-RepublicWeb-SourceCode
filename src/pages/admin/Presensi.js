@@ -25,27 +25,47 @@ const Presensi = () => {
     const today = new Date().toISOString().split("T")[0];
 
     axios
-      .get(`https://republikweb-cp-backend.vercel.app/report/date/${today}`, {
+      .get(`https://republikweb-cp-backend.vercel.app/all-logs`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
         const mappedData = response.data.map((item) => ({
-          nama: item.karyawanId,
+          nama: item.fullname,
           masuk: formatTime(item.checkInTimes.start),
           pulang: formatTime(item.checkInTimes.end),
           mulai: formatTime(item.checkInTimes.break),
           selesai: formatTime(item.checkInTimes.resume),
-          // total: item.total,
-          // kurang: item.kurang,
-          // aktivitas: item.aktivitas,
-          // aksi: item.aksi,
-          // status: item.status,
+          total: item.total,
+          kurang: item.kurang,
+          aktivitas: item.aktivitas,
+          aksi: item.aksi,
+          status: item.status,
         }));
         setData(mappedData);
       })
       .catch((error) => {
         console.error("There was an error fetching the data!", error);
       });
+    // axios
+    //   .get(
+    //     `https://republikweb-cp-backend.vercel.app/worktimedate/${today}`,
+    //     {}
+    //   )
+    //   .then((response) => {
+    //     const mappedData = response.data.map((item) => ({
+    //       // nama: item.fullname,
+    //       // masuk: formatTime(item.checkInTimes.start),
+    //       // pulang: formatTime(item.checkInTimes.end),
+    //       // mulai: formatTime(item.checkInTimes.break),
+    //       // selesai: formatTime(item.checkInTimes.resume),
+    //       total: formatTime(ite),
+    //       kurang: item.kurang,
+    //       // aktivitas: item.aktivitas,
+    //       // aksi: item.aksi,
+    //       // status: item.status,
+    //     }));
+    //     setData(mappedData);
+    //   });
   }, []);
 
   return (

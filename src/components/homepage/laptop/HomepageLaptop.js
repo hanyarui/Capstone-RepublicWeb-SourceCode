@@ -7,15 +7,6 @@ import Header from "./HeaderLaptop";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 
-// Function to Get Current Date
-const getCurrentDate = () => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
 // Function to Format Time (Hours and Minutes)
 const formatTime = (timeString) => {
   if (!timeString) return "---"; // Handle case where timeString is undefined or null
@@ -30,6 +21,16 @@ const formatTime = (timeString) => {
   const formattedHours = String(hours).padStart(2, "0");
 
   return `${formattedHours}:${minutes}:${seconds} ${ampm}`;
+};
+
+// Function to Convert Minutes to HH:MM Format
+const convertMinutesToHHMM = (timeDebt) => {
+  const hours = Math.floor(timeDebt / 60);
+  const minutes = timeDebt % 60;
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+    2,
+    "0"
+  )}`;
 };
 
 // Mock API Call to Save Data
@@ -68,9 +69,9 @@ const saveActivityData = async (data) => {
       return;
     }
 
-    // Mock API call to save data
-    await fetch(
-      "https://republikweb-cp-backend.vercel.app/attendance/activitylog",
+    // API call to save data
+    const response = await fetch(
+      "https://republikweb-cp-backend.vercel.app/activitylog",
       {
         method: "POST",
         headers: {
@@ -80,8 +81,15 @@ const saveActivityData = async (data) => {
         body: JSON.stringify(data),
       }
     );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Error saving activity data");
+    }
+
+    console.log("Activity data saved successfully");
   } catch (error) {
-    console.error("Error saving attendance data:", error);
+    console.error("Error saving activity data:", error.message);
   }
 };
 
@@ -117,6 +125,37 @@ const getAttendanceData = async (karyawanId) => {
   }
 };
 
+const getDebtTimeData = async (karyawanId) => {
+  try {
+    const token = Cookies.get("token");
+    if (!token) {
+      console.error("No token found in cookies");
+      return null;
+    }
+
+    const response = await fetch(
+      `https://republikweb-cp-backend.vercel.app/debttime/total/${karyawanId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Add token to headers
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch debt time data");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching debt time data:", error);
+    return null;
+  }
+};
+
 const HomepageLaptop = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [isLogPopupVisible, setIsLogPopupVisible] = useState(false);
@@ -127,6 +166,7 @@ const HomepageLaptop = () => {
   const [currentPulangTime, setCurrentPulangTime] = useState("---");
   const [currentStep, setCurrentStep] = useState(0);
   const [isIconRed, setIsIconRed] = useState(false);
+  const [currentTimeDebt, setDebtTime] = useState("---");
 
   // Get karyawanId from token
   const token = Cookies.get("token");
@@ -157,12 +197,25 @@ const HomepageLaptop = () => {
     })();
   }, [currentStep]); // add currentStep as dependency to fetch latest data
 
+  // UseEffect to Fetch Debt Time Data
+  useEffect(() => {
+    (async () => {
+      const data = await getDebtTimeData(karyawanId);
+      if (data) {
+        const formattedDebtTime = convertMinutesToHHMM(data.timeDebt);
+        setDebtTime(formattedDebtTime);
+      }
+    })();
+  }, []);
+
+  console.log(currentTimeDebt);
+
   // Button Click Handlers
   const handleButtonClick = () => {
     setIsPopupVisible(true);
   };
 
-  const handleConfirm = async () => {
+  const handleConfirmCheckIn = async () => {
     setIsPopupVisible(false);
     setIsIconRed(true);
 
@@ -187,18 +240,25 @@ const HomepageLaptop = () => {
     setCurrentStep(currentStep + 1);
   };
 
+  const handleConfirmActivity = async () => {
+    if (!logActivityText.trim()) {
+      console.error("Activity log text is empty");
+      return;
+    }
+
+    const data = {
+      description: logActivityText,
+    };
+
+    await saveActivityData(data);
+  };
+
   // Navigate to History Log Activity Page
   let navigate = useNavigate();
 
   // Handle Log Activity Pop-up
   const popupLogActivity = () => {
     setIsLogPopupVisible(true);
-  };
-
-  const handleLogConfirm = () => {
-    console.log("Log Activity:", logActivityText);
-    setIsLogPopupVisible(false);
-    setLogActivityText(""); // Reset text field after confirmation
   };
 
   const moveToHistoryLogActivity = () => {
@@ -237,7 +297,7 @@ const HomepageLaptop = () => {
                 <div className="bg-white p-5 rounded-lg">
                   <p>Anda telah {getButtonText().toLowerCase()}</p>
                   <button
-                    onClick={handleConfirm}
+                    onClick={handleConfirmCheckIn}
                     className="mt-3 p-2 bg-blue-500 text-white rounded"
                   >
                     Konfirmasi
@@ -256,15 +316,18 @@ const HomepageLaptop = () => {
             </button>
             {isLogPopupVisible && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white p-5 rounded-lg">
-                  <textarea
+                <div className="w-1/3 h-1/2 bg-white p-3 rounded-2xl">
+                  <div className="mb-3 text-start font-bold text-lg">
+                    Log Activity
+                  </div>
+                  <input
                     value={logActivityText}
                     onChange={(e) => setLogActivityText(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded mb-3"
+                    className="w-full h-2/3 p-2 border border-gray-300 rounded-lg mb-3"
                     placeholder="Masukkan aktivitas log anda..."
                   />
                   <button
-                    onClick={handleLogConfirm}
+                    onClick={handleConfirmActivity}
                     className="mt-3 p-2 bg-blue-500 text-white rounded"
                   >
                     Konfirmasi
@@ -360,7 +423,7 @@ const HomepageLaptop = () => {
                     Anda memiliki kekurangan jam kerja
                   </div>
                   <div className="text-red-500 text-2xl text-center mt-2">
-                    -14:01:53
+                    {currentTimeDebt}
                   </div>
                   <div className="text-center">
                     <button className="text-blue-600 mt-2">Lihat Detail</button>
