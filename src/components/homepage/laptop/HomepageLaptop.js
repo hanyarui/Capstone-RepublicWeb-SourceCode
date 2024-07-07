@@ -125,6 +125,7 @@ const getAttendanceData = async (karyawanId) => {
   }
 };
 
+// API Call to Get Debt Time Data
 const getDebtTimeData = async (karyawanId) => {
   try {
     const token = Cookies.get("token");
@@ -139,7 +140,7 @@ const getDebtTimeData = async (karyawanId) => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Add token to headers
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -160,13 +161,17 @@ const HomepageLaptop = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [isLogPopupVisible, setIsLogPopupVisible] = useState(false);
   const [logActivityText, setLogActivityText] = useState("");
+
   const [currentMasukTime, setCurrentMasukTime] = useState("---");
   const [currentIstirahatTime, setCurrentIstirahatTime] = useState("---");
   const [currentKembaliTime, setCurrentKembaliTime] = useState("---");
   const [currentPulangTime, setCurrentPulangTime] = useState("---");
+
   const [currentStep, setCurrentStep] = useState(0);
   const [isIconRed, setIsIconRed] = useState(false);
-  const [currentTimeDebt, setDebtTime] = useState("---");
+
+  const [totalDebtTime, setTotalDebtTime] = useState(0);
+  const [formattedTime, setFormattedTime] = useState("00:00");
 
   // Get karyawanId from token
   const token = Cookies.get("token");
@@ -175,6 +180,26 @@ const HomepageLaptop = () => {
     const decodedToken = jwtDecode(token);
     karyawanId = decodedToken.karyawanId;
   }
+
+  useEffect(() => {
+    const fetchTotalDebtTime = async () => {
+      const data = await getDebtTimeData(karyawanId);
+      if (data) {
+        setTotalDebtTime(data.totalDebtTime);
+
+        // Convert total debt time from minutes to HH:MM format
+        const hours = Math.floor(data.totalDebtTime / 60);
+        const minutes = data.totalDebtTime % 60;
+        setFormattedTime(
+          `${hours.toString().padStart(2, "0")}:${minutes
+            .toString()
+            .padStart(2, "0")}`
+        );
+      }
+    };
+
+    fetchTotalDebtTime();
+  }, [karyawanId]);
 
   // UseEffect to Fetch Attendance Data
   useEffect(() => {
@@ -196,19 +221,6 @@ const HomepageLaptop = () => {
       }
     })();
   }, [currentStep]); // add currentStep as dependency to fetch latest data
-
-  // UseEffect to Fetch Debt Time Data
-  useEffect(() => {
-    (async () => {
-      const data = await getDebtTimeData(karyawanId);
-      if (data) {
-        const formattedDebtTime = convertMinutesToHHMM(data.timeDebt);
-        setDebtTime(formattedDebtTime);
-      }
-    })();
-  }, []);
-
-  console.log(currentTimeDebt);
 
   // Button Click Handlers
   const handleButtonClick = () => {
@@ -251,6 +263,8 @@ const HomepageLaptop = () => {
     };
 
     await saveActivityData(data);
+
+    window.location.reload();
   };
 
   // Navigate to History Log Activity Page
@@ -423,7 +437,7 @@ const HomepageLaptop = () => {
                     Anda memiliki kekurangan jam kerja
                   </div>
                   <div className="text-red-500 text-2xl text-center mt-2">
-                    {currentTimeDebt}
+                    -{formattedTime}
                   </div>
                   <div className="text-center">
                     <button className="text-blue-600 mt-2">Lihat Detail</button>

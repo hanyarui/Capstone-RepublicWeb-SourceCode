@@ -44,7 +44,7 @@ const Sidebar = () => {
       </div>
       <div className="flex items-center mt-4">
         <Link
-          to="/logout"
+          to="/"
           className="flex items-center text-gray-800 font-bold hover:bg-gray-200 rounded px-4 py-2"
         >
           <span className="mr-2">Logout</span>

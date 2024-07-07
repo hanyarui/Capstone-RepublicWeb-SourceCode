@@ -33,7 +33,7 @@ const Shift = () => {
           >
             <div className="grid grid-cols-2">
               <div className="text-white">
-                <h2 className="text-3xl  font-bold">Data Presensi</h2>
+                <h2 className="text-3xl  font-bold">Data Laporan</h2>
                 <p className="">Data per tanggal</p>
               </div>
 

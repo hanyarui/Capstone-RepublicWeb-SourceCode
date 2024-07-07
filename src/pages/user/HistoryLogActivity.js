@@ -3,16 +3,56 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Header from "../../components/homepage/laptop/HeaderLaptop";
 import { IoIosArrowBack } from "react-icons/io";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode"; // Library untuk mendekode token JWT
 
 const HistoryLogActivity = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    // Ganti URL dengan endpoint API Anda
+    // Get karyawanId from token
+    const token = Cookies.get("token");
+
+    let karyawanId = "";
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      karyawanId = decodedToken.karyawanId;
+    }
+
+    // Ganti URL dengan endpoint API yang sesuai dan gunakan IdKaryawan
     axios
-      .get("https://api.example.com/activity-logs")
+      .get(
+        `https://republikweb-cp-backend.vercel.app/activitylog/${karyawanId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Sertakan token dalam header Authorization
+          },
+        }
+      )
       .then((response) => {
-        setData(response.data);
+        // Transformasi data menjadi format yang sesuai
+        const transformedData = response.data.map((item) => {
+          // Konversi timestamp ke format tanggal yang dapat dibaca
+          const date = new Date(
+            item.date._seconds * 1000 + item.date._nanoseconds / 1000000
+          );
+          const formattedDate = date.toLocaleDateString("id-ID", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            // hour: "2-digit",
+            // minute: "2-digit",
+            // second: "2-digit",
+          });
+
+          return {
+            ...item,
+            tanggal: formattedDate,
+            activity: item.description,
+          };
+        });
+
+        setData(transformedData);
       })
       .catch((error) => {
         console.error("There was an error fetching the data!", error);
@@ -32,7 +72,7 @@ const HistoryLogActivity = () => {
         </div>
       </div>
 
-      <table class="table-auto w-11/12">
+      <table className="table-auto w-11/12">
         <thead>
           <tr className="border bg-gray-200 text-left">
             <th>No</th>
