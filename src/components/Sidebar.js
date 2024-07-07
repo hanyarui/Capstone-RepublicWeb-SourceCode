@@ -42,8 +42,14 @@ const Sidebar = () => {
           </Link>
         </nav>
       </div>
-      <div className="justify-center items-center">
-        <Logout />
+      <div className="flex items-center mt-4">
+        <Link
+          to="/logout"
+          className="flex items-center text-gray-800 font-bold hover:bg-gray-200 rounded px-4 py-2"
+        >
+          <span className="mr-2">Logout</span>
+          <Logout />
+        </Link>
       </div>
     </aside>
   );
