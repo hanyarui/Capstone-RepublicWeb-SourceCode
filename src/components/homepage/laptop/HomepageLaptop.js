@@ -6,6 +6,7 @@ import { LuFileClock } from "react-icons/lu";
 import Header from "./HeaderLaptop";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
+import ClipLoader from "react-spinners/ClipLoader";
 
 // Function to Format Time (Hours and Minutes)
 const formatTime = (timeString) => {
@@ -148,6 +149,7 @@ const getDebtTimeData = async (karyawanId) => {
 };
 
 const HomepageLaptop = () => {
+  const [loading, setLoading] = useState(true);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [isLogPopupVisible, setIsLogPopupVisible] = useState(false);
   const [logActivityText, setLogActivityText] = useState("");
@@ -195,6 +197,7 @@ const HomepageLaptop = () => {
     };
 
     fetchTotalDebtTime();
+    setLoading(false);
   }, [karyawanId]);
 
   // UseEffect to Fetch Attendance Data
@@ -216,6 +219,7 @@ const HomepageLaptop = () => {
         setCurrentStep(step);
       }
     })();
+    setLoading(false);
   }, [currentStep]); // add currentStep as dependency to fetch latest data
 
   // Button Click Handlers
@@ -237,6 +241,7 @@ const HomepageLaptop = () => {
       type = "resume";
     } else if (currentStep === 3) {
       type = "end";
+      window.location.reload();
     }
 
     const attendanceData = {

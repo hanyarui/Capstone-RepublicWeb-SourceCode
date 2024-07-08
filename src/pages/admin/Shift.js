@@ -4,10 +4,11 @@ import Cookies from "js-cookie";
 import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import { IoIosSearch } from "react-icons/io";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const Shift = () => {
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const token = Cookies.get("token");
 
@@ -36,7 +37,7 @@ const Shift = () => {
           : "Server Error";
       setError(errorMessage);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -168,6 +169,21 @@ const Shift = () => {
     setData(newData);
   };
 
+  if (loading) {
+    return (
+      <div className="bg-slate-100 h-screen flex items-center justify-center">
+        <div className="flex items-center justify-center">
+          <ClipLoader
+            loading={loading}
+            size={150}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen bg-slate-100">
       <Sidebar />
@@ -189,77 +205,71 @@ const Shift = () => {
             <IoIosSearch className="absolute left-3 top-3 text-gray-400 w-6 h-6" />
           </div>
           <div className="bg-white rounded-lg shadow flex-1 overflow-y-scroll">
-            {isLoading ? (
-              <div>Loading...</div>
-            ) : (
-              <div>
-                {error && <div className="text-red-500">Error: {error}</div>}
-                <table className="table-auto w-full bg-white border">
-                  <thead className="sticky top-0 bg-gray-50">
-                    <tr>
-                      <th className="py-2 border-b">No</th>
-                      <th className="py-2 border-b">Nama</th>
-                      <th className="py-2 border-b">Shift</th>
-                      <th className="py-2 border-b">Jam Masuk</th>
-                      <th className="py-2 border-b">Jam Pulang</th>
+            <div>
+              {error && <div className="text-red-500">Error: {error}</div>}
+              <table className="table-auto w-full bg-white border">
+                <thead className="sticky top-0 bg-gray-50">
+                  <tr>
+                    <th className="py-2 border-b">No</th>
+                    <th className="py-2 border-b">Nama</th>
+                    <th className="py-2 border-b">Shift</th>
+                    <th className="py-2 border-b">Jam Masuk</th>
+                    <th className="py-2 border-b">Jam Pulang</th>
+                  </tr>
+                </thead>
+                <tbody className="overflow-y-auto">
+                  {data.map((item, index) => (
+                    <tr key={index}>
+                      <td className="py-2 border-b text-center">{index + 1}</td>
+                      <td className="py-2 border-b text-center">
+                        {item.fullname}
+                      </td>
+                      <td className="py-2 border-b text-center">
+                        <select
+                          className="border border-gray-300 rounded px-2 py-1"
+                          value={item.shift}
+                          onChange={(e) => {
+                            handleInputChange(index, "shift", e.target.value);
+                            changeTime();
+                          }}
+                        >
+                          <option value="pagi">Pagi</option>
+                          <option value="siang">Siang</option>
+                        </select>
+                      </td>
+                      <td className="py-2 border-b text-center">
+                        <input
+                          type="time"
+                          className="border border-gray-300 rounded px-2 py-1"
+                          value={item.jam_masuk}
+                          onChange={(e) =>
+                            handleInputChange(
+                              index,
+                              "jam_masuk",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </td>
+                      <td className="py-2 border-b text-center">
+                        <input
+                          type="time"
+                          className="border border-gray-300 rounded px-2 py-1"
+                          value={item.jam_pulang}
+                          onChange={(e) =>
+                            handleInputChange(
+                              index,
+                              "jam_pulang",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className="overflow-y-auto">
-                    {data.map((item, index) => (
-                      <tr key={index}>
-                        <td className="py-2 border-b text-center">
-                          {index + 1}
-                        </td>
-                        <td className="py-2 border-b text-center">
-                          {item.fullname}
-                        </td>
-                        <td className="py-2 border-b text-center">
-                          <select
-                            className="border border-gray-300 rounded px-2 py-1"
-                            value={item.shift}
-                            onChange={(e) => {
-                              handleInputChange(index, "shift", e.target.value);
-                              changeTime();
-                            }}
-                          >
-                            <option value="pagi">Pagi</option>
-                            <option value="siang">Siang</option>
-                          </select>
-                        </td>
-                        <td className="py-2 border-b text-center">
-                          <input
-                            type="time"
-                            className="border border-gray-300 rounded px-2 py-1"
-                            value={item.jam_masuk}
-                            onChange={(e) =>
-                              handleInputChange(
-                                index,
-                                "jam_masuk",
-                                e.target.value
-                              )
-                            }
-                          />
-                        </td>
-                        <td className="py-2 border-b text-center">
-                          <input
-                            type="time"
-                            className="border border-gray-300 rounded px-2 py-1"
-                            value={item.jam_pulang}
-                            onChange={(e) =>
-                              handleInputChange(
-                                index,
-                                "jam_pulang",
-                                e.target.value
-                              )
-                            }
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
           <div className="flex justify-center items-center my-5">
             <button

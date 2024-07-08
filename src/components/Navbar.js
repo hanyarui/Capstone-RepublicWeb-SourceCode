@@ -24,12 +24,12 @@ const Navbar = () => {
   }, []); // Kosong berarti hanya akan dijalankan sekali setelah render pertama
 
   return (
-    <header className="flex justify-end items-center p-4">
+    <header className=" flex justify-end items-center p-4">
       <HiOutlineBell className="text-3xl mr-4" />
       <Link to="/Profile" className="flex items-center">
         <div className="flex flex-col text-right mr-4">
           <p className="font-bold">{employeeName ? employeeName : "Nama"}</p>
-          <p className="text-sm text-gray-600">Admin</p>
+          <p className="text-sm text-gray-600">Administrator</p>
         </div>
         <img
           className="w-14 h-14 rounded-full"

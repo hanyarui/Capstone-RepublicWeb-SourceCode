@@ -6,10 +6,13 @@ import Navbar from "../../components/Navbar";
 import { FiCheckCircle } from "react-icons/fi";
 import { BiLogIn, BiLogOut } from "react-icons/bi";
 import { MdOutlineDoNotDisturbOn } from "react-icons/md";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const Dashboard = () => {
+  const [loading, setLoading] = useState(true);
   const [activities, setActivities] = useState([]);
   const [visibleActivities, setVisibleActivities] = useState([]);
+  const [attendanceStats, setAttendanceStats] = useState(null);
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -29,6 +32,7 @@ const Dashboard = () => {
             },
           }
         );
+        setLoading(false);
 
         if (!response.ok) {
           throw new Error("Error fetching data");
@@ -49,7 +53,37 @@ const Dashboard = () => {
       }
     };
 
+    const fetchAttendanceStats = async () => {
+      try {
+        // Ambil token dari cookies
+        const token = Cookies.get("token");
+
+        if (!token) {
+          throw new Error("No authorization token found");
+        }
+
+        const response = await fetch(
+          "https://republikweb-cp-backend.vercel.app/daily-attendance",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Sertakan token dalam header Authorization
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Error fetching attendance stats");
+        }
+
+        const data = await response.json();
+        setAttendanceStats(data);
+      } catch (error) {
+        console.error("Failed to fetch attendance stats:", error);
+      }
+    };
+
     fetchActivities();
+    fetchAttendanceStats();
   }, []);
 
   useEffect(() => {
@@ -68,6 +102,21 @@ const Dashboard = () => {
     return () => window.removeEventListener("resize", updateVisibleActivities);
   }, [activities]);
 
+  if (loading) {
+    return (
+      <div className="bg-slate-100 h-screen flex items-center justify-center">
+        <div className="flex items-center justify-center">
+          <ClipLoader
+            loading={loading}
+            size={150}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen bg-slate-100">
       <Sidebar />
@@ -78,28 +127,36 @@ const Dashboard = () => {
             <section className="grid grid-cols-2 auto-cols-min size-4/5 gap-6 p-6">
               <div className="relative bg-blue-600 h-60 text-white p-4 rounded-xl">
                 <h3 className="text-xl font-semibold">Jumlah Karyawan</h3>
-                <p className="text-4xl mt-5 font-bold">%%</p>
+                <p className="text-4xl mt-5 font-bold">
+                  {attendanceStats ? attendanceStats.totalEmployees : "..."}
+                </p>
                 <div className="absolute bottom-2 right-2">
                   <FiCheckCircle size={110} />
                 </div>
               </div>
               <div className="relative bg-green-600 h-60 text-white p-4 rounded-xl">
                 <h3 className="text-xl font-semibold">Masuk</h3>
-                <p className="text-4xl mt-5 font-bold">%%</p>
+                <p className="text-4xl mt-5 font-bold">
+                  {attendanceStats ? attendanceStats.hadirCount : "..."}
+                </p>
                 <div className="absolute bottom-2 right-2">
                   <BiLogIn size={110} />
                 </div>
               </div>
               <div className="relative bg-red-600 h-60 text-white p-4 rounded-xl">
                 <h3 className="text-xl font-semibold">Tidak Masuk</h3>
-                <p className="text-4xl mt-5 font-bold">%%</p>
+                <p className="text-4xl mt-5 font-bold">
+                  {attendanceStats ? attendanceStats.tidakHadirCount : "..."}
+                </p>
                 <div className="absolute bottom-2 right-2">
                   <BiLogOut size={110} />
                 </div>
               </div>
               <div className="relative bg-orange-600 h-60 text-white p-4 rounded-xl">
                 <h3 className="text-xl font-semibold">Izin</h3>
-                <p className="text-4xl mt-5 font-bold">%%</p>
+                <p className="text-4xl mt-5 font-bold">
+                  {attendanceStats ? attendanceStats.izinCount : "..."}
+                </p>
                 <div className="absolute bottom-2 right-2">
                   <MdOutlineDoNotDisturbOn size={110} />
                 </div>
@@ -107,7 +164,7 @@ const Dashboard = () => {
             </section>
             <div></div>
           </div>
-          <section className="bg-gray-100 p-4 rounded mb-5 max-h-screen overflow-y-auto">
+          <section className="bg-gray-100 shadow-xl p-4 rounded mb-5 h-max overflow-y-auto">
             <h2 className="text-lg font-bold mb-4">Aktivitas Terbaru</h2>
             <ul className="space-y-4">
               {visibleActivities.map((activity, index) => (
@@ -122,11 +179,6 @@ const Dashboard = () => {
                 </li>
               ))}
             </ul>
-            {activities && activities.length > visibleActivities.length && (
-              <a href="#" className="block mt-4 text-blue-500">
-                Lihat lebih lanjut...
-              </a>
-            )}
           </section>
         </div>
       </main>

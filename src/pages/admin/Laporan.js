@@ -3,21 +3,49 @@ import axios from "axios";
 import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import { IoIosSearch } from "react-icons/io";
+import Cookies from "js-cookie";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const Shift = () => {
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    // Ganti URL dengan endpoint API Anda
-    axios
-      .get("https://api.example.com/activity-logs")
-      .then((response) => {
+    const fetchData = async () => {
+      const token = Cookies.get("token"); // Mengambil token dari cookies
+      try {
+        const response = await axios.get(
+          "https://republikweb-cp-backend.vercel.app/kehadiran/karyawan/all",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Menyertakan token dalam header
+            },
+          }
+        );
         setData(response.data);
-      })
-      .catch((error) => {
+        setLoading(false);
+      } catch (error) {
         console.error("There was an error fetching the data!", error);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="bg-slate-100 h-screen flex items-center justify-center">
+        <div className="flex items-center justify-center">
+          <ClipLoader
+            loading={loading}
+            size={150}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-slate-100">
@@ -74,32 +102,37 @@ const Shift = () => {
             </form>
           </div>
           <div className="overflow-x-auto mt-10">
-            <table className="table-auto w-full border-collapse">
-              <thead className="bg-gray-200">
+            <table className="table-auto w-full border-collapse bg-white">
+              <thead className="bg-gray-50">
                 <tr>
-                  <th className="border px-4 py-2 font-semibold">No</th>
-                  <th className="border px-4 py-2 font-semibold">Nama</th>
-                  <th className="border px-4 py-2 font-semibold">NIP</th>
-                  <th className="border px-4 py-2 font-semibold">
-                    Total Kehadiran
+                  <th className="py-2 border-b">No</th>
+                  <th className="py-2 border-b">Nama</th>
+                  <th className="py-2 border-b">NIP</th>
+                  <th className="py-2 border-b">Total Kehadiran</th>
+                  <th className="px-4 py-2 font-semibold border-b">
+                    Total Izin
                   </th>
-                  <th className="border px-4 py-2 font-semibold">Total Izin</th>
-                  <th className="border px-4 py-2 font-semibold">
+                  <th className="px-4 py-2 font-semibold border-b">
                     Total Ketidakhadiran
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {data.map((item, index) => (
-                  <tr key={index} className="border text-base">
-                    <td>{index + 1}</td>
-                    <td>{item.nama}</td>
-                    <td>{item.nip}</td>
-                    <td>{item.hadir}</td>
-                    <td>{item.izin}</td>
-                    <td>{item.tidak}</td>
-                    <td>
-                      <button className="text-blue-500">Action</button>
+                  <tr key={index} className="text-base">
+                    <td className="text-center py-2 border-b">{index + 1}</td>
+                    <td className="text-center py-2 border-b">
+                      {item.fullname}
+                    </td>
+                    <td className="text-center py-2 border-b">{item.NIP}</td>
+                    <td className="text-center py-2 border-b">
+                      {item.totalHadir}
+                    </td>
+                    <td className="text-center py-2 border-b">
+                      {item.totalIzin}
+                    </td>
+                    <td className="text-center py-2 border-b">
+                      {item.totalTidakHadir}
                     </td>
                   </tr>
                 ))}

@@ -3,42 +3,104 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import Sidebar from "../../components/Sidebar";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const Profile = () => {
+  const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState(null);
+  const [formData, setFormData] = useState({
+    fullname: "",
+    email: "",
+    phoneNumber: "",
+    address: "",
+  });
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        // Ambil token dari cookies
         const token = Cookies.get("token");
-
         if (!token) {
           console.error("Token tidak ditemukan di cookies");
           return;
         }
 
-        // Decode token untuk mendapatkan karyawanId
         const decodedToken = jwtDecode(token);
         const karyawanId = decodedToken.karyawanId;
 
-        // Ambil data profil dari API
         const response = await axios.get(
-          `https://republikweb-cp-backend.vercel.app/karyawan/${karyawanId}`
+          `https://republikweb-cp-backend.vercel.app/karyawan/${karyawanId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setProfileData(response.data);
+        setFormData({
+          fullname: response.data.fullname || "",
+          email: response.data.email || "",
+          phoneNumber: response.data.phoneNumber || "",
+          address: response.data.address || "",
+        });
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching profile data:", error);
+        setLoading(false);
       }
     };
 
     fetchProfileData();
   }, []);
 
-  if (!profileData) {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const token = Cookies.get("token");
+      if (!token) {
+        console.error("Token tidak ditemukan di cookies");
+        return;
+      }
+
+      const decodedToken = jwtDecode(token);
+      const karyawanId = decodedToken.karyawanId;
+
+      await axios.put(
+        `https://republikweb-cp-backend.vercel.app/karyawan/${karyawanId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert("Profile updated successfully!");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Failed to update profile. Please try again.");
+    }
+  };
+
+  if (loading) {
     return (
-      <div className="w-full h-full items-center text-center">
-        <h1>Loading</h1>
+      <div className="bg-slate-100 h-screen flex items-center justify-center">
+        <div className="flex items-center justify-center">
+          <ClipLoader
+            loading={loading}
+            size={150}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
+        </div>
       </div>
     );
   }
@@ -46,10 +108,9 @@ const Profile = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar />
-      {/* Main Content */}
       <div className="flex flex-col flex-grow justify-center items-center p-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 items-center justify-center w-full max-w-6xl h-full">
-          <div className="p-6 w-full max-w-sm mx-auto h-max md:col-span-1">
+          <div className="bg-white py-24 px-6 w-full rounded-lg shadow-lg max-w-sm mx-auto h-max md:col-span-1">
             <div className="flex flex-col items-center space-y-4 h-full">
               <img
                 src={profileData.profile_photo_url}
@@ -62,8 +123,8 @@ const Profile = () => {
               </div>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full h-max md:col-span-2">
-            <div className="flex items-center space-x-6 mb-6">
+          <div className="bg-white py-8 px-6 rounded-lg shadow-lg w-full h-max md:col-span-2">
+            <div className="flex items-center space-x-6 mb-4">
               <div className="flex flex-col items-start">
                 <label className="text-sm font-bold mb-2 text-gray-700">
                   Profile Picture
@@ -81,7 +142,7 @@ const Profile = () => {
             <label className="text-sm font-bold mb-2 text-gray-700">
               Personal Details
             </label>
-            <form>
+            <form onSubmit={handleFormSubmit}>
               <div className="grid grid-cols-2 gap-6 mb-6">
                 <div>
                   <label className="block mb-2 text-sm font-semibold text-gray-700">
@@ -89,8 +150,10 @@ const Profile = () => {
                   </label>
                   <input
                     type="text"
+                    name="fullname"
+                    value={formData.fullname}
+                    onChange={handleInputChange}
                     className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
-                    placeholder={profileData.fullname}
                   />
                 </div>
                 <div>
@@ -99,8 +162,10 @@ const Profile = () => {
                   </label>
                   <input
                     type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
                     className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
-                    placeholder={profileData.email}
                   />
                 </div>
               </div>
@@ -111,8 +176,10 @@ const Profile = () => {
                   </label>
                   <input
                     type="text"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleInputChange}
                     className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
-                    placeholder={profileData.phoneNumber}
                   />
                 </div>
                 <div>
@@ -121,16 +188,24 @@ const Profile = () => {
                   </label>
                   <input
                     type="text"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
                     className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
-                    placeholder={profileData.address}
                   />
                 </div>
               </div>
               <div className="flex justify-end mt-auto">
-                <button className="px-4 py-2 font-bold text-white bg-gray-400 rounded hover:bg-gray-500 focus:outline-none focus:shadow-outline">
+                <button
+                  type="button"
+                  className="px-4 py-2 font-bold text-white bg-gray-400 rounded hover:bg-gray-500 focus:outline-none focus:shadow-outline"
+                >
                   Cancel
                 </button>
-                <button className="ml-3 px-4 py-2 font-bold text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline">
+                <button
+                  type="submit"
+                  className="ml-3 px-4 py-2 font-bold text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
+                >
                   Update
                 </button>
               </div>
