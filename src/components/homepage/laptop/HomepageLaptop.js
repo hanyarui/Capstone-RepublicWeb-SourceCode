@@ -271,7 +271,7 @@ const HomepageLaptop = () => {
   // Move to History Log Activity
   const navigate = useNavigate();
   const moveToHistoryLogActivity = () => {
-    navigate("/history-log-activity");
+    navigate("/HistoryLogActivity");
   };
 
   // Function to get button text based on current step
@@ -460,9 +460,6 @@ const HomepageLaptop = () => {
                   </div>
                   <div className="text-red-500 text-2xl text-center mt-2">
                     -{formattedTime}
-                  </div>
-                  <div className="text-center">
-                    <button className="text-blue-600 mt-2">Lihat Detail</button>
                   </div>
                 </div>
               </div>

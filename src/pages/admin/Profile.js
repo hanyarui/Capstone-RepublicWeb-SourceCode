@@ -36,7 +36,11 @@ const Profile = () => {
   }, []);
 
   if (!profileData) {
-    return <div className="items-center justify-center">Loading</div>;
+    return (
+      <div className="w-full h-full items-center text-center">
+        <h1>Loading</h1>
+      </div>
+    );
   }
 
   return (
@@ -44,8 +48,8 @@ const Profile = () => {
       <Sidebar />
       {/* Main Content */}
       <div className="flex flex-col flex-grow justify-center items-center p-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 justify-center w-full max-w-6xl h-full">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm mx-auto h-full md:col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 items-center justify-center w-full max-w-6xl h-full">
+          <div className="p-6 w-full max-w-sm mx-auto h-max md:col-span-1">
             <div className="flex flex-col items-center space-y-4 h-full">
               <img
                 src={profileData.profile_photo_url}
@@ -58,7 +62,7 @@ const Profile = () => {
               </div>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full h-full md:col-span-2">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full h-max md:col-span-2">
             <div className="flex items-center space-x-6 mb-6">
               <div className="flex flex-col items-start">
                 <label className="text-sm font-bold mb-2 text-gray-700">
@@ -86,7 +90,7 @@ const Profile = () => {
                   <input
                     type="text"
                     className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
-                    value={profileData.fullname}
+                    placeholder={profileData.fullname}
                   />
                 </div>
                 <div>
@@ -96,7 +100,7 @@ const Profile = () => {
                   <input
                     type="email"
                     className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
-                    value={profileData.email}
+                    placeholder={profileData.email}
                   />
                 </div>
               </div>
@@ -108,7 +112,7 @@ const Profile = () => {
                   <input
                     type="text"
                     className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
-                    value={profileData.phoneNumber}
+                    placeholder={profileData.phoneNumber}
                   />
                 </div>
                 <div>
@@ -118,22 +122,9 @@ const Profile = () => {
                   <input
                     type="text"
                     className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
-                    value={profileData.address}
+                    placeholder={profileData.address}
                   />
                 </div>
-              </div>
-              <div className="mb-6">
-                <h3 className="block mb-2 text-sm font-bold text-gray-700">
-                  Additional Info
-                </h3>
-                <label className="block mb-2 text-sm font-semibold text-gray-700">
-                  About
-                </label>
-                <textarea
-                  className="h-min w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
-                  rows="4"
-                  placeholder="Enter additional information"
-                ></textarea>
               </div>
               <div className="flex justify-end mt-auto">
                 <button className="px-4 py-2 font-bold text-white bg-gray-400 rounded hover:bg-gray-500 focus:outline-none focus:shadow-outline">

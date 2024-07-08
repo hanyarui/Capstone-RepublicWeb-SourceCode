@@ -61,13 +61,10 @@ const TambahKaryawan = () => {
       }
 
       const result = await response.json();
+
+      // Handle success response here
       alert("Data Karyawan Berhasil Ditambahkan");
       window.location.reload();
-      // Handle success response here
-      console.log("Success:", result);
-
-      // Handle success response here, e.g., show success message or redirect
-      alert("Karyawan berhasil ditambahkan!");
 
       // Clear form after successful submission (optional)
       setFormData({
