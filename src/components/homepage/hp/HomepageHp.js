@@ -4,115 +4,270 @@ import { GoDotFill } from "react-icons/go";
 import { RiStickyNoteAddFill } from "react-icons/ri";
 import { LuFileClock } from "react-icons/lu";
 import Header from "./HeaderHp";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
-// Function Get Current Time
-const getCurrentTime = () => {
-  const now = new Date();
-  const hours = String(now.getHours()).padStart(2, "0");
-  const minutes = String(now.getMinutes()).padStart(2, "0");
-  const seconds = String(now.getSeconds()).padStart(2, "0");
-  return `${hours}:${minutes}:${seconds}`;
-};
+// Function to Format Time (Hours and Minutes)
+const formatTime = (timeString) => {
+  if (!timeString) return "---"; // Handle case where timeString is undefined or null
+  const date = new Date(timeString);
+  let hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
 
-// Function to Get Current Date
-const getCurrentDate = () => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  const formattedHours = String(hours).padStart(2, "0");
+
+  return `${formattedHours}:${minutes}:${seconds} ${ampm}`;
 };
 
 // Mock API Call to Save Data
 const saveAttendanceData = async (data) => {
   try {
+    const token = Cookies.get("token"); // Get token from cookies
+
+    if (!token) {
+      console.error("No token found in cookies");
+      return;
+    }
+
     // Mock API call to save data
-    await fetch("/api/saveAttendance", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+    await fetch(
+      "https://republikweb-cp-backend.vercel.app/attendance/checkin",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Add token to headers
+        },
+        body: JSON.stringify(data),
+      }
+    );
   } catch (error) {
     console.error("Error saving attendance data:", error);
   }
 };
 
+const saveActivityData = async (data) => {
+  try {
+    const token = Cookies.get("token"); // Get token from cookies
+
+    if (!token) {
+      console.error("No token found in cookies");
+      return;
+    }
+
+    // API call to save data
+    const response = await fetch(
+      "https://republikweb-cp-backend.vercel.app/activitylog",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Add token to headers
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Error saving activity data");
+    }
+
+    console.log("Activity data saved successfully");
+  } catch (error) {
+    console.error("Error saving activity data:", error.message);
+  }
+};
+
+// Function to Get Attendance Data
+const getAttendanceData = async (karyawanId) => {
+  try {
+    const token = Cookies.get("token");
+    if (!token) {
+      console.error("No token found in cookies");
+      return null;
+    }
+
+    const response = await fetch(
+      `https://republikweb-cp-backend.vercel.app/attendance-today/${karyawanId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Add token to headers
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch attendance data");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching attendance data:", error);
+    return null;
+  }
+};
+
+// API Call to Get Debt Time Data
+const getDebtTimeData = async (karyawanId) => {
+  try {
+    const token = Cookies.get("token");
+    if (!token) {
+      console.error("No token found in cookies");
+      return null;
+    }
+
+    const response = await fetch(
+      `https://republikweb-cp-backend.vercel.app/debttime/total/${karyawanId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch debt time data");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching debt time data:", error);
+    return null;
+  }
+};
+
 const Homepage = () => {
-  const [time, setTime] = useState(getCurrentTime());
   const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [isLogPopupVisible, setIsLogPopupVisible] = useState(false);
+  const [logActivityText, setLogActivityText] = useState("");
+
   const [currentMasukTime, setCurrentMasukTime] = useState("---");
   const [currentIstirahatTime, setCurrentIstirahatTime] = useState("---");
   const [currentKembaliTime, setCurrentKembaliTime] = useState("---");
   const [currentPulangTime, setCurrentPulangTime] = useState("---");
+
   const [currentStep, setCurrentStep] = useState(0);
   const [isIconRed, setIsIconRed] = useState(false);
-  const [storedDate, setStoredDate] = useState(getCurrentDate());
 
-  // Time Interval
+  const [totalDebtTime, setTotalDebtTime] = useState(0);
+  const [formattedTime, setFormattedTime] = useState("00:00");
+
+  // Get karyawanId from token
+  const token = Cookies.get("token");
+  let karyawanId = "";
+  if (token) {
+    const decodedToken = jwtDecode(token);
+    karyawanId = decodedToken.karyawanId;
+  }
+
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      setTime(getCurrentTime());
-      checkAndResetProgress();
-    }, 1000);
+    const fetchTotalDebtTime = async () => {
+      const data = await getDebtTimeData(karyawanId);
+      if (data) {
+        setTotalDebtTime(data.totalDebtTime);
 
-    return () => clearInterval(intervalId);
-  }, []);
+        // Convert total debt time from minutes to HH:MM:SS format
+        const totalSeconds = data.totalDebtTime * 60; // convert minutes to seconds
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
 
-  // Check and Reset Progress
-  const checkAndResetProgress = async () => {
-    const currentDate = getCurrentDate();
-    if (currentDate !== storedDate) {
-      const attendanceData = {
-        date: storedDate,
-        masuk: currentMasukTime,
-        istirahat: currentIstirahatTime,
-        kembali: currentKembaliTime,
-        pulang: currentPulangTime,
-      };
-      await saveAttendanceData(attendanceData);
-      resetProgress();
-      setStoredDate(currentDate);
-    }
-  };
+        setFormattedTime(
+          `${hours.toString().padStart(2, "0")}:${minutes
+            .toString()
+            .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+        );
+      }
+    };
 
-  // Reset Progress
-  const resetProgress = () => {
-    setCurrentMasukTime("---");
-    setCurrentIstirahatTime("---");
-    setCurrentKembaliTime("---");
-    setCurrentPulangTime("---");
-    setCurrentStep(0);
-    setIsIconRed(false);
-  };
+    fetchTotalDebtTime();
+  }, [karyawanId]);
+
+  // UseEffect to Fetch Attendance Data
+  useEffect(() => {
+    (async () => {
+      const data = await getAttendanceData(karyawanId);
+      if (data) {
+        setCurrentMasukTime(formatTime(data.checkInTimes.start));
+        setCurrentIstirahatTime(formatTime(data.checkInTimes.break));
+        setCurrentKembaliTime(formatTime(data.checkInTimes.resume));
+        setCurrentPulangTime(formatTime(data.checkInTimes.end));
+
+        // Set currentStep based on available data
+        let step = 0;
+        if (data.checkInTimes.start) step = 1;
+        if (data.checkInTimes.break) step = 2;
+        if (data.checkInTimes.resume) step = 3;
+        if (data.checkInTimes.end) step = 4;
+        setCurrentStep(step);
+      }
+    })();
+  }, [currentStep]); // add currentStep as dependency to fetch latest data
 
   // Button Click Handlers
   const handleButtonClick = () => {
     setIsPopupVisible(true);
   };
 
-  // Pop Up Konfirmasi
-  const handleConfirm = () => {
-    const timeString = getCurrentTime();
+  const handleConfirmCheckIn = async () => {
     setIsPopupVisible(false);
     setIsIconRed(true);
 
+    let type = "";
+
     if (currentStep === 0) {
-      setCurrentMasukTime(timeString);
+      type = "start";
     } else if (currentStep === 1) {
-      setCurrentIstirahatTime(timeString);
+      type = "break";
     } else if (currentStep === 2) {
-      setCurrentKembaliTime(timeString);
+      type = "resume";
     } else if (currentStep === 3) {
-      setCurrentPulangTime(timeString);
+      type = "end";
     }
+
+    const attendanceData = {
+      step: getButtonText().toLowerCase(),
+      type,
+    };
+    await saveAttendanceData(attendanceData);
 
     setCurrentStep(currentStep + 1);
   };
 
-  // Pindah Halaman History Log Activity
+  const handleConfirmActivity = async () => {
+    if (!logActivityText.trim()) {
+      console.error("Activity log text is empty");
+      return;
+    }
+
+    const data = {
+      description: logActivityText,
+    };
+
+    await saveActivityData(data);
+
+    window.location.reload();
+  };
+
+  // Navigate to History Log Activity Page
   let navigate = useNavigate();
+
+  // Handle Log Activity Pop-up
+  const popupLogActivity = () => {
+    setIsLogPopupVisible(true);
+  };
+
   const moveToHistoryLogActivity = () => {
     navigate("/HistoryLogActivity");
   };
@@ -129,13 +284,13 @@ const Homepage = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col items-center p-0">
       <Header />
-      <div className="w-full px-4 py-4 flex justify-end items-center bg-white text-black">
+      <div className="w-full px-4 pt-6 flex justify-end items-center bg-white text-black">
         <button className="text-red-600">Lihat Barcode Saya</button>
       </div>
       <div className="w-full px-4 py-6 text-center bg-white">
         <h2 className="text-2xl font-bold mb-4">Shift Middle</h2>
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-gray-200 p-1 rounded-md">
+          <div className="bg-gray-200 py-5 px-3 rounded-md">
             <div className="grid grid-cols-5 items-center">
               <GoDotFill
                 className={`${
@@ -148,10 +303,10 @@ const Homepage = () => {
               <p className="text-start font-medium text-base">
                 {currentMasukTime}
               </p>
-              <p className="text-start text-red-600 text-sm">-Telat Masuk</p>
+              {/* <p className="text-start text-red-600 text-sm">-Telat Masuk</p> */}
             </div>
           </div>
-          <div className="bg-gray-200 p-1 rounded-md">
+          <div className="bg-gray-200 py-5 px-3 rounded-md">
             <div className="grid grid-cols-5 items-center">
               <GoDotFill
                 className={`${
@@ -164,7 +319,7 @@ const Homepage = () => {
               <p className="text-start font-medium">{currentIstirahatTime}</p>
             </div>
           </div>
-          <div className="bg-gray-200 p-1 rounded-md">
+          <div className="bg-gray-200 py-5 px-3 rounded-md">
             <div className="grid grid-cols-5 items-center">
               <GoDotFill
                 className={`${
@@ -177,7 +332,7 @@ const Homepage = () => {
               <p className="text-start font-medium">{currentKembaliTime}</p>
             </div>
           </div>
-          <div className="bg-gray-200 p-1 rounded-md">
+          <div className="bg-gray-200 py-5 px-3 rounded-md">
             <div className="grid grid-cols-5 items-center">
               <GoDotFill
                 className={`${
@@ -206,31 +361,18 @@ const Homepage = () => {
             <div className="text-red-700 font-semibold">
               Anda memiliki kekurangan jam kerja
             </div>
-            <div className="text-red-700 text-2xl mt-2">-</div>
+            <div className="text-red-700 text-2xl mt-2">-{formattedTime}</div>
             <div className="mt-2">
               <button className="text-blue-600">Lihat Detail</button>
             </div>
           </div>
         </div>
       </div>
-      <div className="w-full px-4 py-6 flex justify-between bg-white">
-        {isPopupVisible && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-5 rounded-lg">
-              <p>Anda telah masuk</p>
-              <button
-                onClick={handleConfirm}
-                className="mt-3 p-2 bg-blue-500 text-white rounded"
-              >
-                Konfirmasi
-              </button>
-            </div>
-          </div>
-        )}
-        <div className="fixed bottom-0 left-0 w-full flex justify-center p-2 bg-white border-t border-gray-300">
+      <div className="w-full px-4 py-6 bg-white">
+        <div className="fixed bottom-0 left-0 w-full flex justify-between p-2 bg-white border-t border-gray-300">
           <button
             onClick={handleButtonClick}
-            className="p-4 text-white text-xl font-semibold w-1/3"
+            className="p-4 text-white text-xl font-semibold w-full"
             style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
             disabled={currentStep > 3}
           >
@@ -241,7 +383,7 @@ const Homepage = () => {
               <div className="bg-white p-5 rounded-lg">
                 <p>Anda telah {getButtonText().toLowerCase()}</p>
                 <button
-                  onClick={handleConfirm}
+                  onClick={handleConfirmCheckIn}
                   className="mt-3 p-2 bg-blue-500 text-white rounded"
                 >
                   Konfirmasi
@@ -250,15 +392,37 @@ const Homepage = () => {
             </div>
           )}
           <button
-            className="p-2 text-white rounded-md mx-2"
+            onClick={popupLogActivity}
+            className="w-max text-white rounded-md mx-2"
             style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
             // onClick={moveToLogActivity}
           >
             <RiStickyNoteAddFill className="size-6 mx-8" />
           </button>
+          {isLogPopupVisible && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="w-10/12 h-2/5 bg-white p-3 rounded-2xl">
+                <div className="mb-3 text-start font-bold text-lg">
+                  Log Activity
+                </div>
+                <input
+                  value={logActivityText}
+                  onChange={(e) => setLogActivityText(e.target.value)}
+                  className="w-full h-2/3 p-2 border border-gray-300 rounded-lg mb-3"
+                  placeholder="Masukkan aktivitas log anda..."
+                />
+                <button
+                  onClick={handleConfirmActivity}
+                  className="p-2 bg-blue-500 text-white rounded"
+                >
+                  Konfirmasi
+                </button>
+              </div>
+            </div>
+          )}
           <button
             onClick={moveToHistoryLogActivity}
-            className="p-2 text-white rounded-md mx-2"
+            className="w-max text-white rounded-md"
             style={{ backgroundColor: "#040F4D", borderRadius: "20px" }}
           >
             <LuFileClock className="size-6 mx-8" />

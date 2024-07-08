@@ -1,5 +1,6 @@
 import { React, useState, useEffect } from "react";
 import TodayDate from "../../../pages/user/home/TodayDate";
+import Logout from "../../../pages/auth/Logout";
 import { IoPersonSharp, IoLogOutOutline } from "react-icons/io5";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import Cookies from "js-cookie";
@@ -70,12 +71,12 @@ const Header = () => {
               <IoPersonSharp className="size-7" />
             </div>
             <div className="ml-3">
-              <p className="text-xs font-semibold">{employeeName}</p>
-              <p style={{ fontSize: "10px" }}>{employeeNIP}</p>
+              <p className="text-base font-semibold">{employeeName}</p>
+              <p style={{ fontSize: "14px" }}>{employeeNIP}</p>
             </div>
           </div>
           <div className="flex items-center justify-end">
-            <IoLogOutOutline className="size-7" />
+            <Logout />
           </div>
         </div>
       </div>

@@ -19,7 +19,7 @@ import Dashboard from "./pages/admin/Dashboard";
 import Divisi from "./pages/admin/Divisi";
 import Project from "./pages/admin/Project";
 import TambahKaryawan from "./pages/admin/divisi/TambahKaryawan";
-import DetailedView from "./pages/admin/DetailedView";
+import DetailDivisi from "./pages/admin/DetailDivisi";
 import Shift from "./pages/admin/Shift";
 import Presensi from "./pages/admin/Presensi";
 import Laporan from "./pages/admin/Laporan";
@@ -78,14 +78,6 @@ root.render(
         }
       />
       <Route
-        path="/DetailedView"
-        element={
-          <PrivateRoute>
-            <DetailedView />
-          </PrivateRoute>
-        }
-      />
-      <Route
         path="/Shift"
         element={
           <PrivateRoute>
@@ -129,7 +121,15 @@ root.render(
         path="/division/:divisionName"
         element={
           <PrivateRoute>
-            <DetailedView />
+            <DetailDivisi />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/Project/:projectName"
+        element={
+          <PrivateRoute>
+            <DetailDivisi />
           </PrivateRoute>
         }
       />

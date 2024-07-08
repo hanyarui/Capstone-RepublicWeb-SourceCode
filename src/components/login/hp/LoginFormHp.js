@@ -70,7 +70,7 @@ const LoginFormHp = () => {
           id="username"
           style={{ borderRadius: "5px" }}
           placeholder="Masukkan Email"
-          className="input p-2 h-12 border border-black mb-5 w-full"
+          className="input p-2 h-12 border text-black border-black mb-5 w-full"
           value={username}
           onChange={(event) => setUsername(event.target.value)}
         />
@@ -82,7 +82,7 @@ const LoginFormHp = () => {
           id="password"
           style={{ borderRadius: "5px" }}
           placeholder="Masukkan Password"
-          className="input p-2 h-12 border border-black mb-8 w-full"
+          className="input p-2 h-12 border text-black border-black mb-8 w-full"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie"; // Tambahkan ini untuk mengakses cookies
 import { BsPersonFill } from "react-icons/bs";
 import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
@@ -6,14 +7,56 @@ import { FiCheckCircle } from "react-icons/fi";
 import { BiLogIn, BiLogOut } from "react-icons/bi";
 import { MdOutlineDoNotDisturbOn } from "react-icons/md";
 
-const Dashboard = ({ activities }) => {
+const Dashboard = () => {
+  const [activities, setActivities] = useState([]);
   const [visibleActivities, setVisibleActivities] = useState([]);
 
   useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        // Ambil token dari cookies
+        const token = Cookies.get("token");
+
+        if (!token) {
+          throw new Error("No authorization token found");
+        }
+
+        const response = await fetch(
+          "https://republikweb-cp-backend.vercel.app/recent-activities",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Sertakan token dalam header Authorization
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Error fetching data");
+        }
+
+        const data = await response.json();
+
+        const formattedActivities = data.map((activity) => ({
+          name: activity.activity.split(" ")[0],
+          time: activity.activity,
+          type: activity.type,
+        }));
+
+        setActivities(formattedActivities);
+        setVisibleActivities(formattedActivities.slice(0, 5));
+      } catch (error) {
+        console.error("Failed to fetch activities:", error);
+      }
+    };
+
+    fetchActivities();
+  }, []);
+
+  useEffect(() => {
     const updateVisibleActivities = () => {
-      const itemHeight = 70; // Adjust based on actual item height
-      const headerHeight = 50; // Adjust based on actual header height
-      const footerHeight = 40; // Adjust based on actual footer height
+      const itemHeight = 70;
+      const headerHeight = 50;
+      const footerHeight = 40;
       const availableHeight = window.innerHeight - headerHeight - footerHeight;
       const maxItems = Math.floor(availableHeight / itemHeight);
       setVisibleActivities(activities?.slice(0, maxItems) || []);

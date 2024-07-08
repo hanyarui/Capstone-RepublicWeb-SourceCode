@@ -23,16 +23,6 @@ const formatTime = (timeString) => {
   return `${formattedHours}:${minutes}:${seconds} ${ampm}`;
 };
 
-// Function to Convert Minutes to HH:MM Format
-const convertMinutesToHHMM = (timeDebt) => {
-  const hours = Math.floor(timeDebt / 60);
-  const minutes = timeDebt % 60;
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
-    2,
-    "0"
-  )}`;
-};
-
 // Mock API Call to Save Data
 const saveAttendanceData = async (data) => {
   try {
@@ -190,13 +180,16 @@ const HomepageLaptop = () => {
       if (data) {
         setTotalDebtTime(data.totalDebtTime);
 
-        // Convert total debt time from minutes to HH:MM format
-        const hours = Math.floor(data.totalDebtTime / 60);
-        const minutes = data.totalDebtTime % 60;
+        // Convert total debt time from minutes to HH:MM:SS format
+        const totalSeconds = data.totalDebtTime * 60; // convert minutes to seconds
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
         setFormattedTime(
           `${hours.toString().padStart(2, "0")}:${minutes
             .toString()
-            .padStart(2, "0")}`
+            .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
         );
       }
     };

@@ -61,6 +61,9 @@ const TambahKaryawan = () => {
       }
 
       const result = await response.json();
+      alert("Data Karyawan Berhasil Ditambahkan");
+      window.location.reload();
+      // Handle success response here
       console.log("Success:", result);
 
       // Handle success response here, e.g., show success message or redirect

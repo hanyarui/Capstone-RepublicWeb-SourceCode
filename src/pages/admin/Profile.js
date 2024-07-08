@@ -1,7 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 import Sidebar from "../../components/Sidebar";
 
 const Profile = () => {
+  const [profileData, setProfileData] = useState(null);
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        // Ambil token dari cookies
+        const token = Cookies.get("token");
+
+        if (!token) {
+          console.error("Token tidak ditemukan di cookies");
+          return;
+        }
+
+        // Decode token untuk mendapatkan karyawanId
+        const decodedToken = jwtDecode(token);
+        const karyawanId = decodedToken.karyawanId;
+
+        // Ambil data profil dari API
+        const response = await axios.get(
+          `https://republikweb-cp-backend.vercel.app/karyawan/${karyawanId}`
+        );
+        setProfileData(response.data);
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
+
+  if (!profileData) {
+    return <div className="items-center justify-center">Loading</div>;
+  }
+
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar />
@@ -11,36 +48,29 @@ const Profile = () => {
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm mx-auto h-full md:col-span-1">
             <div className="flex flex-col items-center space-y-4 h-full">
               <img
-                src="https://via.placeholder.com/150"
+                src={profileData.profile_photo_url}
                 alt="Profile"
                 className="w-44 h-44 rounded-full"
               />
               <div className="text-center">
-                <h2 className="text-xl font-bold">Wahyudi Atkinson</h2>
-                <p className="text-gray-600">wahyudiatkinson@gmail.com</p>
-              </div>
-              <div className="mt-6">
-                <h3 className="text-xl text-center font-bold mb-2">About</h3>
-                <p className="text-gray-700 text-center">
-                  Mengatur pelaksanaan sistem kerja perusahaan, mulai dari
-                  meng-input, memproses, mengelola hingga mengevaluasi data
-                </p>
+                <h2 className="text-xl font-bold">{profileData.fullname}</h2>
+                <p className="text-gray-600">{profileData.email}</p>
               </div>
             </div>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-lg w-full h-full md:col-span-2">
             <div className="flex items-center space-x-6 mb-6">
-              <img
-                src="https://via.placeholder.com/150"
-                alt="Profile"
-                className="w-16 h-16 rounded-full"
-              />
               <div className="flex flex-col items-start">
-                <button className="px-4 py-2 font-semibold text-sm text-gray-600 bg-white rounded hover:bg-gray-100 border-2 border-gray-300">
-                  Change Photo
-                </button>
-                <button className="px-10 mt-2 text-blue-600 hover:underline focus:outline-none">
-                  remove
+                <label className="text-sm font-bold mb-2 text-gray-700">
+                  Profile Picture
+                </label>
+                <input
+                  type="file"
+                  name="profile_photo"
+                  className="px-4 py-2 font-semibold text-sm text-gray-600 bg-white rounded hover:bg-gray-100 border-2 border-gray-300"
+                />
+                <button className="mt-2 text-blue-600 hover:underline focus:outline-none">
+                  Remove
                 </button>
               </div>
             </div>
@@ -56,8 +86,7 @@ const Profile = () => {
                   <input
                     type="text"
                     className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
-                    value="Wahyudi Atkinson"
-                    readOnly
+                    value={profileData.fullname}
                   />
                 </div>
                 <div>
@@ -67,8 +96,7 @@ const Profile = () => {
                   <input
                     type="email"
                     className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
-                    value="wahyudiatkinson@gmail.com"
-                    readOnly
+                    value={profileData.email}
                   />
                 </div>
               </div>
@@ -80,8 +108,7 @@ const Profile = () => {
                   <input
                     type="text"
                     className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
-                    value="081326273187"
-                    readOnly
+                    value={profileData.phoneNumber}
                   />
                 </div>
                 <div>
@@ -91,8 +118,7 @@ const Profile = () => {
                   <input
                     type="text"
                     className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
-                    value="Jateng"
-                    readOnly
+                    value={profileData.address}
                   />
                 </div>
               </div>
@@ -104,7 +130,7 @@ const Profile = () => {
                   About
                 </label>
                 <textarea
-                  className="h-56 w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
+                  className="h-min w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:shadow-outline"
                   rows="4"
                   placeholder="Enter additional information"
                 ></textarea>

@@ -7,8 +7,8 @@ import { IoIosSearch } from "react-icons/io";
 import { IoChevronBackOutline } from "react-icons/io5";
 import Sidebar from "../../components/Sidebar";
 
-const DetailedView = ({ karyawan = [] }) => {
-  const { divisionName } = useParams();
+const DetailProject = ({ karyawan = [] }) => {
+  const { projectName } = useParams();
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
@@ -24,10 +24,10 @@ const DetailedView = ({ karyawan = [] }) => {
         <div className="px-10 pt-5">
           <div className="flex justify-between items-center mb-10">
             <div className="flex items-center space-x-2">
-              <button className="text-xl" onClick={() => navigate("/Divisi")}>
+              <button className="text-xl" onClick={() => navigate("/Project")}>
                 <IoChevronBackOutline size={32} />
               </button>
-              <h1 className="text-3xl font-bold">{divisionName}</h1>
+              <h1 className="text-3xl font-bold">{projectName}</h1>
             </div>
             <div className="relative">
               <input
@@ -42,26 +42,13 @@ const DetailedView = ({ karyawan = [] }) => {
           </div>
           <div className="bg-blue-950 shadow rounded p-4 mb-0">
             <h1 className="text-lg text-white font-medium mb-0">
-              Filter Data Karyawan
+              {data.description}
             </h1>
           </div>
           <div className="bg-white shadow rounded p-4 mb-4">
             <div className="flex space-x-2 items-center">
-              <input type="checkbox" className="form-checkbox" />
-              <select className="border border-gray-300 rounded px-2 py-1">
-                <option>Bulk Action</option>
-                <option>Action 1</option>
-                <option>Action 2</option>
-              </select>
-              <button className="bg-blue-900 text-white px-4 py-1 rounded">
-                Apply
-              </button>
-              <span className="text-lg font-semibold mr-2">Project :</span>
-              <select className="border border-gray-300 rounded px-2 py-1">
-                <option>Pilih Project</option>
-                <option>Project 1</option>
-                <option>Project 2</option>
-              </select>
+              {data.startdate}
+              {data.enddate}
             </div>
           </div>
           <div className="bg-blue-950 p-4 rounded">
@@ -82,4 +69,4 @@ const DetailedView = ({ karyawan = [] }) => {
   );
 };
 
-export default DetailedView;
+export default DetailProject;
