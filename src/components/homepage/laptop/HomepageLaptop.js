@@ -241,7 +241,6 @@ const HomepageLaptop = () => {
       type = "resume";
     } else if (currentStep === 3) {
       type = "end";
-      window.location.reload();
     }
 
     const attendanceData = {

@@ -9,28 +9,34 @@ import ClipLoader from "react-spinners/ClipLoader";
 const Shift = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const fetchData = async (fullname = "") => {
+    const token = Cookies.get("token"); // Mengambil token dari cookies
+    try {
+      const response = await axios.get(
+        `https://republikweb-cp-backend.vercel.app/kehadiran/karyawan/all?fullname=${fullname}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Menyertakan token dalam header
+          },
+        }
+      );
+      setData(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("There was an error fetching the data!", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const token = Cookies.get("token"); // Mengambil token dari cookies
-      try {
-        const response = await axios.get(
-          "https://republikweb-cp-backend.vercel.app/kehadiran/karyawan/all",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`, // Menyertakan token dalam header
-            },
-          }
-        );
-        setData(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("There was an error fetching the data!", error);
-      }
-    };
-
     fetchData();
   }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    fetchData(searchTerm);
+  };
 
   if (loading) {
     return (
@@ -61,12 +67,12 @@ const Shift = () => {
           >
             <div className="grid grid-cols-2">
               <div className="text-white">
-                <h2 className="text-3xl  font-bold">Data Laporan</h2>
+                <h2 className="text-3xl font-bold">Data Laporan</h2>
                 <p className="">Data per tanggal</p>
               </div>
 
               <div className="relative text-white">
-                <form>
+                <form onSubmit={handleSearch}>
                   <label className="block">Cari Karyawan</label>
                   <div className="relative mt-1">
                     <IoIosSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -74,6 +80,8 @@ const Shift = () => {
                       type="text"
                       className="w-full border text-black border-gray-300 rounded pl-10 pr-4 py-2"
                       placeholder="Pencarian"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
                 </form>

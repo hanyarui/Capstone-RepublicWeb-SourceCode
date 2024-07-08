@@ -10,19 +10,19 @@ const Shift = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const token = Cookies.get("token");
 
-  const fetchData = async () => {
+  const fetchData = async (fullname = "") => {
     try {
       const response = await axios.get(
-        "https://republikweb-cp-backend.vercel.app/shift-details",
+        `https://republikweb-cp-backend.vercel.app/shift-details?fullname=${fullname}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      // Menggunakan `karyawanId` dari data karyawan
       const formattedData = response.data.map((item) => ({
         ...item,
         karyawanId: item.karyawanId, // Pastikan field ini sudah ada di data dari backend
@@ -45,6 +45,11 @@ const Shift = () => {
     fetchData();
   }, [token]);
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    fetchData(searchTerm);
+  };
+
   const handleSave = async () => {
     try {
       const shifts = data.map((item) => ({
@@ -54,7 +59,6 @@ const Shift = () => {
         jam_pulang: item.jam_pulang,
       }));
 
-      // Log untuk melihat payload yang dikirim
       console.log("Payload:", { shifts });
 
       const validShifts = ["pagi", "siang"];
@@ -88,9 +92,7 @@ const Shift = () => {
         }
       );
 
-      // Setelah berhasil disimpan, fetch data terbaru dari backend
       fetchData();
-
       alert("Data berhasil disimpan!");
     } catch (error) {
       console.error("Error updating shift data:", error);
@@ -113,7 +115,6 @@ const Shift = () => {
         shift: item.shift,
       }));
 
-      // Log untuk melihat payload yang dikirim
       console.log("Payload:", { shifts });
 
       const validShifts = ["pagi", "siang"];
@@ -147,7 +148,6 @@ const Shift = () => {
         }
       );
 
-      // Setelah berhasil disimpan, fetch data terbaru dari backend
       fetchData();
     } catch (error) {
       console.error("Error updating shift data:", error);
@@ -197,12 +197,21 @@ const Shift = () => {
             <h2 className="text-3xl text-white font-bold">Sunting Shift</h2>
           </div>
           <div className="mb-4 relative">
-            <input
-              type="text"
-              placeholder="Cari Nama"
-              className="border border-gray-300 rounded px-4 py-2 w-6/12 pl-10"
-            />
-            <IoIosSearch className="absolute left-3 top-3 text-gray-400 w-6 h-6" />
+            <form onSubmit={handleSearch}>
+              <input
+                type="text"
+                placeholder="Cari Nama"
+                className="border border-gray-300 rounded px-4 py-2 w-6/12 pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <button
+                type="submit"
+                className="absolute left-3 top-3 text-gray-400 w-6 h-6"
+              >
+                <IoIosSearch />
+              </button>
+            </form>
           </div>
           <div className="bg-white rounded-lg shadow flex-1 overflow-y-scroll">
             <div>

@@ -167,8 +167,13 @@ const Project = ({ activities }) => {
         <Navbar />
         <div className="px-10 pt-5">
           <div className="flex justify-between items-center mb-10">
-            <div className="flex items-center space-x-2">
-              <h1 className="text-3xl font-bold">Projects</h1>
+            <div className="flex space-x-10">
+              <Link to="/Divisi">
+                <h2 className="text-2xl font-bold cursor-pointer">Divisi</h2>
+              </Link>
+              <h2 className="text-2xl font-bold border-b-2 border-black">
+                Project
+              </h2>
             </div>
             <div className="relative">
               <input
@@ -185,7 +190,7 @@ const Project = ({ activities }) => {
             {filteredProjects.map((project, index) => (
               <Link
                 key={index}
-                to={`/DetailProject/${encodeURIComponent(project.projectname)}`}
+                to={`/DetailProject/${project.projectId}`}
                 className="relative bg-blue-950 text-white shadow-lg rounded-t-lg flex flex-col justify-between"
                 style={{
                   height: "150px",

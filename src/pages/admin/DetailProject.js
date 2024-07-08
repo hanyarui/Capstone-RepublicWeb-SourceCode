@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Cookies from "js-cookie";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/Sidebar";
 import { IoIosSearch } from "react-icons/io";
@@ -13,32 +14,44 @@ const DetailProject = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchProject = async () => {
+      const token = Cookies.get("token");
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+
       try {
         const response = await axios.get(
-          "https://republikweb-cp-backend.vercel.app/projects"
+          `https://republikweb-cp-backend.vercel.app/projects/${projectId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
 
-        if (Array.isArray(response.data)) {
-          const project = response.data.find(
-            (proj) => proj.id.toString() === projectId
-          );
-          setProject(project);
+        if (response.status === 200) {
+          setProject(response.data);
         } else {
-          console.error("Invalid data format:", response.data);
+          console.error("Invalid response status:", response.status);
         }
       } catch (error) {
-        console.error("Error fetching projects:", error);
+        console.error("Error fetching project:", error);
       }
     };
 
-    fetchProjects();
+    fetchProject();
   }, [projectId]);
 
   const filteredMembers =
     project?.members.filter((member) =>
       member.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
+
+  const convertTimestampToDate = (timestamp) => {
+    return new Date(timestamp._seconds * 1000).toISOString().split("T")[0];
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -66,32 +79,25 @@ const DetailProject = () => {
           </div>
           <div className="bg-blue-950 shadow rounded p-4 mb-0">
             <h1 className="text-lg text-white font-medium mb-0">
-              Filter Data Anggota
+              {project?.description}
             </h1>
           </div>
           <div className="bg-white shadow rounded p-4 mb-4">
-            <div className="flex space-x-2 items-center">
-              <input type="checkbox" className="form-checkbox" />
-              <select className="border border-gray-300 rounded px-2 py-1">
-                <option>Bulk Action</option>
-                <option>Action 1</option>
-                <option>Action 2</option>
-              </select>
-              <button className="bg-blue-900 text-white px-4 py-1 rounded">
-                Apply
-              </button>
-              <span className="text-lg font-semibold mr-2">Project :</span>
-              <select className="border border-gray-300 rounded px-2 py-1">
-                <option>Pilih Project</option>
-                <option>Project 1</option>
-                <option>Project 2</option>
-              </select>
+            <div className="items-center">
+              <p>
+                Tanggal Mulai:{" "}
+                {project ? convertTimestampToDate(project.startdate) : ""}
+              </p>
+              <p>
+                Tanggal Selesai:{" "}
+                {project ? convertTimestampToDate(project.enddate) : ""}
+              </p>
             </div>
           </div>
-          <div className="bg-blue-950 p-4 rounded">
+          <div className="flex rounded w-max">
             {filteredMembers.map((member, index) => (
-              <div key={index} className="bg-white shadow rounded p-4 mb-4">
-                <div className="bg-blue-900 text-white p-4 rounded mb-2">
+              <div key={index} className="mr-5">
+                <div className="bg-blue-900 text-white px-8 py-4 rounded mb-2">
                   <p className="font-mono">{member}</p>
                 </div>
               </div>

@@ -13,6 +13,7 @@ const formatTime = (datetime) => {
 
 const Presensi = () => {
   const [data, setData] = useState([]);
+  const [attendanceStats, setAttendanceStats] = useState(null);
 
   useEffect(() => {
     const token = Cookies.get("token");
@@ -22,13 +23,14 @@ const Presensi = () => {
       return;
     }
 
-    const today = new Date().toISOString().split("T")[0];
-
-    axios
-      .get(`https://republikweb-cp-backend.vercel.app/all-logs`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
+    const fetchLogs = async () => {
+      try {
+        const response = await axios.get(
+          "https://republikweb-cp-backend.vercel.app/all-logs",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         const mappedData = response.data.map((item) => ({
           nama: item.fullname,
           masuk: formatTime(item.checkInTimes.start),
@@ -42,30 +44,35 @@ const Presensi = () => {
           status: item.status,
         }));
         setData(mappedData);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("There was an error fetching the data!", error);
-      });
-    // axios
-    //   .get(
-    //     `https://republikweb-cp-backend.vercel.app/worktimedate/${today}`,
-    //     {}
-    //   )
-    //   .then((response) => {
-    //     const mappedData = response.data.map((item) => ({
-    //       // nama: item.fullname,
-    //       // masuk: formatTime(item.checkInTimes.start),
-    //       // pulang: formatTime(item.checkInTimes.end),
-    //       // mulai: formatTime(item.checkInTimes.break),
-    //       // selesai: formatTime(item.checkInTimes.resume),
-    //       total: formatTime(ite),
-    //       kurang: item.kurang,
-    //       // aktivitas: item.aktivitas,
-    //       // aksi: item.aksi,
-    //       // status: item.status,
-    //     }));
-    //     setData(mappedData);
-    //   });
+      }
+    };
+
+    const fetchAttendanceStats = async () => {
+      try {
+        const response = await fetch(
+          "https://republikweb-cp-backend.vercel.app/daily-attendance",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Error fetching attendance stats");
+        }
+
+        const data = await response.json();
+        setAttendanceStats(data);
+
+        console.log(data);
+      } catch (error) {
+        console.error("Failed to fetch attendance stats:", error);
+      }
+    };
+
+    fetchLogs();
+    fetchAttendanceStats();
   }, []);
 
   return (
@@ -83,7 +90,6 @@ const Presensi = () => {
                 <h2 className="text-3xl font-bold">Data Presensi</h2>
                 <p>Data per tanggal</p>
               </div>
-
               <div className="relative text-white">
                 <form>
                   <label className="block">Cari Karyawan</label>
@@ -105,20 +111,20 @@ const Presensi = () => {
               <div className="grid grid-flow-col border-t-2 border-gray-400 pt-3">
                 <div className="flex items-center">
                   <p>Total Masuk</p>
-                  <p className="p-1.5 bg-green-500 ml-2 rounded-xl font-bold text-white">
-                    %%
+                  <p className="py-1.5 px-4 bg-green-500 ml-2 rounded-xl font-bold text-white">
+                    {attendanceStats ? attendanceStats.hadirCount : "..."}
                   </p>
                 </div>
                 <div className="flex items-center">
                   <p>Total Izin</p>
-                  <p className="p-1.5 bg-yellow-500 ml-2 rounded-xl font-bold text-white">
-                    %%
+                  <p className="py-1.5 px-4 bg-yellow-500 ml-2 rounded-xl font-bold text-white">
+                    {attendanceStats ? attendanceStats.izinCount : "..."}
                   </p>
                 </div>
                 <div className="flex items-center">
                   <p>Total Tidak Masuk</p>
-                  <p className="p-1.5 bg-red-500 ml-2 rounded-xl font-bold text-white">
-                    %%
+                  <p className="py-1.5 px-4 bg-red-500 ml-2 rounded-xl font-bold text-white">
+                    {attendanceStats ? attendanceStats.tidakHadirCount : "..."}
                   </p>
                 </div>
               </div>
