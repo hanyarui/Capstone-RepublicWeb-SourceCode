@@ -17,10 +17,11 @@ const TambahKaryawan = () => {
     tanggal_keluar: "",
     NIP: null,
     division: "",
-    lokasi_kantor: "",
     OS: "",
     Browser: "",
     barcode: null,
+    jam_masuk: "", // tambahkan field jam_masuk
+    jam_pulang: "", // tambahkan field jam_pulang
   });
 
   const handleChange = (e) => {
@@ -46,11 +47,6 @@ const TambahKaryawan = () => {
       formDataToSend.append(key, formData[key]);
     });
 
-    // Log formDataToSend entries
-    for (let pair of formDataToSend.entries()) {
-      console.log(pair[0] + ": " + pair[1]);
-    }
-
     try {
       const response = await fetch(
         "https://republikweb-cp-backend.vercel.app/karyawan/register",
@@ -60,20 +56,41 @@ const TambahKaryawan = () => {
         }
       );
 
-      // Log response
-      const textResponse = await response.text();
-      console.log(textResponse);
-
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
 
       const result = await response.json();
-      console.log(result);
-      // Handle success response here
+      console.log("Success:", result);
+
+      // Handle success response here, e.g., show success message or redirect
+      alert("Karyawan berhasil ditambahkan!");
+
+      // Clear form after successful submission (optional)
+      setFormData({
+        fullname: "",
+        pendidikan_terakhir: "",
+        tempat_lahir: "",
+        tanggal_lahir: "",
+        phoneNumber: "",
+        username: "",
+        email: null,
+        password: null,
+        ulangiPassword: null,
+        tanggal_masuk: "",
+        tanggal_keluar: "",
+        NIP: null,
+        division: "",
+        OS: "",
+        Browser: "",
+        barcode: null,
+        jam_masuk: "",
+        jam_pulang: "",
+      });
     } catch (error) {
       console.error("There was an error!", error);
-      // Handle error response here
+      // Handle error response here, e.g., show error message
+      alert("Terjadi kesalahan saat menambahkan karyawan. Silakan coba lagi.");
     }
   };
 
@@ -220,12 +237,22 @@ const TambahKaryawan = () => {
                 />
               </div>
               <div className="flex flex-col">
-                <label className="font-bold mb-2">Lokasi Kantor</label>
+                <label className="font-bold mb-2">Jam Masuk</label>
                 <input
-                  type="text"
-                  name="lokasi_kantor"
+                  type="time"
+                  name="jam_masuk"
                   className="border border-gray-300 rounded px-4 py-2 w-full"
-                  value={formData.lokasi_kantor}
+                  value={formData.jam_masuk}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="font-bold mb-2">Jam Pulang</label>
+                <input
+                  type="time"
+                  name="jam_pulang"
+                  className="border border-gray-300 rounded px-4 py-2 w-full"
+                  value={formData.jam_pulang}
                   onChange={handleChange}
                 />
               </div>
@@ -288,16 +315,16 @@ const TambahKaryawan = () => {
                 />
               </div>
             </div>
+            <div className="flex justify-center mt-5">
+              <button
+                type="submit"
+                className="bg-blue-500 w-2/5 text-white px-8 py-1 mb-8 rounded"
+                onClick={handleSubmit}
+              >
+                Simpan
+              </button>
+            </div>
           </form>
-          <div className="flex justify-center mt-5">
-            <button
-              type="submit"
-              className="bg-blue-500 w-2/5 text-white px-8 py-1 mb-8 rounded"
-              onClick={handleSubmit}
-            >
-              Simpan
-            </button>
-          </div>
         </div>
       </main>
     </div>

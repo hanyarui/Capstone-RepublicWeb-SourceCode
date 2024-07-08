@@ -173,6 +173,9 @@ const HomepageLaptop = () => {
   const [totalDebtTime, setTotalDebtTime] = useState(0);
   const [formattedTime, setFormattedTime] = useState("00:00");
 
+  // State for showing barcode popup
+  const [isBarcodeVisible, setIsBarcodeVisible] = useState(false);
+
   // Get karyawanId from token
   const token = Cookies.get("token");
   let karyawanId = "";
@@ -267,25 +270,29 @@ const HomepageLaptop = () => {
     window.location.reload();
   };
 
-  // Navigate to History Log Activity Page
-  let navigate = useNavigate();
-
-  // Handle Log Activity Pop-up
+  // Popup functions
   const popupLogActivity = () => {
     setIsLogPopupVisible(true);
   };
 
+  // Move to History Log Activity
+  const navigate = useNavigate();
   const moveToHistoryLogActivity = () => {
-    navigate("/HistoryLogActivity");
+    navigate("/history-log-activity");
   };
 
-  // Button Text based on current step
+  // Function to get button text based on current step
   const getButtonText = () => {
     if (currentStep === 0) return "Masuk";
     if (currentStep === 1) return "Istirahat";
     if (currentStep === 2) return "Kembali";
     if (currentStep === 3) return "Pulang";
     return "Selesai";
+  };
+
+  // Toggle barcode popup visibility
+  const toggleBarcodePopup = () => {
+    setIsBarcodeVisible(!isBarcodeVisible);
   };
 
   return (
@@ -358,11 +365,33 @@ const HomepageLaptop = () => {
                 Histori Log Activity
               </div>
             </button>
+            {isBarcodeVisible && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white p-5 w-1/3 h-1/3 rounded-lg relative">
+                  <button
+                    onClick={toggleBarcodePopup}
+                    className="absolute top-4 right-7 text-gray-500 hover:text-black"
+                  >
+                    Close
+                  </button>
+                  <p className="mb-2 mt-4">Barcode</p>
+                  <img
+                    src="path/to/your/barcode/image"
+                    className="max-w-full max-h-full object-contain mx-auto"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="col-span-2">
-            <div className="flex justify-end items-start h-10">
-              <button className="text-red-700">Lihat Barcode Saya</button>
+            <div className="flex justify-end items-start h-14">
+              <button
+                onClick={toggleBarcodePopup}
+                className="text-red-700 mt-4"
+              >
+                Lihat Barcode Saya
+              </button>
             </div>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
               <div className="text-left py-5 px-7 font-extrabold bg-gray-200 flex flex-col justify-center h-28 rounded-lg">
