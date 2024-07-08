@@ -15,12 +15,20 @@ const DetailDivisi = () => {
   useEffect(() => {
     const fetchKaryawan = async () => {
       try {
+        console.log(`Fetching data for division: ${divisionName}`);
+
         const response = await fetch(
           `https://republikweb-cp-backend.vercel.app/karyawan/division/${divisionName}`
         );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
         const data = await response.json();
 
-        // Ensure data is an array
+        console.log("Fetched data:", data);
+
         if (Array.isArray(data)) {
           setKaryawan(data);
         } else {
@@ -37,10 +45,8 @@ const DetailDivisi = () => {
     fetchKaryawan();
   }, [divisionName]);
 
-  const filteredKaryawan = karyawan.filter(
-    (employee) =>
-      employee.name &&
-      employee.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredKaryawan = karyawan.filter((karyawan) =>
+    karyawan.NIP?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) {
@@ -95,14 +101,19 @@ const DetailDivisi = () => {
               </select>
             </div>
           </div>
-          <div className="bg-blue-950 p-4 rounded">
+          <div className="bg-white p-4 rounded shadow flex flex-wrap gap-4">
             {filteredKaryawan.map((karyawan, index) => (
-              <div key={index} className="bg-white shadow rounded p-4 mb-4">
-                <div className="bg-blue-900 text-white p-4 rounded mb-2">
-                  <p className="font-mono">{karyawan.id}</p>
+              <div
+                key={index}
+                className="bg-blue-950 text-white shadow rounded w-1/5 flex flex-col"
+              >
+                <div className="p-4 text-center">
+                  <div className="text-lg font-semibold">{karyawan.NIP}</div>
                 </div>
-                <div className="bg-blue-900 text-white p-4 rounded">
-                  <p className="text-lg font-semibold">{karyawan.name}</p>
+                <div className="p-4">
+                  <div className="bg-white text-black p-4 rounded">
+                    <p className="text-lg font-semibold">{karyawan.username}</p>
+                  </div>
                 </div>
               </div>
             ))}
