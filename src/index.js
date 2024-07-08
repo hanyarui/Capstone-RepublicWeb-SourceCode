@@ -1,4 +1,3 @@
-// index.js
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ReactDOM from "react-dom/client";
@@ -20,6 +19,7 @@ import Divisi from "./pages/admin/Divisi";
 import Project from "./pages/admin/Project";
 import TambahKaryawan from "./pages/admin/divisi/TambahKaryawan";
 import DetailDivisi from "./pages/admin/DetailDivisi";
+import DetailProject from "./pages/admin/DetailProject"; // Import the new DetailProject component
 import Shift from "./pages/admin/Shift";
 import Presensi from "./pages/admin/Presensi";
 import Laporan from "./pages/admin/Laporan";
@@ -126,10 +126,10 @@ root.render(
         }
       />
       <Route
-        path="/Project/:projectName"
+        path="/DetailProject/:projectId"
         element={
           <PrivateRoute>
-            <DetailDivisi />
+            <DetailProject />
           </PrivateRoute>
         }
       />

@@ -1,20 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
-import { Link } from "react-router-dom";
-import Logout from "../auth/Logout";
 import { IoIosSearch } from "react-icons/io";
 import { IoChevronBackOutline } from "react-icons/io5";
 import Sidebar from "../../components/Sidebar";
 
-const DetailDivisi = ({ karyawan = [] }) => {
+const DetailDivisi = () => {
   const { divisionName } = useParams();
   const [searchQuery, setSearchQuery] = useState("");
+  const [karyawan, setKaryawan] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const filteredKaryawan = karyawan.filter((employee) =>
-    employee.name.toLowerCase().includes(searchQuery.toLowerCase())
+  useEffect(() => {
+    const fetchKaryawan = async () => {
+      try {
+        const response = await fetch(
+          `https://republikweb-cp-backend.vercel.app/karyawan/division/${divisionName}`
+        );
+        const data = await response.json();
+
+        // Ensure data is an array
+        if (Array.isArray(data)) {
+          setKaryawan(data);
+        } else {
+          console.error("Expected data to be an array:", data);
+          setKaryawan([]);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching karyawan data:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchKaryawan();
+  }, [divisionName]);
+
+  const filteredKaryawan = karyawan.filter(
+    (employee) =>
+      employee.name &&
+      employee.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -65,13 +96,13 @@ const DetailDivisi = ({ karyawan = [] }) => {
             </div>
           </div>
           <div className="bg-blue-950 p-4 rounded">
-            {filteredKaryawan.map((employee, index) => (
+            {filteredKaryawan.map((karyawan, index) => (
               <div key={index} className="bg-white shadow rounded p-4 mb-4">
                 <div className="bg-blue-900 text-white p-4 rounded mb-2">
-                  <p className="font-mono">{employee.id}</p>
+                  <p className="font-mono">{karyawan.id}</p>
                 </div>
                 <div className="bg-blue-900 text-white p-4 rounded">
-                  <p className="text-lg font-semibold">{employee.name}</p>
+                  <p className="text-lg font-semibold">{karyawan.name}</p>
                 </div>
               </div>
             ))}
