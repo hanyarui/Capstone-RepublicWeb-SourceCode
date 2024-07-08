@@ -264,7 +264,8 @@ const HomepageLaptop = () => {
 
     await saveActivityData(data);
 
-    window.location.reload();
+    setIsLogPopupVisible(false); // Close the log activity popup after saving
+    setLogActivityText(""); // Clear the input field after saving
   };
 
   // Popup functions
@@ -334,14 +335,22 @@ const HomepageLaptop = () => {
             </button>
             {isLogPopupVisible && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="w-1/3 h-1/2 bg-white p-3 rounded-2xl">
-                  <div className="mb-3 text-start font-bold text-lg">
-                    Log Activity
+                <div className="w-1/3 h-1/3 bg-white p-5 rounded-2xl">
+                  <div className="flex justify-between mb-3">
+                    <div className=" text-center font-bold text-lg">
+                      Log Activity
+                    </div>
+                    <button
+                      onClick={() => setIsLogPopupVisible(false)}
+                      className="size-7"
+                    >
+                      X
+                    </button>
                   </div>
                   <input
                     value={logActivityText}
                     onChange={(e) => setLogActivityText(e.target.value)}
-                    className="w-full h-2/3 p-2 border border-gray-300 rounded-lg mb-3"
+                    className="w-full h-1/2 p-2 border border-gray-300 rounded-lg mb-3 text-center"
                     placeholder="Masukkan aktivitas log anda..."
                   />
                   <button
