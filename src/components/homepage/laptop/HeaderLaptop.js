@@ -45,7 +45,7 @@ const Header = () => {
 
   return (
     <div
-      className="text-white w-screen flex justify-between items-center pt-12 pb-8 px-16"
+      className="text-white w-full flex justify-between items-center pt-12 pb-8 px-16"
       style={{
         backgroundImage: "url(/assets/background.svg)",
         borderRadius: "0 0 40px 0",

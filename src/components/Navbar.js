@@ -33,7 +33,7 @@ const Navbar = () => {
         </div>
         <img
           className="w-14 h-14 rounded-full"
-          src="https://via.placeholder.com/40"
+          src="/assets/person.png"
           alt="User Avatar"
         />
       </Link>

@@ -170,9 +170,9 @@ const Divisi = ({ activities }) => {
                   </div>
                   <div>
                     <p className="font-bold text-lg">{division.name}</p>
-                    <p className="text-sm text-gray-600">
+                    {/* <p className="text-sm text-gray-600">
                       {division.members} Anggota
-                    </p>
+                    </p> */}
                   </div>
                 </div>
               </div>

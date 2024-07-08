@@ -451,12 +451,13 @@ const HomepageLaptop = () => {
                 <strong>Attention!</strong>
               </div>
 
-              <div className="grid grid-cols md:grid-cols-2 gap-6 mt-6">
-                <div className="bg-white border border-red-500 p-4 rounded-lg flex items-center justify-center h-40">
+              <div className="gap-6 mt-6">
+                {/* <div className="grid grid-cols md:grid-cols-2 gap-6 mt-6"> */}
+                {/* <div className="bg-white border border-red-500 p-4 rounded-lg flex items-center justify-center h-40">
                   <div className="text-red-500 text-center">
                     Kemarin anda absen pulang di kost jangan diulang!
                   </div>
-                </div>
+                </div> */}
 
                 <div className="bg-white border border-red-500 p-4 rounded-lg flex flex-col items-center">
                   <div className="text-red-500 font-semibold text-center mb-5">

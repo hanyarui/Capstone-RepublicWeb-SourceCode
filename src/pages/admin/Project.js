@@ -23,34 +23,37 @@ const Project = ({ activities }) => {
     startdate: "",
     enddate: "",
   });
+  const [employeeOptions, setEmployeeOptions] = useState([]); // State untuk menyimpan opsi karyawan
+  const [selectedEmployees, setSelectedEmployees] = useState([]); // State untuk menyimpan karyawan yang dipilih
 
-  const employeeData = [
-    { value: "1", label: "John Doe" },
-    { value: "2", label: "Jane Smith" },
-    { value: "3", label: "Jack Brown" },
-    // Tambahkan data karyawan lainnya sesuai kebutuhan
-  ];
-
-  const CheckboxOption = (props) => {
-    return (
-      <components.Option {...props}>
-        <input
-          type="checkbox"
-          checked={props.isSelected}
-          onChange={() => null}
-        />{" "}
-        <label>{props.label}</label>
-      </components.Option>
-    );
+  // Fungsi untuk mengambil data karyawan dari API
+  const fetchEmployees = async () => {
+    try {
+      const response = await axios.get(
+        "https://republikweb-cp-backend.vercel.app/karyawan"
+      );
+      if (response.status === 200) {
+        // Format data menjadi opsi untuk dropdown
+        const formattedEmployees = response.data.map((employee) => ({
+          value: employee.karyawan_id,
+          label: employee.fullname,
+        }));
+        setEmployeeOptions(formattedEmployees);
+      }
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+    }
   };
 
-  const [selectedEmployees, setSelectedEmployees] = useState([]);
+  useEffect(() => {
+    fetchEmployees(); // Ambil data karyawan saat komponen dimount
+  }, []);
 
   const handleChange = (selectedOptions) => {
     setSelectedEmployees(selectedOptions);
     setNewProject({
       ...newProject,
-      members: selectedOptions.map((option) => option.label),
+      members: selectedOptions.map((option) => option.label), // Simpan nama karyawan yang dipilih
     });
   };
 
@@ -63,7 +66,7 @@ const Project = ({ activities }) => {
   };
 
   const handleConfirmProject = async () => {
-    const token = Cookies.get("token"); // Assuming the token is stored in a cookie named 'token'
+    const token = Cookies.get("token");
 
     if (!token) {
       console.error("No token found");
@@ -72,7 +75,7 @@ const Project = ({ activities }) => {
 
     try {
       const response = await axios.post(
-        "https://republikweb-cp-backend.vercel.app/projects",
+        `https://republikweb-cp-backend.vercel.app/projects`,
         newProject,
         {
           headers: {
@@ -84,16 +87,11 @@ const Project = ({ activities }) => {
       if (response.status === 201) {
         console.log("Project created successfully", response.data);
         setIsLogPopupVisible(false);
-        // Optionally update the UI or fetch new data here
         window.location.reload();
       }
     } catch (error) {
       console.error("Error creating project:", error);
     }
-  };
-
-  const convertTimestampToDate = (timestamp) => {
-    return new Date(timestamp._seconds * 1000).toISOString().split("T")[0];
   };
 
   useEffect(() => {
@@ -120,47 +118,40 @@ const Project = ({ activities }) => {
     setIsLogPopupVisible(false);
   };
 
-  useEffect(() => {
-    const lowercasedFilter = searchQuery.toLowerCase();
-    const filteredData = projects?.filter((item) =>
-      item.projectname.toLowerCase().includes(lowercasedFilter)
-    );
-    setFilteredProjects(filteredData || []);
-  }, [searchQuery, projects]);
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+    fetchProjects(e.target.value);
+  };
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      const token = Cookies.get("token");
+  const fetchProjects = async (projectname = "") => {
+    const token = Cookies.get("token");
 
-      if (!token) {
-        console.error("No token found");
-        return;
-      }
+    if (!token) {
+      console.error("No token found");
+      return;
+    }
 
-      try {
-        const response = await axios.get(
-          "https://republikweb-cp-backend.vercel.app/projects",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (response.status === 200) {
-          const projectsData = response.data.map((project) => ({
-            ...project,
-            startdate: convertTimestampToDate(project.startdate),
-            enddate: convertTimestampToDate(project.enddate),
-          }));
-          setProjects(projectsData);
-          setFilteredProjects(projectsData);
+    try {
+      const response = await axios.get(
+        `https://republikweb-cp-backend.vercel.app/projects?projectname=${projectname}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      }
-    };
+      );
 
+      if (response.status === 200) {
+        const projectsData = response.data;
+        setProjects(projectsData);
+        setFilteredProjects(projectsData); // Set filtered projects initially
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchProjects();
   }, []);
 
@@ -185,7 +176,7 @@ const Project = ({ activities }) => {
                 placeholder="Cari Project"
                 className="border border-gray-300 rounded px-10 py-2 w-96"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearch}
               />
               <IoIosSearch className="absolute left-2 top-2 text-gray-400 w-6 h-6" />
             </div>
@@ -203,9 +194,7 @@ const Project = ({ activities }) => {
               {filteredProjects?.map((project, index) => (
                 <Link
                   key={index}
-                  to={`/DetailProject/${encodeURIComponent(
-                    project.projectname
-                  )}`}
+                  to={`/DetailProject/${encodeURIComponent(project.projectId)}`}
                   className="relative bg-blue-950 text-white shadow-lg rounded-t-lg flex flex-col justify-between"
                   style={{
                     height: "150px",
@@ -256,50 +245,40 @@ const Project = ({ activities }) => {
                     hideSelectedOptions={false}
                     components={{ Option: CheckboxOption }}
                     onChange={handleChange}
-                    options={employeeData}
-                    allowSelectAll={true}
-                    value={selectedEmployees}
-                    placeholder="Pilih karyawan"
+                    options={employeeOptions} // Set opsi untuk dropdown list
+                    placeholder="Pilih Anggota Project"
+                    value={selectedEmployees} // Set nilai yang dipilih
                   />
                 </div>
-                <div className="flex justify-between">
-                  <div className="w-full mr-3">
-                    <label>Tanggal Mulai</label>
-                    <br />
-                    <input
-                      name="startdate"
-                      value={newProject.startdate}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border border-gray-300 rounded-lg mt-1 mb-3"
-                      type="date"
-                    />
-                  </div>
-                  <div className="w-full">
-                    <label>Tanggal Akhir</label>
-                    <br />
-                    <input
-                      name="enddate"
-                      value={newProject.enddate}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border border-gray-300 rounded-lg mt-1 mb-3"
-                      type="date"
-                    />
-                  </div>
-                </div>
-                <label>Deskripsi Project</label>
-                <textarea
+                <label>Deskripsi</label>
+                <input
                   name="description"
                   value={newProject.description}
                   onChange={handleInputChange}
                   className="w-full p-2 border border-gray-300 rounded-lg mt-1 mb-3"
                   placeholder="Masukkan Deskripsi Project"
-                  rows="4"
+                />
+                <label>Tanggal Mulai</label>
+                <input
+                  name="startdate"
+                  value={newProject.startdate}
+                  onChange={handleInputChange}
+                  type="date"
+                  className="w-full p-2 border border-gray-300 rounded-lg mt-1 mb-3"
+                />
+                <label>Tanggal Selesai</label>
+                <input
+                  name="enddate"
+                  value={newProject.enddate}
+                  onChange={handleInputChange}
+                  type="date"
+                  className="w-full p-2 border border-gray-300 rounded-lg mt-1 mb-3"
                 />
                 <button
                   onClick={handleConfirmProject}
-                  className="bg-blue-950 text-white px-4 py-2 rounded-lg"
+                  className="w-full bg-blue-950 text-white py-2 rounded-xl"
                 >
-                  Konfirmasi
+                  Tambah Project
                 </button>
               </div>
             </div>
@@ -307,6 +286,15 @@ const Project = ({ activities }) => {
         </div>
       </main>
     </div>
+  );
+};
+
+const CheckboxOption = (props) => {
+  return (
+    <components.Option {...props}>
+      <input type="checkbox" checked={props.isSelected} onChange={() => null} />{" "}
+      <label>{props.label}</label>
+    </components.Option>
   );
 };
 

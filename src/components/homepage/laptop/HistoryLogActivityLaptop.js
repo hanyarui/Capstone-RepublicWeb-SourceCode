@@ -60,7 +60,7 @@ const HistoryLogActivityLaptop = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center p-0">
+    <div className="h-full w-screen bg-white flex flex-col items-center p-0">
       <Header />
       <div className="flex items-center w-11/12 p-0 my-5">
         <Link to="/Homepage">
@@ -71,25 +71,27 @@ const HistoryLogActivityLaptop = () => {
         </div>
       </div>
 
-      <table className="table-auto w-11/12">
+      <table className="table-auto w-11/12 mb-10">
         <thead>
           <tr className="border bg-gray-200 text-left">
-            <th>No</th>
-            <th>Tanggal</th>
-            <th>Activity Log</th>
-            <th>Status</th>
-            <th>Aksi</th>
+            <th className="text-center py-2">No</th>
+            <th className="text-center py-2">Tanggal</th>
+            <th className="text-center py-2">Activity Log</th>
+            <th className="text-center py-2">Status</th>
+            <th className="text-center py-2">Aksi</th>
           </tr>
         </thead>
         <tbody>
           {data.map((item, index) => (
             <tr key={index} className="border text-base">
-              <td>{index + 1}</td>
-              <td>{item.tanggal}</td>
-              <td>{item.activity}</td>
-              <td>{item.status}</td>
-              <td>
-                <button className="text-blue-500">Action</button>
+              <td className="text-center py-2">{index + 1}</td>
+              <td className="text-center py-2">{item.tanggal}</td>
+              <td className="py-2">{item.activity}</td>
+              <td className="text-center py-2">{item.status}</td>
+              <td className="items-center justify-center text-center">
+                <button className="text-white rounded-lg py-1 px-4 bg-blue-950">
+                  Action
+                </button>
               </td>
             </tr>
           ))}

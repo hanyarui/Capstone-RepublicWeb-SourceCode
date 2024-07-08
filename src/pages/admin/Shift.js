@@ -27,7 +27,6 @@ const Shift = () => {
         ...item,
         karyawanId: item.karyawanId, // Pastikan field ini sudah ada di data dari backend
       }));
-      console.log("Fetched Data:", formattedData);
       setData(formattedData);
     } catch (error) {
       console.error("Error fetching shift data:", error);

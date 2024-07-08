@@ -113,7 +113,8 @@ const Profile = () => {
           <div className="bg-white py-24 px-6 w-full rounded-lg shadow-lg max-w-sm mx-auto h-max md:col-span-1">
             <div className="flex flex-col items-center space-y-4 h-full">
               <img
-                src={profileData.profile_photo_url}
+                src="/assets/person.png"
+                // src={profileData.profile_photo_url}
                 alt="Profile"
                 className="w-44 h-44 rounded-full"
               />

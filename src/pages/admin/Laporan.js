@@ -84,6 +84,10 @@ const Shift = () => {
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
+                  <button
+                    type="submit"
+                    className="absolute left-3 top-3 text-gray-400 w-6 h-6"
+                  ></button>
                 </form>
               </div>
             </div>
