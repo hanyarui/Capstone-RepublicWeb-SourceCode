@@ -8,6 +8,11 @@ import { jwtDecode } from "jwt-decode"; // Library untuk mendekode token JWT
 
 const HistoryLogActivityLaptop = () => {
   const [data, setData] = useState([]);
+  const [isLogPopupVisible, setIsLogPopupVisible] = useState(false);
+
+  const hanleEditActivityLog = () => {
+    setIsLogPopupVisible(true);
+  };
 
   useEffect(() => {
     // Get karyawanId from token
@@ -100,7 +105,10 @@ const HistoryLogActivityLaptop = () => {
                 <td className="py-2">{item.activity}</td>
                 <td className="text-center py-2">{item.status}</td>
                 <td className="items-center justify-center text-center">
-                  <button className="text-white rounded-lg py-1 px-4 bg-blue-950">
+                  <button
+                    onClick={hanleEditActivityLog}
+                    className="text-white rounded-lg py-1 px-4 bg-blue-950"
+                  >
                     Action
                   </button>
                 </td>
@@ -109,6 +117,34 @@ const HistoryLogActivityLaptop = () => {
           </tbody>
         </table>
       </div>
+      {isLogPopupVisible && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-1/3 h-max bg-white p-5 rounded-2xl">
+            <div className="flex justify-between mb-3">
+              <div className=" text-center font-bold text-lg">Log Activity</div>
+              <button
+                onClick={() => setIsLogPopupVisible(false)}
+                className="size-7"
+              >
+                X
+              </button>
+            </div>
+            <input
+              type="text"
+              // value={logActivityText}
+              // onChange={(e) => setLogActivityText(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-lg mb-3 text-left align-text-top"
+              placeholder="Masukkan aktivitas log anda..."
+            />
+            <button
+              // onClick={handleConfirmActivity}
+              className="mt-3 p-2 bg-blue-500 text-white rounded"
+            >
+              Konfirmasi
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -44,6 +44,45 @@ const Presensi = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [attendanceStats, setAttendanceStats] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  // const [hiddenChecks, setHiddenChecks] = useState({});
+  // const [hiddenCancels, setHiddenCancels] = useState({});
+  const [isAttendancePopupVisible, setIsAttendancePopupVisible] =
+    useState(false);
+
+  const [attendanceForm, setAttendanceForm] = useState({
+    karyawanId: "",
+    date: getTodayDate(),
+    status: "izin",
+  });
+
+  const hanleAttendance = (idKaryawan, date) => {
+    setAttendanceForm({ karyawanId: idKaryawan, date: date, status: "izin" });
+    setIsAttendancePopupVisible(true);
+  };
+
+  const handleFormChange = (event) => {
+    const { name, value } = event.target;
+    setAttendanceForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const today = getTodayDate();
+
+  const handleAttendance = async (idKaryawan, date) => {
+    const token = Cookies.get("token");
+    try {
+      const response = await axios.post(
+        `https://republikweb-cp-backend.vercel.app/add-permission/${idKaryawan}/${date}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      alert("Attendance permission added successfully!");
+    } catch (error) {
+      console.error("There was an error adding the permission!", error);
+    }
+  };
 
   const handleReject = async (idKaryawan, activitylogid) => {
     try {
@@ -64,10 +103,36 @@ const Presensi = () => {
       );
 
       if (response.status === 200) {
-        console.log("Activity log rejected successfully");
+        alert("Activity log rejected successfully");
+        // setHiddenCancels((prev) => ({ ...prev, [activitylogid]: true }));
       }
     } catch (error) {
-      console.error("Error rejecting activity log:", error);
+      alert("Error rejecting activity log:", error);
+    }
+  };
+
+  const handleAccept = async (idKaryawan, activitylogid) => {
+    try {
+      const token = Cookies.get("token");
+      if (!token) {
+        console.error("No token found!");
+        return;
+      }
+
+      const response = await axios.post(
+        `https://republikweb-cp-backend.vercel.app/activitylog/${idKaryawan}/${activitylogid}/accept`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200) {
+        alert("Activity log accepted successfully");
+        // setHiddenChecks((prev) => ({ ...prev, [activitylogid]: true }));
+      }
+    } catch (error) {
+      alert("Error rejecting activity log:", error);
     }
   };
 
@@ -81,25 +146,24 @@ const Presensi = () => {
 
     const today = getTodayDate();
 
-    const fetchAttendanceToday = async () => {
+    const fetchAttendanceToday = async (fullname = "") => {
       try {
         const response = await axios.get(
-          `https://republikweb-cp-backend.vercel.app/report/date/${today}`,
+          `https://republikweb-cp-backend.vercel.app/report/date/${today}?fullname=${fullname}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
         return response.data.map((item) => ({
-          idKaryawan: item.idKaryawan,
+          idKaryawan: item.karyawanId,
           nama: item.fullname,
           masuk: formatTime(item.checkInTimes.start),
           pulang: formatTime(item.checkInTimes.end),
           mulai: formatTime(item.checkInTimes.break),
           selesai: formatTime(item.checkInTimes.resume),
-          status: item.status,
         }));
       } catch (error) {
-        console.error("There was an error fetching the data!", error);
+        alert("There was an error fetching the data!", error);
         return [];
       }
     };
@@ -113,7 +177,7 @@ const Presensi = () => {
           }
         );
         return response.data.map((item) => ({
-          idKaryawan: item.idKaryawan,
+          idKaryawan: item.karyawanId,
           kurang: formatTimeDebt(item.timeDebt),
         }));
       } catch (error) {
@@ -130,10 +194,8 @@ const Presensi = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        console.log("Activity Log Response Data:", response.data);
-
         return response.data.map((item) => ({
-          idKaryawan: item.idKaryawan,
+          idKaryawan: item.idkaryawan,
           activitylogid: item.activitylogid,
           aktivitas: item.description,
         }));
@@ -152,8 +214,26 @@ const Presensi = () => {
           }
         );
         return response.data.map((item) => ({
-          idKaryawan: item.idKaryawan,
+          idKaryawan: item.karyawanId,
           totalWorkHours: item.totalWorkHours,
+        }));
+      } catch (error) {
+        console.error("There was an error fetching the data!", error);
+        return [];
+      }
+    };
+
+    const fetchAttandanceUser = async () => {
+      try {
+        const response = await axios.get(
+          `https://republikweb-cp-backend.vercel.app/attendancedate/date/${today}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        return response.data.map((item) => ({
+          idKaryawan: item.karyawanId,
+          status: item.status,
         }));
       } catch (error) {
         console.error("There was an error fetching the data!", error);
@@ -186,13 +266,19 @@ const Presensi = () => {
     };
 
     const fetchData = async () => {
-      const [attendanceToday, debtAttendance, activityLog, totalWorkHours] =
-        await Promise.all([
-          fetchAttendanceToday(),
-          fetchDebtAttendance(),
-          fetchActivityLog(),
-          fetchTotalWorkHours(),
-        ]);
+      const [
+        attendanceToday,
+        debtAttendance,
+        activityLog,
+        attendanceUser,
+        totalWorkHours,
+      ] = await Promise.all([
+        fetchAttendanceToday(searchTerm),
+        fetchDebtAttendance(),
+        fetchActivityLog(),
+        fetchAttandanceUser(),
+        fetchTotalWorkHours(),
+      ]);
 
       // Menggabungkan data berdasarkan idKaryawan
       const combinedData = {};
@@ -215,7 +301,7 @@ const Presensi = () => {
       activityLog.forEach((item) => {
         if (combinedData[item.idKaryawan]) {
           combinedData[item.idKaryawan].aktivitas = item.aktivitas;
-          combinedData[item.idKaryawan].activitylogid = item.activitylogid; // Tambahkan activitylogid
+          combinedData[item.idKaryawan].activitylogid = item.activitylogid;
         } else {
           combinedData[item.idKaryawan] = { ...item };
         }
@@ -230,14 +316,27 @@ const Presensi = () => {
         }
       });
 
-      // Konversi objek ke array
-      setData(Object.values(combinedData));
-      setLoading(false);
+      // Gabungkan data dari attendanceUser
+      attendanceUser.forEach((item) => {
+        if (combinedData[item.idKaryawan]) {
+          combinedData[item.idKaryawan].status = item.status;
+        } else {
+          combinedData[item.idKaryawan] = { ...item };
+        }
+      });
+
+      // Convert combinedData object to array
+      const finalData = Object.values(combinedData);
+      setData(finalData);
     };
 
     fetchData();
     fetchAttendanceStats();
-  }, []);
+  }, [searchTerm]);
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
 
   if (loading) {
     return (
@@ -270,17 +369,17 @@ const Presensi = () => {
                 <p>Data per tanggal</p>
               </div>
               <div className="relative text-white">
-                <form>
-                  <label className="block">Cari Karyawan</label>
-                  <div className="relative mt-1">
-                    <IoIosSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <input
-                      type="text"
-                      className="w-full border text-black border-gray-300 rounded pl-10 pr-4 py-2"
-                      placeholder="Pencarian"
-                    />
-                  </div>
-                </form>
+                <label className="block">Cari Karyawan</label>
+                <div className="relative mt-1">
+                  <IoIosSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full border text-black border-gray-300 rounded pl-10 pr-4 py-2"
+                    placeholder="Pencarian"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -328,37 +427,37 @@ const Presensi = () => {
             <table className="table-auto w-full border-collapse">
               <thead className="bg-gray-200">
                 <tr>
-                  <th className="border px-4 py-2 font-semibold">No</th>
-                  <th className="border px-4 py-2 font-semibold">Nama</th>
-                  <th className="border px-4 py-2 font-semibold" colSpan="2">
+                  <th className="px-4 py-2 border font-semibold">No</th>
+                  <th className="px-4 py-2 border font-semibold">Nama</th>
+                  <th className="px-4 py-2 border font-semibold" colSpan="2">
                     Jam Kerja
                     <div className="flex border-t border-black justify-between mt-1 font-semibold">
                       <span>Masuk</span>
                       <span>Pulang</span>
                     </div>
                   </th>
-                  <th className="border px-4 py-2 font-semibold" colSpan="2">
+                  <th className="px-4 py-2 border font-semibold" colSpan="2">
                     Jam Istirahat
                     <div className="flex border-t border-black justify-between mt-1 font-semibold">
                       <span>Mulai</span>
                       <span>Selesai</span>
                     </div>
                   </th>
-                  <th className="border px-4 py-2 font-semibold" colSpan="2">
+                  <th className="px-4 py-2 border font-semibold" colSpan="2">
                     Total Jam Kerja
                     <div className="flex border-t border-black justify-between mt-1 font-semibold">
                       <span>Total Jam</span>
                       <span>(+) (-)</span>
                     </div>
                   </th>
-                  <th className="border px-4 py-2 font-semibold" colSpan="2">
+                  <th className="px-4 py-2 border font-semibold" colSpan="2">
                     Log Aktivitas
                     <div className="flex border-t border-black justify-between mt-1 font-semibold">
                       <span>Log Aktivitas</span>
                       <span>Aksi</span>
                     </div>
                   </th>
-                  <th className="border px-4 py-2 font-semibold">
+                  <th className="px-4 py-2 border font-semibold">
                     Status Kehadiran
                   </th>
                 </tr>
@@ -375,39 +474,59 @@ const Presensi = () => {
 
                   return (
                     <tr key={index} className="border text-base">
-                      <td className="text-center border py-2">{index + 1}</td>
-                      <td className="text-center border py-2">{item.nama}</td>
-                      <td className="text-center border py-2">{item.masuk}</td>
-                      <td className="text-center border py-2">{item.pulang}</td>
-                      <td className="text-center border py-2">{item.mulai}</td>
-                      <td className="text-center border py-2">
+                      <td className="text-center border-b py-2">{index + 1}</td>
+                      <td className="text-center border-b py-2">{item.nama}</td>
+                      <td className="text-center border-b py-2">
+                        {item.masuk}
+                      </td>
+                      <td className="text-center border-b py-2">
+                        {item.pulang}
+                      </td>
+                      <td className="text-center border-b py-2">
+                        {item.mulai}
+                      </td>
+                      <td className="text-center border-b py-2">
                         {item.selesai}
                       </td>
-                      <td className="text-center border py-2">
+                      <td className="text-center border-b py-2">
                         {item.totalWorkHours}
                       </td>
                       <td
-                        className={`text-center border py-2 ${debtTimeClass}`}
+                        className={`text-center border-b py-2 ${debtTimeClass}`}
                       >
                         {item.kurang || "00:00:00"}
                       </td>
-                      <td className="text-center border py-2">
+                      <td className="text-center border-b py-2">
                         {item.aktivitas}
                       </td>
-                      <td className="text-end border py-2">
+                      <td className="text-end border-b py-2">
                         <div className="flex col-span-2 items-center justify-between px-2">
+                          {/* {!hiddenChecks[item.activitylogid] && ( */}
                           <MdOutlineCancel
-                            className="size-5 cursor-pointer"
+                            className="size-5 cursor-pointer fill-red-500"
                             onClick={() =>
                               handleReject(item.idKaryawan, item.activitylogid)
                             }
                           />
+                          {/* )} */}
+                          {/* {!hiddenCancels[item.activitylogid] && ( */}
                           <FaRegCircleCheck
-                          // onClick={() => handleAccept(item.idKaryawan, item.activitylogid)}
+                            className="cursor-pointer fill-green-500"
+                            onClick={() =>
+                              handleAccept(item.idKaryawan, item.activitylogid)
+                            }
                           />
+                          {/* )} */}
                         </div>
                       </td>
-                      <td className="text-center border py-2">{item.status}</td>
+                      <td className="text-center border-b py-2">
+                        <div
+                          onClick={hanleAttendance}
+                          className="cursor-pointer"
+                        >
+                          {item.status}
+                        </div>
+                      </td>
                       {/* <td className="text-center border py-2">
                         <button className="text-blue-500">Action</button>
                       </td> */}
@@ -418,6 +537,65 @@ const Presensi = () => {
             </table>
           </div>
         </div>
+        {isAttendancePopupVisible && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="w-1/3 h-max bg-white p-5 rounded-2xl">
+              <div className="flex justify-between mb-3">
+                <div className=" text-center font-bold text-lg">
+                  Log Activity
+                </div>
+                <button
+                  onClick={() => setIsAttendancePopupVisible(false)}
+                  className="size-7"
+                >
+                  X
+                </button>
+              </div>
+              <label className="font-bold">Keterangan</label>
+              <input
+                type="text"
+                className="border border-gray-300 rounded px-4 py-2 mt-1 mb-3 w-full"
+              />
+              <label className="font-bold">Link Gambar</label>
+              <input
+                type="url"
+                className="border border-gray-300 rounded px-4 py-2 mt-1 mb-3 w-full"
+              />
+              <label className="font-bold mb-1">Ganti Jam</label>
+              <div className="flex justify-between w-3/4">
+                <div>
+                  <input type="radio" id="ganti" placeholder="Ganti Jam" />
+                  <label for="ganti" className="ml-2">
+                    Ganti Jam
+                  </label>
+                </div>
+                <div>
+                  <input type="radio" id="ganti" placeholder="Ganti Jam" />
+                  <label for="ganti" className="ml-2">
+                    Tidak Ganti Jam
+                  </label>
+                </div>
+              </div>
+              <label className="font-bold mt-3 mb-1 block">Status</label>
+              <select
+                name="status"
+                id="status"
+                className="border border-gray-300 rounded px-4 py-2 w-full"
+                value={attendanceForm.status}
+                onChange={handleFormChange}
+              >
+                <option>Tidak Hadir</option>
+                <option>Izin</option>
+              </select>
+              <button
+                // onClick={() => handleAttendance(item.idKaryawan, today)}
+                className="mt-8 p-2 bg-blue-500 text-white rounded"
+              >
+                Konfirmasi
+              </button>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

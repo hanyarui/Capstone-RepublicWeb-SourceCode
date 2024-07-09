@@ -102,22 +102,11 @@ const LoginFormLaptop = () => {
                 Lupa Kata Sandi?
               </Link>
             </div>
-            <div className="mb-8 text-left">
-              <input
-                type="checkbox"
-                id="remember"
-                name="remember"
-                value="remember"
-              />
-              <label htmlFor="remember" className="ml-3 text-left">
-                Ingat Saya
-              </label>
-            </div>
           </div>
           <button
             type="submit"
             style={{ borderRadius: "5px", fontWeight: "700" }}
-            className="button p-4 w-1/2 mx-auto bg-white text-black rounded-3 cursor-pointer"
+            className="button p-4 w-1/2 mt-5 mx-auto bg-white text-black rounded-3 cursor-pointer"
           >
             Login
           </button>

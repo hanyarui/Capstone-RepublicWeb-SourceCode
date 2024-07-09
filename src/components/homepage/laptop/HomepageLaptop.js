@@ -369,7 +369,7 @@ const HomepageLaptop = () => {
               onClick={popupLogActivity}
               className="p-4 text-white w-3/5 mt-4 bg-blue-950 rounded-xl"
             >
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center text-base">
                 <RiStickyNoteAddFill className="mr-3" />
                 Log Activity
               </div>
@@ -407,7 +407,7 @@ const HomepageLaptop = () => {
               onClick={moveToHistoryLogActivity}
               className="p-4 text-white w-3/5 mt-4 bg-blue-950 rounded-xl"
             >
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center text-base">
                 <LuFileClock className="mr-3" />
                 Histori Log Activity
               </div>

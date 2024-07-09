@@ -92,17 +92,6 @@ const LoginFormHp = () => {
               Lupa Kata Sandi?
             </Link>
           </div>
-          <div className="mb-8 text-left">
-            <input
-              type="checkbox"
-              id="remember"
-              name="remember"
-              value="remember"
-            />
-            <label htmlFor="remember" className="ml-3 text-left text-black">
-              Ingat Saya
-            </label>
-          </div>
         </div>
         <button
           onClick={handleSubmit}
@@ -112,7 +101,7 @@ const LoginFormHp = () => {
             fontWeight: "700",
             backgroundColor: "#040F4D",
           }}
-          className="button p-4 w-1/2 mx-auto text-white rounded-3 cursor-pointer"
+          className="button p-4 w-1/2 mt-5 mx-auto text-white rounded-3 cursor-pointer"
         >
           Login
         </button>
