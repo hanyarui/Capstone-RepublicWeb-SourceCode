@@ -8,22 +8,6 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import ClipLoader from "react-spinners/ClipLoader";
 
-// Function to format debt time from minutes to HH:MM:SS
-const formatTimeDebt = (minutes) => {
-  const isNegative = minutes < 0;
-  const absMinutes = Math.abs(minutes);
-
-  const hours = Math.floor(absMinutes / 60);
-  const mins = Math.floor(absMinutes % 60);
-  const secs = Math.floor((absMinutes * 60) % 60);
-
-  const formattedTime = `${String(hours).padStart(2, "0")}:${String(
-    mins
-  ).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
-
-  return isNegative ? `+${formattedTime}` : `-${formattedTime}`;
-};
-
 // Function to Format Time (Hours and Minutes)
 const formatTime = (timeString) => {
   if (!timeString) return "---"; // Handle case where timeString is undefined or null
@@ -164,6 +148,38 @@ const getDebtTimeData = async (karyawanId) => {
   }
 };
 
+// Function to fetch QR code URL based on karyawanId
+const fetchQrCode = async (karyawanId) => {
+  try {
+    const token = Cookies.get("token");
+    if (!token) {
+      console.error("No token found in cookies");
+      return null;
+    }
+
+    const response = await fetch(
+      `https://republikweb-cp-backend.vercel.app/karyawan/${karyawanId}/barcode`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(response);
+    if (!response.ok) {
+      throw new Error("Failed to fetch QR code");
+    }
+
+    const data = await response.json();
+    return data.gambar_qr; // Assuming this is the filename of the QR code image
+  } catch (error) {
+    console.error("Error fetching QR code:", error);
+    return null;
+  }
+};
+
 const HomepageLaptop = () => {
   const [loading, setLoading] = useState(true);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -182,7 +198,8 @@ const HomepageLaptop = () => {
   const [formattedTime, setFormattedTime] = useState("00:00");
 
   // State for showing barcode popup
-  const [isBarcodeVisible, setIsBarcodeVisible] = useState(false);
+  const [isQrCodeVisible, setIsQrCodeVisible] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState(null);
 
   // Get karyawanId from token
   const token = Cookies.get("token");
@@ -198,11 +215,18 @@ const HomepageLaptop = () => {
       if (data) {
         setTotalDebtTime(data.totalDebtTime);
 
-        // Convert total debt time from minutes to HH:MM:SS format using formatTimeDebt
-        const formattedDebtTime = formatTimeDebt(data.totalDebtTime);
-        setFormattedTime(formattedDebtTime);
+        // Convert total debt time from minutes to HH:MM:SS format
+        const totalSeconds = data.totalDebtTime * 60; // convert minutes to seconds
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        setFormattedTime(
+          `${hours.toString().padStart(2, "0")}:${minutes
+            .toString()
+            .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+        );
       }
-      setLoading(false);
     };
 
     fetchTotalDebtTime();
@@ -297,9 +321,17 @@ const HomepageLaptop = () => {
     return "Selesai";
   };
 
-  // Toggle barcode popup visibility
-  const toggleBarcodePopup = () => {
-    setIsBarcodeVisible(!isBarcodeVisible);
+  // Function to toggle QR code popup and fetch QR code URL
+  const toggleQrCodePopup = async () => {
+    if (!isQrCodeVisible) {
+      const qrCodeFileName = await fetchQrCode(karyawanId); // Fetch gambar_qr (filename)
+      if (qrCodeFileName) {
+        // Construct the URL to the image based on your storage or hosting
+        const url = `https://firebasestorage.googleapis.com/v0/b/republikweb-presence-system.appspot.com/o/${qrCodeFileName}?alt=media`; // Replace with your actual URL
+        setQrCodeUrl(url);
+      }
+    }
+    setIsQrCodeVisible(!isQrCodeVisible);
   };
 
   return (
@@ -380,20 +412,31 @@ const HomepageLaptop = () => {
                 Histori Log Activity
               </div>
             </button>
-            {isBarcodeVisible && (
+            {isQrCodeVisible && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                 <div className="bg-white p-5 w-max h-max rounded-lg relative">
                   <button
-                    onClick={toggleBarcodePopup}
+                    onClick={toggleQrCodePopup}
                     className="absolute top-4 right-7 text-gray-500 hover:text-black"
                   >
                     Close
                   </button>
-                  <p className="mb-2 mt-4">Barcode</p>
-                  <img
-                    src="/assets/qr-code.png"
-                    className="max-w-full max-h-full object-contain mx-auto"
-                  />
+                  <p className="mb-2 mt-4">QR Code</p>
+                  {qrCodeUrl ? (
+                    <img
+                      src={qrCodeUrl}
+                      alt="Karyawan QR Code"
+                      className="max-w-full max-h-full object-contain mx-auto"
+                    />
+                  ) : (
+                    <div className="flex justify-center items-center">
+                      <ClipLoader
+                        size={50}
+                        color={"#123abc"}
+                        loading={loading}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -401,10 +444,7 @@ const HomepageLaptop = () => {
 
           <div className="col-span-2">
             <div className="flex justify-end items-start h-14">
-              <button
-                onClick={toggleBarcodePopup}
-                className="text-red-700 mt-4"
-              >
+              <button onClick={toggleQrCodePopup} className="text-red-700 mt-4">
                 Lihat Barcode Saya
               </button>
             </div>
@@ -482,7 +522,7 @@ const HomepageLaptop = () => {
                     Anda memiliki kekurangan jam kerja
                   </div>
                   <div className="text-red-500 text-2xl text-center mt-2">
-                    {formattedTime}
+                    -{formattedTime}
                   </div>
                 </div>
               </div>
