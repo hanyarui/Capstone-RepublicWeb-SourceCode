@@ -60,7 +60,7 @@ const HistoryLogActivityLaptop = () => {
   }, []);
 
   return (
-    <div className="h-full w-screen bg-white flex flex-col items-center p-0">
+    <div className="h-full w-screen bg-white flex flex-col items-center p-0 overflow-auto">
       <Header />
       <div className="flex items-center w-11/12 p-0 my-5">
         <Link to="/Homepage">
@@ -71,32 +71,44 @@ const HistoryLogActivityLaptop = () => {
         </div>
       </div>
 
-      <table className="table-auto w-11/12 mb-10">
-        <thead>
-          <tr className="border bg-gray-200 text-left">
-            <th className="text-center py-2">No</th>
-            <th className="text-center py-2">Tanggal</th>
-            <th className="text-center py-2">Activity Log</th>
-            <th className="text-center py-2">Status</th>
-            <th className="text-center py-2">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, index) => (
-            <tr key={index} className="border text-base">
-              <td className="text-center py-2">{index + 1}</td>
-              <td className="text-center py-2">{item.tanggal}</td>
-              <td className="py-2">{item.activity}</td>
-              <td className="text-center py-2">{item.status}</td>
-              <td className="items-center justify-center text-center">
-                <button className="text-white rounded-lg py-1 px-4 bg-blue-950">
-                  Action
-                </button>
-              </td>
+      <div className="w-11/12 mb-10 overflow-auto">
+        <table className="table-auto w-full">
+          <thead className="sticky top-0 bg-gray-200">
+            <tr className="border text-left">
+              <th className="text-center py-2 sticky top-0 bg-gray-200 z-10">
+                No
+              </th>
+              <th className="text-center py-2 sticky top-0 bg-gray-200 z-10">
+                Tanggal
+              </th>
+              <th className="text-center py-2 sticky top-0 bg-gray-200 z-10">
+                Activity Log
+              </th>
+              <th className="text-center py-2 sticky top-0 bg-gray-200 z-10">
+                Status
+              </th>
+              <th className="text-center py-2 sticky top-0 bg-gray-200 z-10">
+                Aksi
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data.map((item, index) => (
+              <tr key={index} className="border text-base">
+                <td className="text-center py-2">{index + 1}</td>
+                <td className="text-center py-2">{item.tanggal}</td>
+                <td className="py-2">{item.activity}</td>
+                <td className="text-center py-2">{item.status}</td>
+                <td className="items-center justify-center text-center">
+                  <button className="text-white rounded-lg py-1 px-4 bg-blue-950">
+                    Action
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
