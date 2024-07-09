@@ -8,6 +8,22 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import ClipLoader from "react-spinners/ClipLoader";
 
+// Function to format debt time from minutes to HH:MM:SS
+const formatTimeDebt = (minutes) => {
+  const isNegative = minutes < 0;
+  const absMinutes = Math.abs(minutes);
+
+  const hours = Math.floor(absMinutes / 60);
+  const mins = Math.floor(absMinutes % 60);
+  const secs = Math.floor((absMinutes * 60) % 60);
+
+  const formattedTime = `${String(hours).padStart(2, "0")}:${String(
+    mins
+  ).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+
+  return isNegative ? `+${formattedTime}` : `-${formattedTime}`;
+};
+
 // Function to Format Time (Hours and Minutes)
 const formatTime = (timeString) => {
   if (!timeString) return "---"; // Handle case where timeString is undefined or null
@@ -182,18 +198,11 @@ const HomepageLaptop = () => {
       if (data) {
         setTotalDebtTime(data.totalDebtTime);
 
-        // Convert total debt time from minutes to HH:MM:SS format
-        const totalSeconds = data.totalDebtTime * 60; // convert minutes to seconds
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-
-        setFormattedTime(
-          `${hours.toString().padStart(2, "0")}:${minutes
-            .toString()
-            .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
-        );
+        // Convert total debt time from minutes to HH:MM:SS format using formatTimeDebt
+        const formattedDebtTime = formatTimeDebt(data.totalDebtTime);
+        setFormattedTime(formattedDebtTime);
       }
+      setLoading(false);
     };
 
     fetchTotalDebtTime();
@@ -364,7 +373,7 @@ const HomepageLaptop = () => {
             </button>
             {isBarcodeVisible && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white p-5 w-1/3 h-1/3 rounded-lg relative">
+                <div className="bg-white p-5 w-max h-max rounded-lg relative">
                   <button
                     onClick={toggleBarcodePopup}
                     className="absolute top-4 right-7 text-gray-500 hover:text-black"
@@ -373,7 +382,7 @@ const HomepageLaptop = () => {
                   </button>
                   <p className="mb-2 mt-4">Barcode</p>
                   <img
-                    src="path/to/your/barcode/image"
+                    src="/assets/qr-code.png"
                     className="max-w-full max-h-full object-contain mx-auto"
                   />
                 </div>
@@ -464,7 +473,7 @@ const HomepageLaptop = () => {
                     Anda memiliki kekurangan jam kerja
                   </div>
                   <div className="text-red-500 text-2xl text-center mt-2">
-                    -{formattedTime}
+                    {formattedTime}
                   </div>
                 </div>
               </div>

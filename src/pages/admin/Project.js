@@ -133,7 +133,7 @@ const Project = ({ activities }) => {
 
     try {
       const response = await axios.get(
-        `https://republikweb-cp-backend.vercel.app/projects?projectname=${projectname}`,
+        `https://republikweb-cp-backend.vercel.app/projects?search=${projectname}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

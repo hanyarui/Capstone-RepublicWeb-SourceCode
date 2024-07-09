@@ -77,6 +77,7 @@ const Dashboard = () => {
 
         const data = await response.json();
         setAttendanceStats(data);
+        setLoading(false);
       } catch (error) {
         console.error("Failed to fetch attendance stats:", error);
       }
