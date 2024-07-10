@@ -154,14 +154,33 @@ const Presensi = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        return response.data.map((item) => ({
-          idKaryawan: item.karyawanId,
-          nama: item.fullname,
-          masuk: formatTime(item.checkInTimes.start),
-          pulang: formatTime(item.checkInTimes.end),
-          mulai: formatTime(item.checkInTimes.break),
-          selesai: formatTime(item.checkInTimes.resume),
-        }));
+        return response.data.map((item) => {
+          const masuk =
+            item.checkInTimes.start == null
+              ? "-"
+              : formatTime(item.checkInTimes.start);
+          const pulang =
+            item.checkInTimes.end == null
+              ? "-"
+              : formatTime(item.checkInTimes.end);
+          const mulai =
+            item.checkInTimes.break == null
+              ? "-"
+              : formatTime(item.checkInTimes.break);
+          const selesai =
+            item.checkInTimes.resume == null
+              ? "-"
+              : formatTime(item.checkInTimes.resume);
+
+          return {
+            idKaryawan: item.karyawanId,
+            nama: item.fullname,
+            masuk: masuk,
+            pulang: pulang,
+            mulai: mulai,
+            selesai: selesai,
+          };
+        });
       } catch (error) {
         alert("There was an error fetching the data!", error);
         return [];
