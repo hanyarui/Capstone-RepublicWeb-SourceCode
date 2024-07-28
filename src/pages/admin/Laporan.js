@@ -15,7 +15,7 @@ const Shift = () => {
     const token = Cookies.get("token"); // Mengambil token dari cookies
     try {
       const response = await axios.get(
-        `https://republikweb-cp-backend.vercel.app/kehadiran/karyawan/all?fullname=${fullname}`,
+        `https://localhost:3000/kehadiran/karyawan/all?fullname=${fullname}`,
         {
           headers: {
             Authorization: `Bearer ${token}`, // Menyertakan token dalam header
@@ -54,7 +54,7 @@ const Shift = () => {
   }
 
   return (
-    <div className="flex h-screen bg-slate-100">
+    <div className="flex h-full bg-slate-100">
       <Sidebar />
       <main className="flex-1 w-full ">
         <Navbar />
@@ -114,7 +114,7 @@ const Shift = () => {
             </form>
           </div>
           <div className="overflow-x-auto mt-10">
-            <table className="table-auto w-full border-collapse bg-white">
+            <table className="table-auto w-full border-collapse bg-white mb-10">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="py-2 border-b">No</th>

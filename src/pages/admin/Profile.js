@@ -28,7 +28,7 @@ const Profile = () => {
         const karyawanId = decodedToken.karyawanId;
 
         const response = await axios.get(
-          `https://republikweb-cp-backend.vercel.app/karyawan/${karyawanId}`,
+          `https://localhost:3000/karyawan/${karyawanId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -73,7 +73,7 @@ const Profile = () => {
       const karyawanId = decodedToken.karyawanId;
 
       await axios.put(
-        `https://republikweb-cp-backend.vercel.app/karyawan/${karyawanId}`,
+        `https://localhost:3000/karyawan/${karyawanId}`,
         formData,
         {
           headers: {

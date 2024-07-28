@@ -29,9 +29,7 @@ const Project = ({ activities }) => {
   // Fungsi untuk mengambil data karyawan dari API
   const fetchEmployees = async () => {
     try {
-      const response = await axios.get(
-        "https://republikweb-cp-backend.vercel.app/karyawan"
-      );
+      const response = await axios.get("https://localhost:3000/karyawan");
       if (response.status === 200) {
         // Format data menjadi opsi untuk dropdown
         const formattedEmployees = response.data.map((employee) => ({
@@ -75,7 +73,7 @@ const Project = ({ activities }) => {
 
     try {
       const response = await axios.post(
-        `https://republikweb-cp-backend.vercel.app/projects`,
+        `https://localhost:3000/projects`,
         newProject,
         {
           headers: {
@@ -133,7 +131,7 @@ const Project = ({ activities }) => {
 
     try {
       const response = await axios.get(
-        `https://republikweb-cp-backend.vercel.app/projects?search=${projectname}`,
+        `https://localhost:3000/projects?search=${projectname}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -34,17 +34,14 @@ const saveAttendanceData = async (data) => {
     }
 
     // Mock API call to save data
-    await fetch(
-      "https://republikweb-cp-backend.vercel.app/attendance/checkin",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Add token to headers
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    await fetch("https://localhost:3000/attendance/checkin", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Add token to headers
+      },
+      body: JSON.stringify(data),
+    });
   } catch (error) {
     console.error("Error saving attendance data:", error);
   }
@@ -60,17 +57,14 @@ const saveActivityData = async (data) => {
     }
 
     // API call to save data
-    const response = await fetch(
-      "https://republikweb-cp-backend.vercel.app/activitylog",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Add token to headers
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    const response = await fetch("https://localhost:3000/activitylog", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Add token to headers
+      },
+      body: JSON.stringify(data),
+    });
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -93,7 +87,7 @@ const getAttendanceData = async (karyawanId) => {
     }
 
     const response = await fetch(
-      `https://republikweb-cp-backend.vercel.app/attendance-today/${karyawanId}`,
+      `https://localhost:3000/attendance-today/${karyawanId}`,
       {
         method: "GET",
         headers: {
@@ -125,7 +119,7 @@ const getDebtTimeData = async (karyawanId) => {
     }
 
     const response = await fetch(
-      `https://republikweb-cp-backend.vercel.app/debttime/total/${karyawanId}`,
+      `https://localhost:3000/debttime/total/${karyawanId}`,
       {
         method: "GET",
         headers: {

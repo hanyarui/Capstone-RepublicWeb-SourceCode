@@ -25,7 +25,7 @@ const Dashboard = () => {
         }
 
         const response = await fetch(
-          "https://republikweb-cp-backend.vercel.app/recent-activities",
+          "https://localhost:3000/recent-activities",
           {
             headers: {
               Authorization: `Bearer ${token}`, // Sertakan token dalam header Authorization
@@ -63,7 +63,7 @@ const Dashboard = () => {
         }
 
         const response = await fetch(
-          "https://republikweb-cp-backend.vercel.app/daily-attendance",
+          "https://localhost:3000/daily-attendance",
           {
             headers: {
               Authorization: `Bearer ${token}`, // Sertakan token dalam header Authorization

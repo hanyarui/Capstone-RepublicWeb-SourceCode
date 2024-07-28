@@ -23,7 +23,7 @@ const DetailProject = () => {
 
       try {
         const response = await axios.get(
-          `https://republikweb-cp-backend.vercel.app/projects/${projectId}`,
+          `https://localhost:3000/projects/${projectId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

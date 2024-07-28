@@ -26,14 +26,11 @@ const HistoryLogActivityLaptop = () => {
 
     // Ganti URL dengan endpoint API yang sesuai dan gunakan IdKaryawan
     axios
-      .get(
-        `https://republikweb-cp-backend.vercel.app/activitylog/${karyawanId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Sertakan token dalam header Authorization
-          },
-        }
-      )
+      .get(`https://localhost:3000/activitylog/${karyawanId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Sertakan token dalam header Authorization
+        },
+      })
       .then((response) => {
         // Transformasi data menjadi format yang sesuai
         const transformedData = response.data.map((item) => {

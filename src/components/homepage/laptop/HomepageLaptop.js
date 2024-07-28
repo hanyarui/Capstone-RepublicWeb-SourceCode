@@ -35,17 +35,14 @@ const saveAttendanceData = async (data) => {
     }
 
     // Mock API call to save data
-    await fetch(
-      "https://republikweb-cp-backend.vercel.app/attendance/checkin",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Add token to headers
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    await fetch("https://localhost:3000/attendance/checkin", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Add token to headers
+      },
+      body: JSON.stringify(data),
+    });
   } catch (error) {
     console.error("Error saving attendance data:", error);
   }
@@ -61,17 +58,14 @@ const saveActivityData = async (data) => {
     }
 
     // API call to save data
-    const response = await fetch(
-      "https://republikweb-cp-backend.vercel.app/activitylog",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Add token to headers
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    const response = await fetch("https://localhost:3000/activitylog", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Add token to headers
+      },
+      body: JSON.stringify(data),
+    });
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -94,7 +88,7 @@ const getAttendanceData = async (karyawanId) => {
     }
 
     const response = await fetch(
-      `https://republikweb-cp-backend.vercel.app/attendance-today/${karyawanId}`,
+      `https://localhost:3000/attendance-today/${karyawanId}`,
       {
         method: "GET",
         headers: {
@@ -126,7 +120,7 @@ const getDebtTimeData = async (karyawanId) => {
     }
 
     const response = await fetch(
-      `https://republikweb-cp-backend.vercel.app/debttime/total/${karyawanId}`,
+      `https://localhost:3000/debttime/total/${karyawanId}`,
       {
         method: "GET",
         headers: {
@@ -158,7 +152,7 @@ const fetchQrCode = async (karyawanId) => {
     }
 
     const response = await fetch(
-      `https://republikweb-cp-backend.vercel.app/karyawan/${karyawanId}/barcode`,
+      `https://localhost:3000/karyawan/${karyawanId}/barcode`,
       {
         method: "GET",
         headers: {
@@ -414,19 +408,19 @@ const HomepageLaptop = () => {
             </button>
             {isQrCodeVisible && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white p-5 w-max h-max rounded-lg relative">
+                <div className="bg-white p-2 w-max h-max rounded-lg relative">
                   <button
                     onClick={toggleQrCodePopup}
                     className="absolute top-4 right-7 text-gray-500 hover:text-black"
                   >
-                    Close
+                    x
                   </button>
                   <p className="mb-2 mt-4">QR Code</p>
                   {qrCodeUrl ? (
                     <img
                       src={qrCodeUrl}
                       alt="Karyawan QR Code"
-                      className="max-w-full max-h-full object-contain mx-auto"
+                      className="size-80 object-contain mx-auto"
                     />
                   ) : (
                     <div className="flex justify-center items-center">
@@ -510,13 +504,6 @@ const HomepageLaptop = () => {
               </div>
 
               <div className="gap-6 mt-6">
-                {/* <div className="grid grid-cols md:grid-cols-2 gap-6 mt-6"> */}
-                {/* <div className="bg-white border border-red-500 p-4 rounded-lg flex items-center justify-center h-40">
-                  <div className="text-red-500 text-center">
-                    Kemarin anda absen pulang di kost jangan diulang!
-                  </div>
-                </div> */}
-
                 <div className="bg-white border border-red-500 p-4 rounded-lg flex flex-col items-center">
                   <div className="text-red-500 font-semibold text-center mb-5">
                     Anda memiliki kekurangan jam kerja

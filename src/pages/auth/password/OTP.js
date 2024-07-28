@@ -14,7 +14,7 @@ const OTP = () => {
     event.preventDefault();
     try {
       const response = await axios.post(
-        "https://republikweb-cp-backend.vercel.app/karyawan/validasi-otp",
+        "https://localhost:3000/karyawan/validasi-otp",
         { otp }
       );
       if (response.data.message === "OTP is valid") {

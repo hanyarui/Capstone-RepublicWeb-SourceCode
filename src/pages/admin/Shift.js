@@ -16,7 +16,7 @@ const Shift = () => {
   const fetchData = async (fullname = "") => {
     try {
       const response = await axios.get(
-        `https://republikweb-cp-backend.vercel.app/shift-details?fullname=${fullname}`,
+        `https://localhost:3000/shift-details?fullname=${fullname}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -81,7 +81,7 @@ const Shift = () => {
       }
 
       await axios.put(
-        "https://republikweb-cp-backend.vercel.app/shift-details/update/update-multiple",
+        "https://localhost:3000/shift-details/update/update-multiple",
         { shifts },
         {
           headers: {
@@ -137,7 +137,7 @@ const Shift = () => {
       }
 
       await axios.put(
-        "https://republikweb-cp-backend.vercel.app/shift-details/update/update-multiple",
+        "https://localhost:3000/shift-details/update/update-multiple",
         { shifts },
         {
           headers: {

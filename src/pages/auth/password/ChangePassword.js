@@ -21,7 +21,7 @@ const ChangePassword = () => {
 
     try {
       const response = await axios.post(
-        "https://republikweb-cp-backend.vercel.app/karyawan/reset-password",
+        "https://localhost:3000/karyawan/reset-password",
         {
           userId,
           newPassword: password,

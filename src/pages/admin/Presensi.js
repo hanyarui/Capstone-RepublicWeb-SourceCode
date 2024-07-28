@@ -12,9 +12,12 @@ import ClipLoader from "react-spinners/ClipLoader";
 // Fungsi untuk format waktu ke jam:menit
 const formatTime = (datetime) => {
   const date = new Date(datetime);
-  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const timeString = date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  return timeString === "07:00 AM" ? "-" : timeString;
 };
-
 // Fungsi untuk format waktu dari menit ke format HH:MM:SS
 const formatTimeDebt = (minutes) => {
   const isNegative = minutes < 0;
@@ -31,28 +34,16 @@ const formatTimeDebt = (minutes) => {
   return isNegative ? `+${formattedTime}` : `-${formattedTime}`;
 };
 
-// Fungsi untuk mendapatkan tanggal hari ini dalam format YYYY-MM-DD
-const getTodayDate = () => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0"); // tambahkan 1 karena getMonth() dimulai dari 0
-  const day = String(today.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
 const Presensi = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [attendanceStats, setAttendanceStats] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  // const [hiddenChecks, setHiddenChecks] = useState({});
-  // const [hiddenCancels, setHiddenCancels] = useState({});
   const [isAttendancePopupVisible, setIsAttendancePopupVisible] =
     useState(false);
-
   const [attendanceForm, setAttendanceForm] = useState({
     karyawanId: "",
-    date: getTodayDate(),
+    date: "",
     status: "izin",
   });
 
@@ -66,19 +57,19 @@ const Presensi = () => {
     setAttendanceForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const today = getTodayDate();
-
-  const handleAttendance = async (idKaryawan, date) => {
+  const handleSubmitAttendance = async () => {
+    const { karyawanId, date } = attendanceForm;
     const token = Cookies.get("token");
     try {
       const response = await axios.post(
-        `https://republikweb-cp-backend.vercel.app/add-permission/${idKaryawan}/${date}`,
+        `https://localhost:3000/add-permission/${karyawanId}/${date}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       alert("Attendance permission added successfully!");
+      setIsAttendancePopupVisible(false);
     } catch (error) {
       console.error("There was an error adding the permission!", error);
     }
@@ -86,8 +77,6 @@ const Presensi = () => {
 
   const handleReject = async (idKaryawan, activitylogid) => {
     try {
-      console.log("idKaryawan:", idKaryawan);
-      console.log("activitylogid:", activitylogid);
       const token = Cookies.get("token");
       if (!token) {
         console.error("No token found!");
@@ -95,7 +84,7 @@ const Presensi = () => {
       }
 
       const response = await axios.post(
-        `https://republikweb-cp-backend.vercel.app/activitylog/${idKaryawan}/${activitylogid}/reject`,
+        `https://localhost:3000/activitylog/${idKaryawan}/${activitylogid}/reject`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -120,7 +109,7 @@ const Presensi = () => {
       }
 
       const response = await axios.post(
-        `https://republikweb-cp-backend.vercel.app/activitylog/${idKaryawan}/${activitylogid}/accept`,
+        `https://localhost:3000/activitylog/${idKaryawan}/${activitylogid}/accept`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -132,7 +121,7 @@ const Presensi = () => {
         // setHiddenChecks((prev) => ({ ...prev, [activitylogid]: true }));
       }
     } catch (error) {
-      alert("Error rejecting activity log:", error);
+      alert("Error accepting activity log:", error);
     }
   };
 
@@ -144,12 +133,10 @@ const Presensi = () => {
       return;
     }
 
-    const today = getTodayDate();
-
-    const fetchAttendanceToday = async (fullname = "") => {
+    const fetchAttendanceToday = async (date) => {
       try {
         const response = await axios.get(
-          `https://republikweb-cp-backend.vercel.app/report/date/${today}?fullname=${fullname}`,
+          `https://localhost:3000/report/date/${date}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -182,15 +169,14 @@ const Presensi = () => {
           };
         });
       } catch (error) {
-        alert("There was an error fetching the data!", error);
         return [];
       }
     };
 
-    const fetchDebtAttendance = async () => {
+    const fetchDebtAttendance = async (date) => {
       try {
         const response = await axios.get(
-          `https://republikweb-cp-backend.vercel.app/debttime/report/${today}`,
+          `https://localhost:3000/debttime/report/${date}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -200,15 +186,14 @@ const Presensi = () => {
           kurang: formatTimeDebt(item.timeDebt),
         }));
       } catch (error) {
-        console.error("There was an error fetching the data!", error);
         return [];
       }
     };
 
-    const fetchActivityLog = async () => {
+    const fetchActivityLog = async (date) => {
       try {
         const response = await axios.get(
-          `https://republikweb-cp-backend.vercel.app/activitylog/date/${today}`,
+          `https://localhost:3000/activitylog/date/${date}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -219,15 +204,14 @@ const Presensi = () => {
           aktivitas: item.description,
         }));
       } catch (error) {
-        console.error("There was an error fetching the data!", error);
         return [];
       }
     };
 
-    const fetchTotalWorkHours = async () => {
+    const fetchTotalWorkHours = async (date) => {
       try {
         const response = await axios.get(
-          `https://republikweb-cp-backend.vercel.app/total-work-hours/${today}`,
+          `https://localhost:3000/total-work-hours/${date}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -237,15 +221,14 @@ const Presensi = () => {
           totalWorkHours: item.totalWorkHours,
         }));
       } catch (error) {
-        console.error("There was an error fetching the data!", error);
         return [];
       }
     };
 
-    const fetchAttandanceUser = async () => {
+    const fetchAttandanceUser = async (date) => {
       try {
         const response = await axios.get(
-          `https://republikweb-cp-backend.vercel.app/attendancedate/date/${today}`,
+          `https://localhost:3000/attendancedate/date/${date}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -255,7 +238,6 @@ const Presensi = () => {
           status: item.status,
         }));
       } catch (error) {
-        console.error("There was an error fetching the data!", error);
         return [];
       }
     };
@@ -263,7 +245,7 @@ const Presensi = () => {
     const fetchAttendanceStats = async () => {
       try {
         const response = await axios.get(
-          "https://republikweb-cp-backend.vercel.app/daily-attendance",
+          "https://localhost:3000/daily-attendance",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -275,87 +257,48 @@ const Presensi = () => {
 
         const data = response.data;
         setAttendanceStats(data);
+      } catch (error) {}
+    };
 
-        console.log(data);
-      } catch (error) {
-        console.error("Failed to fetch attendance stats:", error);
-      }
+    const fetchAllData = async () => {
+      setLoading(true);
+      const attendanceToday = await fetchAttendanceToday(searchTerm);
+      const debtAttendance = await fetchDebtAttendance(searchTerm);
+      const activityLog = await fetchActivityLog(searchTerm);
+      const totalWorkHours = await fetchTotalWorkHours(searchTerm);
+      const attendanceUser = await fetchAttandanceUser(searchTerm);
 
+      const mergedData = attendanceToday.map((attendance) => {
+        const debt = debtAttendance.find(
+          (item) => item.idKaryawan === attendance.idKaryawan
+        );
+        const activity = activityLog.find(
+          (item) => item.idKaryawan === attendance.idKaryawan
+        );
+        const workHours = totalWorkHours.find(
+          (item) => item.idKaryawan === attendance.idKaryawan
+        );
+        const userStatus = attendanceUser.find(
+          (item) => item.idKaryawan === attendance.idKaryawan
+        );
+
+        return {
+          ...attendance,
+          kurang: debt ? debt.kurang : "",
+          aktivitas: activity ? activity.aktivitas : "",
+          totalWorkHours: workHours ? workHours.totalWorkHours : "",
+          status: userStatus ? userStatus.status : "",
+          activitylogid: activity ? activity.activitylogid : "",
+        };
+      });
+
+      setData(mergedData);
       setLoading(false);
     };
 
-    const fetchData = async () => {
-      const [
-        attendanceToday,
-        debtAttendance,
-        activityLog,
-        attendanceUser,
-        totalWorkHours,
-      ] = await Promise.all([
-        fetchAttendanceToday(searchTerm),
-        fetchDebtAttendance(),
-        fetchActivityLog(),
-        fetchAttandanceUser(),
-        fetchTotalWorkHours(),
-      ]);
-
-      // Menggabungkan data berdasarkan idKaryawan
-      const combinedData = {};
-
-      // Gabungkan data dari attendanceToday
-      attendanceToday.forEach((item) => {
-        combinedData[item.idKaryawan] = { ...item };
-      });
-
-      // Gabungkan data dari debtAttendance
-      debtAttendance.forEach((item) => {
-        if (combinedData[item.idKaryawan]) {
-          combinedData[item.idKaryawan].kurang = item.kurang;
-        } else {
-          combinedData[item.idKaryawan] = { ...item };
-        }
-      });
-
-      // Gabungkan data dari activityLog
-      activityLog.forEach((item) => {
-        if (combinedData[item.idKaryawan]) {
-          combinedData[item.idKaryawan].aktivitas = item.aktivitas;
-          combinedData[item.idKaryawan].activitylogid = item.activitylogid;
-        } else {
-          combinedData[item.idKaryawan] = { ...item };
-        }
-      });
-
-      // Gabungkan data dari totalWorkHours
-      totalWorkHours.forEach((item) => {
-        if (combinedData[item.idKaryawan]) {
-          combinedData[item.idKaryawan].totalWorkHours = item.totalWorkHours;
-        } else {
-          combinedData[item.idKaryawan] = { ...item };
-        }
-      });
-
-      // Gabungkan data dari attendanceUser
-      attendanceUser.forEach((item) => {
-        if (combinedData[item.idKaryawan]) {
-          combinedData[item.idKaryawan].status = item.status;
-        } else {
-          combinedData[item.idKaryawan] = { ...item };
-        }
-      });
-
-      // Convert combinedData object to array
-      const finalData = Object.values(combinedData);
-      setData(finalData);
-    };
-
-    fetchData();
+    fetchAllData();
     fetchAttendanceStats();
   }, [searchTerm]);
-
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
 
   if (loading) {
     return (
@@ -386,19 +329,6 @@ const Presensi = () => {
               <div className="text-white">
                 <h2 className="text-3xl font-bold">Data Presensi</h2>
                 <p>Data per tanggal</p>
-              </div>
-              <div className="relative text-white">
-                <label className="block">Cari Karyawan</label>
-                <div className="relative mt-1">
-                  <IoIosSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full border text-black border-gray-300 rounded pl-10 pr-4 py-2"
-                    placeholder="Pencarian"
-                  />
-                </div>
               </div>
             </div>
           </div>
@@ -434,6 +364,9 @@ const Presensi = () => {
                     <IoIosSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black" />
                     <input
                       type="date"
+                      name="date"
+                      value={searchTerm}
+                      onChange={(event) => setSearchTerm(event.target.value)}
                       className="w-full border text-black border-black pl-10 pr-2 py-2"
                       placeholder="Pencarian"
                     />
@@ -442,118 +375,133 @@ const Presensi = () => {
               </div>
             </div>
           </div>
-          <div className="overflow-auto mt-10">
-            <table className="table-auto w-full border-collapse">
-              <thead className="bg-gray-200">
-                <tr>
-                  <th className="px-4 py-2 border font-semibold">No</th>
-                  <th className="px-4 py-2 border font-semibold">Nama</th>
-                  <th className="px-4 py-2 border font-semibold" colSpan="2">
-                    Jam Kerja
-                    <div className="flex border-t border-black justify-between mt-1 font-semibold">
-                      <span>Masuk</span>
-                      <span>Pulang</span>
-                    </div>
-                  </th>
-                  <th className="px-4 py-2 border font-semibold" colSpan="2">
-                    Jam Istirahat
-                    <div className="flex border-t border-black justify-between mt-1 font-semibold">
-                      <span>Mulai</span>
-                      <span>Selesai</span>
-                    </div>
-                  </th>
-                  <th className="px-4 py-2 border font-semibold" colSpan="2">
-                    Total Jam Kerja
-                    <div className="flex border-t border-black justify-between mt-1 font-semibold">
-                      <span>Total Jam</span>
-                      <span>(+) (-)</span>
-                    </div>
-                  </th>
-                  <th className="px-4 py-2 border font-semibold" colSpan="2">
-                    Log Aktivitas
-                    <div className="flex border-t border-black justify-between mt-1 font-semibold">
-                      <span>Log Aktivitas</span>
-                      <span>Aksi</span>
-                    </div>
-                  </th>
-                  <th className="px-4 py-2 border font-semibold">
-                    Status Kehadiran
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((item, index) => {
-                  const timeDebtValue = parseFloat(
-                    item.kurang ? item.kurang.replace(":", ".") : "0"
-                  );
-                  const isPositive = timeDebtValue > 0;
-                  const debtTimeClass = isPositive
-                    ? "text-green-500"
-                    : "text-red-500";
+          <div className="bg-white relative overflow-y-auto mt-10 mb-3 h-80">
+            {loading ? (
+              <ClipLoader size={50} color={"#123abc"} loading={loading} />
+            ) : data.length > 0 ? (
+              <table className="table-auto w-full border-collapse mb-10">
+                <thead className="sticky top-0 bg-gray-200">
+                  <tr>
+                    <th className="px-4 py-2 border font-semibold">No</th>
+                    <th className="px-4 py-2 border font-semibold">Nama</th>
+                    <th className="px-4 py-2 border font-semibold" colSpan="2">
+                      Jam Kerja
+                      <div className="flex border-t border-black justify-between mt-1 font-semibold">
+                        <span>Masuk</span>
+                        <span>Pulang</span>
+                      </div>
+                    </th>
+                    <th className="px-4 py-2 border font-semibold" colSpan="2">
+                      Jam Istirahat
+                      <div className="flex border-t border-black justify-between mt-1 font-semibold">
+                        <span>Mulai</span>
+                        <span>Selesai</span>
+                      </div>
+                    </th>
+                    <th className="px-4 py-2 border font-semibold" colSpan="2">
+                      Total Jam Kerja
+                      <div className="flex border-t border-black justify-between mt-1 font-semibold">
+                        <span>Total Jam</span>
+                        <span>(+) (-)</span>
+                      </div>
+                    </th>
+                    <th className="px-4 py-2 border font-semibold" colSpan="2">
+                      Log Aktivitas
+                      <div className="flex border-t border-black justify-between mt-1 font-semibold">
+                        <span>Log Aktivitas</span>
+                        <span>Aksi</span>
+                      </div>
+                    </th>
+                    <th className="px-4 py-2 border font-semibold">
+                      Status Kehadiran
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white">
+                  {data.map((item, index) => {
+                    const timeDebtValue = parseFloat(
+                      item.kurang ? item.kurang.replace(":", ".") : "0"
+                    );
+                    const isPositive = timeDebtValue > 0;
+                    const debtTimeClass = isPositive
+                      ? "text-green-500"
+                      : "text-red-500";
 
-                  return (
-                    <tr key={index} className="border text-base">
-                      <td className="text-center border-b py-2">{index + 1}</td>
-                      <td className="text-center border-b py-2">{item.nama}</td>
-                      <td className="text-center border-b py-2">
-                        {item.masuk}
-                      </td>
-                      <td className="text-center border-b py-2">
-                        {item.pulang}
-                      </td>
-                      <td className="text-center border-b py-2">
-                        {item.mulai}
-                      </td>
-                      <td className="text-center border-b py-2">
-                        {item.selesai}
-                      </td>
-                      <td className="text-center border-b py-2">
-                        {item.totalWorkHours}
-                      </td>
-                      <td
-                        className={`text-center border-b py-2 ${debtTimeClass}`}
-                      >
-                        {item.kurang || "00:00:00"}
-                      </td>
-                      <td className="text-center border-b py-2">
-                        {item.aktivitas}
-                      </td>
-                      <td className="text-end border-b py-2">
-                        <div className="flex col-span-2 items-center justify-between px-2">
-                          {/* {!hiddenChecks[item.activitylogid] && ( */}
-                          <MdOutlineCancel
-                            className="size-5 cursor-pointer fill-red-500"
-                            onClick={() =>
-                              handleReject(item.idKaryawan, item.activitylogid)
-                            }
-                          />
-                          {/* )} */}
-                          {/* {!hiddenCancels[item.activitylogid] && ( */}
-                          <FaRegCircleCheck
-                            className="cursor-pointer fill-green-500"
-                            onClick={() =>
-                              handleAccept(item.idKaryawan, item.activitylogid)
-                            }
-                          />
-                          {/* )} */}
-                        </div>
-                      </td>
-                      <td className="text-center border-b py-2">
-                        <div
-                          onClick={hanleAttendance}
-                          className="cursor-pointer"
+                    return (
+                      <tr key={index} className="border-b text-base">
+                        <td className="text-center border-b py-2">
+                          {index + 1}
+                        </td>
+                        <td className="text-center border-b py-2">
+                          {item.nama}
+                        </td>
+                        <td className="text-center border-b py-2">
+                          {item.masuk}
+                        </td>
+                        <td className="text-center border-b py-2">
+                          {item.pulang}
+                        </td>
+                        <td className="text-center border-b py-2">
+                          {item.mulai}
+                        </td>
+                        <td className="text-center border-b py-2">
+                          {item.selesai}
+                        </td>
+                        <td className="text-center border-b py-2">
+                          {item.totalWorkHours}
+                        </td>
+                        <td
+                          className={`text-center border-b py-2 ${debtTimeClass}`}
                         >
-                          {item.status}
-                        </div>
-                      </td>
-                      {/* <td className="text-center border py-2">
-                        <button className="text-blue-500">Action</button>
-                      </td> */}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                          {item.kurang || "00:00:00"}
+                        </td>
+                        <td className="text-center border-b py-2">
+                          {item.aktivitas}
+                        </td>
+                        <td className="text-end border-b py-2">
+                          <div className="flex col-span-2 items-center justify-between px-2">
+                            <MdOutlineCancel
+                              className="size-5 cursor-pointer fill-red-500"
+                              onClick={() =>
+                                handleReject(
+                                  item.idKaryawan,
+                                  item.activitylogid
+                                )
+                              }
+                            />
+                            <FaRegCircleCheck
+                              className="cursor-pointer fill-green-500"
+                              onClick={() =>
+                                handleAccept(
+                                  item.idKaryawan,
+                                  item.activitylogid
+                                )
+                              }
+                            />
+                          </div>
+                        </td>
+                        <td className="text-center border-b py-2">
+                          <div
+                            onClick={hanleAttendance}
+                            className="cursor-pointer"
+                          >
+                            {item.status}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            ) : (
+              <div className="text-center text-gray-500">
+                <p>Silahkan pilih tanggal terlebih dahulu</p>
+                <p>
+                  Data tanggal ini {searchTerm}{" "}
+                  {searchTerm === null ? "tidak ada" : searchTerm} belum ada
+                </p>
+              </div>
+            )}
           </div>
         </div>
         {isAttendancePopupVisible && (

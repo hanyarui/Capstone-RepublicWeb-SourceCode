@@ -18,7 +18,7 @@ const DetailDivisi = () => {
         console.log(`Fetching data for division: ${divisionName}`);
 
         const response = await fetch(
-          `https://republikweb-cp-backend.vercel.app/karyawan/division/${divisionName}`
+          `https://localhost:3000/karyawan/division/${divisionName}`
         );
 
         if (!response.ok) {
